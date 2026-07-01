@@ -1,0 +1,28 @@
+name: 'Smoke test'
+description: 'Build a dev container template and run its smoke test inside the built container'
+inputs:
+  template:
+    description: 'Template to test'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout main
+      id: checkout_release
+      uses: actions/checkout@v7
+
+    - name: Log in to GHCR
+      id: ghcr_login
+      shell: bash
+      run: echo "${{ github.token }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Build template
+      id: build_template
+      shell: bash
+      run: ${{ github.action_path }}/build.sh ${{ inputs.template }}
+
+    - name: Test template
+      id: test_template
+      shell: bash
+      run: ${{ github.action_path }}/test.sh  ${{ inputs.template }}

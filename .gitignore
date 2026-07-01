@@ -1,0 +1,33 @@
+# Node
+node_modules/
+package-lock.json
+package.json
+
+# Dev Container CLI local artifacts
+.devcontainer/
+!src/**/.devcontainer/
+!src/**/.devcontainer/**
+
+# Claude Code artifacts
+.claude/
+
+# Agent instruction files (one-off, not tracked)
+prompt.txt
+
+# State and build artifacts
+scripts/state.json
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

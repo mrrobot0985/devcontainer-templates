@@ -1,0 +1,39 @@
+name: "CI - Test Templates"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      templates: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            private-claude-code:
+              - 'src/private-claude-code/**'
+              - '.github/actions/smoke-test/**'
+
+  test:
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.templates != '[]'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        templates: ${{ fromJSON(needs.detect-changes.outputs.templates) }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Smoke test for '${{ matrix.templates }}'
+        id: smoke_test
+        uses: ./.github/actions/smoke-test
+        with:
+          template: "${{ matrix.templates }}"

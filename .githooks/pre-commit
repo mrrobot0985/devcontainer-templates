@@ -1,0 +1,47 @@
+#!/bin/bash
+set -euo pipefail
+
+# Pre-commit hook: ensure template READMEs stay in sync with devcontainer-template.json metadata.
+# Install with: git config core.hooksPath .githooks
+
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO_ROOT"
+
+# Generate any missing READMEs from devcontainer-template.json files.
+python3 scripts/generate-template-readmes.py
+
+# If new READMEs were created (untracked), stage them and abort so the user reviews.
+if git ls-files --others --exclude-standard | grep -qE '^src/.*/README\.md$'; then
+    echo ""
+    echo "Generated new template README(s):"
+    git ls-files --others --exclude-standard | grep -E '^src/.*/README\.md$'
+    echo ""
+    echo "Review the generated files, then stage and commit again:"
+    echo "  git add src/*/README.md"
+    echo "  git commit -m '...'"
+    exit 1
+fi
+
+# Warn when devcontainer-template.json is staged but README.md is not.
+# We warn instead of failing because READMEs often contain manual
+# enhancements beyond what the generator produces.
+STAGED_JSONS=$(git diff --cached --name-only --diff-filter=ACM | grep 'devcontainer-template\.json$' || true)
+if [ -n "$STAGED_JSONS" ]; then
+    MISSING_README_UPDATES=""
+    for json_file in $STAGED_JSONS; do
+        readme_file="$(dirname "$json_file")/README.md"
+        if ! git diff --cached --name-only | grep -Fxq "$readme_file"; then
+            MISSING_README_UPDATES="${MISSING_README_UPDATES}\n  - ${readme_file} (not staged with ${json_file})"
+        fi
+    done
+    if [ -n "$MISSING_README_UPDATES" ]; then
+        echo ""
+        echo "WARNING: The following devcontainer-template.json files are staged"
+        echo "but their README.md counterparts are not. Consider updating them:"
+        printf '%b\n' "$MISSING_README_UPDATES"
+        echo ""
+        # Non-fatal: manual README content is common.
+    fi
+fi
+
+exit 0
