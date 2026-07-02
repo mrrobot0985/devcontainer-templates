@@ -29,7 +29,7 @@
 			"protectGit": true,
 			"preferPythonTooling": false
 		},
-		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-skills:latest": {
+		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-skills-matt-pocock:latest": {
 			"installEngineering": true,
 			"installProductivity": true,
 			"installMisc": false,

@@ -25,6 +25,33 @@ Thanks for helping improve this template collection.
 1. Open a pull request using the provided template.
 1. Ensure all CI checks pass.
 
+## Releasing
+
+This is a monorepo containing multiple dev container templates. To prevent git tag collisions, each template gets its own prefixed tag.
+
+### Tag Format
+
+Use `<template-name>-v<semver>` for every release. For example:
+
+- `private-claude-code-v0.3.0`
+- `typescript-node-v1.2.0`
+
+### Why Prefixed Tags?
+
+A single git tag namespace is shared across all templates. Without a prefix, `v0.3.0` is ambiguous — it could apply to any template. Prefixed tags keep release histories independent and readable.
+
+### Release Steps
+
+1. Update the `version` field in `src/<template>/devcontainer-template.json`
+2. Commit the change with a conventional commit message:  
+   `feat(<template>): bump version to X.Y.Z`
+3. Create and push a signed tag:  
+   `git tag -s <template-name>-vX.Y.Z -m "release <template> vX.Y.Z"`
+4. Push the tag to trigger the release workflow:  
+   `git push origin <template-name>-vX.Y.Z`
+
+The release workflow triggers on any `*-v*` tag and publishes the template whose JSON version changed.
+
 ## Code of conduct
 
 This project follows the [Code of Conduct](CODE_OF_CONDUCT.md).
