@@ -1,6 +1,6 @@
 {
   "id": "private-claude-code-dind",
-  "version": "0.1.2",
+  "version": "0.1.0",
   "name": "Ollama + Claude Code + Docker",
   "description": "A template with Ollama, Claude Code CLI, and Docker-in-Docker for local LLM development. Persists authentication and settings across rebuilds via a named volume.",
   "documentationURL": "https://github.com/devcontainers/devcontainer-templates/tree/main/src/private-claude-code-dind",
