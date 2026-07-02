@@ -1,6 +1,6 @@
 {
   "id": "private-claude-code",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "name": "Ollama + Claude Code",
   "description": "A template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.",
   "documentationURL": "https://github.com/devcontainers/devcontainer-templates/tree/main/src/private-claude-code",
