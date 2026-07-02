@@ -82,6 +82,54 @@ uv run python scripts/generate-template-readmes.py
 
 On release, `.github/workflows/release.yaml` publishes each template to GHCR using the `devcontainers/action@v1` GitHub Action. Templates are private by default; set each package to public in its GHCR package settings page.
 
+## Using the Dev Container CLI
+
+Install the CLI globally via npm or use the VS Code extension's bundled binary:
+
+```bash
+npm install -g @devcontainers/cli
+# or use the VS Code extension binary:
+# ~/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers/cli-bin/devcontainer
+```
+
+### Apply a template to a new workspace
+
+```bash
+# Create a new project from the private-claude-code template
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/private-claude-code:latest
+```
+
+### Build the devcontainer after applying the template
+
+```bash
+cd ./my-project
+devcontainer up --workspace-folder . --build-no-cache
+```
+
+### Force a fresh build (bypass Docker cache)
+
+```bash
+devcontainer up --workspace-folder . --build-no-cache
+```
+
+### Remove stale caches
+
+If the template or features are not updating after a new release:
+
+```bash
+# Remove old containers, images, and caches
+docker ps -aq --filter label=devcontainer.local_folder | xargs -r docker rm -f
+docker images --format "{{.Repository}}:{{.Tag}}" | grep "vsc-" | xargs -r docker rmi -f
+rm -rf /tmp/devcontainercli-*/container-features/*
+rm -f .devcontainer/devcontainer-lock.json
+```
+
+### Important: Lockfiles Pin Feature Versions
+
+If `.devcontainer/devcontainer-lock.json` exists, it overrides `:latest` and pins each feature to a specific digest. Delete the lockfile to force resolution of the newest published version.
+
 ## License
 
 MIT
