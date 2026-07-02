@@ -29,7 +29,12 @@
 			"protectGit": true,
 			"preferPythonTooling": false
 		},
-		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-skills:latest": {},
+		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-skills:latest": {
+			"installEngineering": true,
+			"installProductivity": true,
+			"installMisc": false,
+			"installPersonal": false
+		},
 		"ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
 			"moby": "false",
 			"dockerDashComposeVersion": "v2"
