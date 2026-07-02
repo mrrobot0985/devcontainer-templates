@@ -8,9 +8,10 @@ A focused collection of custom [Dev Container Templates](https://containers.dev/
 
 ## Templates
 
-| Template              | Description                                                                         |
-| --------------------- | ----------------------------------------------------------------------------------- |
-| `private-claude-code` | Ollama + Claude Code CLI with privacy-hardened defaults and custom backend support. |
+| Template                   | Description                                                                               |
+| -------------------------- | ------------------------------------------------------------------------------------------- |
+| `private-claude-code`      | Ollama + Claude Code CLI with privacy-hardened defaults and custom backend support.       |
+| `private-claude-code-dind` | Same as above, plus Docker-in-Docker for building and running containers inside the devcontainer. |
 
 Published to GitHub Container Registry:
 
@@ -44,6 +45,18 @@ devcontainer templates apply \
   --template-id ghcr.io/mrrobot0985/devcontainer-templates/private-claude-code:0
 ```
 
+### `private-claude-code-dind`
+
+Same environment as `private-claude-code`, but with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer.
+
+**Usage:**
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/private-claude-code-dind:0
+```
+
 ## CI
 
 Template changes are validated by [`.github/workflows/test-pr.yaml`](.github/workflows/test-pr.yaml):
@@ -55,8 +68,13 @@ Template changes are validated by [`.github/workflows/test-pr.yaml`](.github/wor
 Run the local smoke test before pushing:
 
 ```bash
+# For the base template
 ./.github/actions/smoke-test/build.sh private-claude-code
 ./.github/actions/smoke-test/test.sh private-claude-code
+
+# For the Docker-in-Docker variant
+./.github/actions/smoke-test/build.sh private-claude-code-dind
+./.github/actions/smoke-test/test.sh private-claude-code-dind
 ```
 
 ## Development
