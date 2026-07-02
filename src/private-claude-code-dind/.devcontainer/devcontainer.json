@@ -9,11 +9,11 @@
 	},
 
 	"features": {
-		"ghcr.io/devcontainers/features/node:1": {
+		"ghcr.io/devcontainers/features/node:2.1.0": {
 			"version": "20"
 		},
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"moby": "true",
+		"ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
+			"moby": "false",
 			"dockerDashComposeVersion": "v2"
 		},
 		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
