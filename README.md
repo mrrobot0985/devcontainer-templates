@@ -39,7 +39,9 @@ A complete development environment for running Claude Code against a local or se
 **Usage:**
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/private-claude-code:0
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/private-claude-code:0
 ```
 
 ## CI
