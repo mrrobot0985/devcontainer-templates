@@ -30,7 +30,13 @@
 			"disableFeedback": true,
 			"disableUpdates": true
 		},
-		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-skills:latest": {}
+		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-skills:latest": {},
+		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-rules:latest": {
+			"enforceSafety": true,
+			"standardizeWorkflow": true,
+			"protectGit": true,
+			"preferPythonTooling": false
+		}
 	},
 
 	"runArgs": [

@@ -9,6 +9,8 @@ A template with Ollama, Claude Code CLI, and Docker-in-Docker for local LLM deve
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
 - Lifecycle hooks (`claude-code-hooks`)
+- Skills library (`claude-code-skills`)
+- Behavior rules (`claude-code-rules`)
 - **Docker-in-Docker** (`ghcr.io/devcontainers/features/docker-in-docker:2`)
 
 ## Persistence
