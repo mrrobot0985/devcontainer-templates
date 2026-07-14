@@ -1,9 +1,9 @@
 {
-  "id": "claude-code-build",
+  "id": "ollama-claude-code-build",
   "version": "0.1.0",
   "name": "Ollama + Claude Code (build)",
   "description": "A Dockerfile-based template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.",
-  "documentationURL": "https://github.com/devcontainers/devcontainer-templates/tree/main/src/claude-code-build",
+  "documentationURL": "https://github.com/devcontainers/devcontainer-templates/tree/main/src/ollama-claude-code-build",
   "licenseURL": "https://github.com/devcontainers/devcontainer-templates/blob/main/LICENSE",
   "options": {
     "imageVariant": {

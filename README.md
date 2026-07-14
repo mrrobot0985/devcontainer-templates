@@ -8,12 +8,12 @@ A focused collection of custom [Dev Container Templates](https://containers.dev/
 
 ## Templates
 
-| Template                    | Description                                                                                           |
-| --------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `claude-code`               | Ollama + Claude Code CLI with privacy-hardened defaults and custom backend support.                 |
-| `claude-code-dind`          | Same as above, plus Docker-in-Docker for building and running containers inside the devcontainer.   |
-| `claude-code-build`         | Same as `claude-code`, but uses a custom `Dockerfile` via the `build` property.                     |
-| `claude-code-build-dind`    | Same as `claude-code-dind`, but uses a custom `Dockerfile` via the `build` property.                  |
+| Template                           | Description                                                                                           |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `ollama-claude-code`               | Ollama + Claude Code CLI with privacy-hardened defaults and custom backend support.                 |
+| `ollama-claude-code-dind`          | Same as above, plus Docker-in-Docker for building and running containers inside the devcontainer.   |
+| `ollama-claude-code-build`         | Same as `ollama-claude-code`, but uses a custom `Dockerfile` via the `build` property.               |
+| `ollama-claude-code-build-dind`    | Same as `ollama-claude-code-dind`, but uses a custom `Dockerfile` via the `build` property.         |
 
 Published to GitHub Container Registry:
 
@@ -21,7 +21,7 @@ Published to GitHub Container Registry:
 ghcr.io/mrrobot0985/devcontainer-templates/<id>:<version>
 ```
 
-### `claude-code`
+### `ollama-claude-code`
 
 A complete development environment for running Claude Code against a local or self-hosted LLM backend (e.g., Ollama).
 
@@ -44,43 +44,43 @@ A complete development environment for running Claude Code against a local or se
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/claude-code:0
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:0
 ```
 
-### `claude-code-dind`
+### `ollama-claude-code-dind`
 
-Same environment as `claude-code`, but with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer.
+Same environment as `ollama-claude-code`, but with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer.
 
 **Usage:**
 
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/claude-code-dind:0
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-dind:0
 ```
 
-### `claude-code-build`
+### `ollama-claude-code-build`
 
-Same environment as `claude-code`, but uses a custom `Dockerfile` via the `build` property in `devcontainer.json`. This demonstrates the Dockerfile-based method for building the devcontainer image.
+Same environment as `ollama-claude-code`, but uses a custom `Dockerfile` via the `build` property in `devcontainer.json`. This demonstrates the Dockerfile-based method for building the devcontainer image.
 
 **Usage:**
 
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/claude-code-build:0
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-build:0
 ```
 
-### `claude-code-build-dind`
+### `ollama-claude-code-build-dind`
 
-Same environment as `claude-code-dind`, but uses a custom `Dockerfile` via the `build` property in `devcontainer.json`. This demonstrates the Dockerfile-based method combined with Docker-in-Docker.
+Same environment as `ollama-claude-code-dind`, but uses a custom `Dockerfile` via the `build` property in `devcontainer.json`. This demonstrates the Dockerfile-based method combined with Docker-in-Docker.
 
 **Usage:**
 
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/claude-code-build-dind:0
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-build-dind:0
 ```
 
 ## CI
@@ -95,19 +95,19 @@ Run the local smoke test before pushing:
 
 ```bash
 # For the base template
-./.github/actions/smoke-test/build.sh claude-code
-./.github/actions/smoke-test/test.sh claude-code
+./.github/actions/smoke-test/build.sh ollama-claude-code
+./.github/actions/smoke-test/test.sh ollama-claude-code
 
 # For the Docker-in-Docker variant
-./.github/actions/smoke-test/build.sh claude-code-dind
-./.github/actions/smoke-test/test.sh claude-code-dind
+./.github/actions/smoke-test/build.sh ollama-claude-code-dind
+./.github/actions/smoke-test/test.sh ollama-claude-code-dind
 
 # For the Dockerfile-based variants
-./.github/actions/smoke-test/build.sh claude-code-build
-./.github/actions/smoke-test/test.sh claude-code-build
+./.github/actions/smoke-test/build.sh ollama-claude-code-build
+./.github/actions/smoke-test/test.sh ollama-claude-code-build
 
-./.github/actions/smoke-test/build.sh claude-code-build-dind
-./.github/actions/smoke-test/test.sh claude-code-build-dind
+./.github/actions/smoke-test/build.sh ollama-claude-code-build-dind
+./.github/actions/smoke-test/test.sh ollama-claude-code-build-dind
 ```
 
 ## Development
@@ -148,10 +148,10 @@ npm install -g @devcontainers/cli
 ### Apply a template to a new workspace
 
 ```bash
-# Create a new project from the claude-code template
+# Create a new project from the ollama-claude-code template
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/claude-code:latest
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:latest
 ```
 
 ### Build the devcontainer after applying the template

@@ -17,17 +17,17 @@ jobs:
         id: filter
         with:
           filters: |
-            claude-code:
-              - 'src/claude-code/**'
+            ollama-claude-code:
+              - 'src/ollama-claude-code/**'
               - '.github/actions/smoke-test/**'
-            claude-code-dind:
-              - 'src/claude-code-dind/**'
+            ollama-claude-code-dind:
+              - 'src/ollama-claude-code-dind/**'
               - '.github/actions/smoke-test/**'
-            claude-code-build:
-              - 'src/claude-code-build/**'
+            ollama-claude-code-build:
+              - 'src/ollama-claude-code-build/**'
               - '.github/actions/smoke-test/**'
-            claude-code-build-dind:
-              - 'src/claude-code-build-dind/**'
+            ollama-claude-code-build-dind:
+              - 'src/ollama-claude-code-build-dind/**'
               - '.github/actions/smoke-test/**'
 
   test:

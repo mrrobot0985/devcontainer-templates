@@ -1,4 +1,4 @@
-# Ollama + Claude Code (build) (claude-code-build)
+# Ollama + Claude Code (build) (ollama-claude-code-build)
 
 A Dockerfile-based template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.
 
@@ -11,5 +11,5 @@ A Dockerfile-based template with Ollama and Claude Code CLI for local LLM develo
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/claude-code-build:0
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-build:0
 ```

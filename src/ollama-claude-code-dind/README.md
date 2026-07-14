@@ -1,8 +1,6 @@
-# Ollama + Claude Code (claude-code)
+# Ollama + Claude Code + Docker (ollama-claude-code-dind)
 
-A template with Ollama and Claude Code CLI for local LLM development.
-
-It consumes the public `ghcr.io/mrrobot0985/devcontainer-features/*` packages published in Phase 1.
+A template with Ollama, Claude Code CLI, and Docker-in-Docker for local LLM development. This extends the base `ollama-claude-code` template with Docker-in-Docker support, allowing you to build, run, and push container images from inside the devcontainer.
 
 ## Includes
 
@@ -14,6 +12,7 @@ It consumes the public `ghcr.io/mrrobot0985/devcontainer-features/*` packages pu
 - Lifecycle hooks (`claude-code-hooks`)
 - Skills library (`claude-code-skills-matt-pocock`)
 - Behavior rules (`claude-code-rules`)
+- **Docker-in-Docker** (`ghcr.io/devcontainers/features/docker-in-docker:2`)
 
 ## Persistence
 
