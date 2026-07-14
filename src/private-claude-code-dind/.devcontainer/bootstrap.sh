@@ -34,6 +34,13 @@ else
 	echo "  The docker-in-docker feature may still be starting. Wait a few seconds and retry."
 fi
 
+# --- Verify GitHub CLI is available ---
+if command -v gh >/dev/null 2>&1; then
+	echo "Bootstrap OK — GitHub CLI installed: $(gh --version | head -1)"
+else
+	echo "Bootstrap WARN — GitHub CLI not found"
+fi
+
 # --- Ensure Claude Code config directory exists for the remote user ---
 CLAUDE_DIR="${_REMOTE_USER_HOME:-$HOME}/.claude"
 if [ -d "$CLAUDE_DIR" ]; then

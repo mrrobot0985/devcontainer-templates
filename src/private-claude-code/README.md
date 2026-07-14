@@ -8,6 +8,7 @@ It consumes the public `ghcr.io/mrrobot0985/devcontainer-features/*` packages pu
 
 - Node.js 20
 - Claude Code CLI (via official Anthropic feature)
+- GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
 - Lifecycle hooks (`claude-code-hooks`)

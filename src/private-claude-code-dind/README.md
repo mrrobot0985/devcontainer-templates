@@ -6,6 +6,7 @@ A template with Ollama, Claude Code CLI, and Docker-in-Docker for local LLM deve
 
 - Node.js 20
 - Claude Code CLI (via official Anthropic feature)
+- GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
 - Lifecycle hooks (`claude-code-hooks`)

@@ -6,6 +6,7 @@ source test-utils.sh
 check "distro" lsb_release -c
 check "node-installed" node --version
 check "claude-installed" which claude
+check "gh-installed" gh --version
 check "settings-exists" test -f ~/.claude/settings.json
 check "hooks-dir-exists" test -d ~/.claude/hooks
 check "claude-dir-persisted" test -d ~/.claude

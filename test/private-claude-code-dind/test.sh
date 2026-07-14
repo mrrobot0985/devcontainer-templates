@@ -53,6 +53,14 @@ if [ "$hook_count" -eq 0 ]; then
 fi
 echo "OK — hooks installed ($hook_count scripts)"
 
+# Check GitHub CLI is installed
+if ! command -v gh >/dev/null 2>&1; then
+    echo "ERROR: gh is not installed"
+    exit 1
+fi
+gh_version=$(gh --version | head -1)
+echo "OK — gh CLI is installed ($gh_version)"
+
 # Check privacy settings
 if [ ! -f "$HOME/.claude/settings.local.json" ]; then
     echo "ERROR: settings.local.json is missing"
