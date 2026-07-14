@@ -10,12 +10,12 @@ A focused collection of custom [Dev Container Templates](https://containers.dev/
 
 Each template is a distinct environment for a specific scenario. Choose the one that matches your needs rather than stripping or adding features after the fact.
 
-| Template | Scenario |
-|----------|----------|
-| `ollama-host-claude` | **Minimal** — Claude Code with Ollama backend. Privacy-hardened by default. GPU passthrough enabled. |
-| `ollama-host-claude-docker` | **Minimal + Docker** — Build and run containers from inside the devcontainer. GPU passthrough enabled for outer container and inner Docker daemon. |
-| `ollama-host-studio` | **Full workspace** — All features: backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
-| `ollama-host-studio-docker` | **Full workspace + Docker** — Studio environment with Docker-in-Docker. GPU passthrough enabled for outer container and inner Docker daemon. |
+| Template | Version | Description |
+| -------- | ------- | ----------- |
+| `ollama-host-claude` | ![ollama-host-claude version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-host-claude/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal — Claude Code with Ollama backend. Privacy-hardened by default. GPU passthrough enabled. |
+| `ollama-host-claude-docker` | ![ollama-host-claude-docker version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-host-claude-docker/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal + Docker — Build and run containers from inside the devcontainer. GPU passthrough enabled for outer container and inner Docker daemon. |
+| `ollama-host-studio` | ![ollama-host-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-host-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace — All features: backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
+| `ollama-host-studio-docker` | ![ollama-host-studio-docker version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-host-studio-docker/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace + Docker — Studio environment with Docker-in-Docker. GPU passthrough enabled for outer container and inner Docker daemon. |
 
 Published to GitHub Container Registry:
 
