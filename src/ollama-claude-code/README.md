@@ -31,5 +31,11 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/claude-code:1
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:latest
+```
+
+Or create a new project with the `create-devcontainer` helper:
+
+```bash
+npx @mrrobot0985/create-devcontainer ollama-claude-code ./my-project
 ```

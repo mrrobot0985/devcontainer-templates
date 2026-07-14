@@ -1,6 +1,6 @@
 {
   "id": "ollama-claude-code",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "name": "Ollama + Claude Code",
   "description": "Minimal devcontainer for Claude Code with a pre-configured Ollama backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/ollama-claude-code",
