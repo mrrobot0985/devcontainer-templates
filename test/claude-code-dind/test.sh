@@ -13,7 +13,7 @@ else
     echo "INFO: test-utils not found, running basic checks"
 fi
 
-echo "Running private-claude-code-dind tests..."
+echo "Running claude-code-dind tests..."
 
 # Check Node.js is installed
 if ! command -v node >/dev/null 2>&1; then

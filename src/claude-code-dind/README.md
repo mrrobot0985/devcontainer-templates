@@ -1,6 +1,6 @@
-# Private Claude Code + Docker-in-Docker (private-claude-code-dind)
+# Ollama + Claude Code + Docker (claude-code-dind)
 
-A template with Ollama, Claude Code CLI, and Docker-in-Docker for local LLM development. This extends the base `private-claude-code` template with Docker-in-Docker support, allowing you to build, run, and push container images from inside the devcontainer.
+A template with Ollama, Claude Code CLI, and Docker-in-Docker for local LLM development. This extends the base `claude-code` template with Docker-in-Docker support, allowing you to build, run, and push container images from inside the devcontainer.
 
 ## Includes
 

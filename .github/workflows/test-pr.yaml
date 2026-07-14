@@ -17,8 +17,17 @@ jobs:
         id: filter
         with:
           filters: |
-            private-claude-code:
-              - 'src/private-claude-code/**'
+            claude-code:
+              - 'src/claude-code/**'
+              - '.github/actions/smoke-test/**'
+            claude-code-dind:
+              - 'src/claude-code-dind/**'
+              - '.github/actions/smoke-test/**'
+            claude-code-build:
+              - 'src/claude-code-build/**'
+              - '.github/actions/smoke-test/**'
+            claude-code-build-dind:
+              - 'src/claude-code-build-dind/**'
               - '.github/actions/smoke-test/**'
 
   test:

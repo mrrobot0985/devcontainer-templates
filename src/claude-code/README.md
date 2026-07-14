@@ -1,4 +1,4 @@
-# Private Claude Code (private-claude-code)
+# Ollama + Claude Code (claude-code)
 
 A template with Ollama and Claude Code CLI for local LLM development.
 
