@@ -42,6 +42,9 @@
 			"moby": "false",
 			"dockerDashComposeVersion": "v2"
 		},
+		"ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:1.1.0": {
+			"enable": false
+		},
 		"ghcr.io/devcontainers/features/node:2.1.0": {
 			"version": "20"
 		},
