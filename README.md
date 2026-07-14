@@ -6,6 +6,19 @@
 
 A focused collection of custom [Dev Container Templates](https://containers.dev/implementors/templates/).
 
+## Quick Start with `create-devcontainer`
+
+Install templates into any workspace using the npm package:
+
+![npm version](https://img.shields.io/npm/v/@mrrobot0985/create-devcontainer)
+![create-devcontainer CI](https://github.com/mrrobot0985/devcontainer-templates/actions/workflows/create-devcontainer-ci.yaml/badge.svg)
+
+```bash
+npx @mrrobot0985/create-devcontainer ollama-claude-code ./my-project
+```
+
+The CLI supports both **registry mode** (default, pulls from GHCR) and **dev mode** (`--dev`, copies local files). See [`packages/create-devcontainer/README.md`](packages/create-devcontainer/README.md) for full usage.
+
 ## Templates
 
 Each template is a distinct environment for a specific scenario. Choose the one that matches your needs rather than stripping or adding features after the fact.

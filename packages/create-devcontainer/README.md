@@ -1,5 +1,9 @@
 # @mrrobot0985/create-devcontainer
 
+![npm version](https://img.shields.io/npm/v/@mrrobot0985/create-devcontainer)
+![CI](https://github.com/mrrobot0985/devcontainer-templates/actions/workflows/create-devcontainer-ci.yaml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 Instantiate devcontainer templates from the [mrrobot0985/devcontainer-templates](https://github.com/mrrobot0985/devcontainer-templates) collection into any workspace.
 
 ## Usage
