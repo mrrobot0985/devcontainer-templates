@@ -25,6 +25,10 @@ jobs:
               - 'src/ollama-claude-code-studio/**'
               - 'test/ollama-claude-code-studio/**'
               - '.github/actions/smoke-test/**'
+            ollama-claude-code-studio-docker:
+              - 'src/ollama-claude-code-studio-docker/**'
+              - 'test/ollama-claude-code-studio-docker/**'
+              - '.github/actions/smoke-test/**'
 
   test:
     needs: [detect-changes]
