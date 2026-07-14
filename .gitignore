@@ -2,11 +2,16 @@
 node_modules/
 package-lock.json
 package.json
+!packages/**/package.json
+!packages/**/package-lock.json
 
 # Dev Container CLI local artifacts
 .devcontainer/
 !src/**/.devcontainer/
 !src/**/.devcontainer/**
+
+# Test fixtures generated during test runs
+test/fixtures/
 
 # Claude Code artifacts
 .claude/

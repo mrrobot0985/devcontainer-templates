@@ -1,0 +1,44 @@
+{
+  "name": "@mrrobot0985/create-devcontainer",
+  "version": "0.1.0",
+  "description": "Instantiate devcontainer templates from the mrrobot0985 collection into any workspace",
+  "license": "MIT",
+  "author": "mrrobot0985",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrrobot0985/devcontainer-templates.git",
+    "directory": "packages/create-devcontainer"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "bin": {
+    "create-devcontainer": "dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    ".npmrc"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'lint: add ruff/eslint as needed'",
+    "format": "echo 'format: add prettier as needed'"
+  },
+  "dependencies": {
+    "@devcontainers/cli": "^0.87.0",
+    "commander": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

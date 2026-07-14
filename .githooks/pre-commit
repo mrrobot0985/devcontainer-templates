@@ -10,6 +10,18 @@ cd "$REPO_ROOT"
 # Generate any missing READMEs from devcontainer-template.json files.
 python3 scripts/generate-template-readmes.py
 
+# Fail fast if the create-devcontainer template registry is out of sync.
+if [ -f "packages/create-devcontainer/src/templates.ts" ]; then
+    if ! npx tsx scripts/sync-template-registry.ts 2>/dev/null; then
+        echo ""
+        echo "ERROR: Template registry is out of sync."
+        echo "Run the following to regenerate it:"
+        echo "  npx tsx scripts/sync-template-registry.ts --write"
+        echo "  git add packages/create-devcontainer/src/templates.ts"
+        exit 1
+    fi
+fi
+
 # If new READMEs were created (untracked), stage them and abort so the user reviews.
 if git ls-files --others --exclude-standard | grep -qE '^src/.*/README\.md$'; then
     echo ""
