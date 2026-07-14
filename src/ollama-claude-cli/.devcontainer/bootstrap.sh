@@ -33,11 +33,11 @@ else
     echo "Bootstrap WARN — GitHub CLI not found"
 fi
 
-# --- Ensure Claude Code config directory exists for the remote user ---
+# --- Ensure Claude CLI config directory exists for the remote user ---
 CLAUDE_DIR="${_REMOTE_USER_HOME:-$HOME}/.claude"
 if [ -d "$CLAUDE_DIR" ]; then
-    echo "Bootstrap OK — Claude Code config directory exists at $CLAUDE_DIR"
+    echo "Bootstrap OK — Claude CLI config directory exists at $CLAUDE_DIR"
 else
-    echo "Bootstrap WARN — Claude Code config directory missing at $CLAUDE_DIR"
+    echo "Bootstrap WARN — Claude CLI config directory missing at $CLAUDE_DIR"
 fi
 

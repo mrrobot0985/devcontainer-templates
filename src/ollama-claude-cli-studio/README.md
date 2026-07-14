@@ -1,11 +1,11 @@
-# Ollama + Claude Code Studio + Docker (ollama-claude-code-studio-docker)
+# Ollama + Claude CLI Studio (ollama-claude-cli-studio)
 
-Full-featured devcontainer for Claude Code with a pre-configured Ollama backend, Docker-in-Docker, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.
+Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.
 
 ## Includes
 
 - Node.js 20
-- Claude Code CLI (via official Anthropic feature)
+- Claude CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
 - Lifecycle hooks (`claude-code-hooks`)
@@ -13,6 +13,7 @@ Full-featured devcontainer for Claude Code with a pre-configured Ollama backend,
 - Behavior rules (`claude-code-rules`)
 - Skills library (`claude-code-skills`)
 - Docker-in-Docker (`docker-in-docker:4.0.0`)
+- NVIDIA Container Toolkit (`nvidia-container-toolkit:0`)
 
 ## Persistence
 
@@ -20,7 +21,7 @@ Authentication tokens, user settings, and session history under `~/.claude` are 
 
 ```json
 "mounts": [
-    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+    "source=claude-cli-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
 ]
 ```
 
@@ -35,11 +36,11 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio-docker:latest
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:latest
 ```
 
 Or create a new project with the `create-devcontainer` helper:
 
 ```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-code-studio-docker ./my-project
+npx @mrrobot0985/create-devcontainer ollama-claude-cli-studio ./my-project
 ```

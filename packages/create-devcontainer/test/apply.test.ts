@@ -60,4 +60,33 @@ describe("applyTemplate", () => {
     const result = readFileSync(join(tmp, "devcontainer.json"), "utf-8");
     expect(result).toBe('{"image": "base:jammy"}');
   });
+
+  it("overrides devcontainer name when --name is provided", () => {
+    const repoRoot = new URL("../../../", import.meta.url).pathname;
+    const fixtureDir = join(repoRoot, "test", "fixtures", "test-template-name");
+    mkdirSync(join(fixtureDir, ".devcontainer"), { recursive: true });
+    writeFileSync(
+      join(fixtureDir, ".devcontainer", "devcontainer.json"),
+      '{"name": "Default Name", "image": "base:${templateOption:imageVariant}"}'
+    );
+
+    const tmp = mkdtempSync(join(tmpdir(), "create-devcontainer-"));
+    const template: Template = {
+      ...fakeTemplate,
+      sourcePath: "test/fixtures/test-template-name",
+    };
+
+    applyTemplate(template, {
+      targetDir: tmp,
+      force: false,
+      mode: "dev",
+      name: "Custom Name",
+    });
+
+    const result = JSON.parse(
+      readFileSync(join(tmp, ".devcontainer", "devcontainer.json"), "utf-8")
+    ) as Record<string, unknown>;
+    expect(result.name).toBe("Custom Name");
+    expect(result.image).toBe("base:jammy");
+  });
 });

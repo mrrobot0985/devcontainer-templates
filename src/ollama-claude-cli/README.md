@@ -1,11 +1,11 @@
-# Claude Code (claude-code)
+# Ollama + Claude CLI (ollama-claude-cli)
 
-Minimal devcontainer for Claude Code with a configurable LLM backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI.
+Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI.
 
 ## Includes
 
 - Node.js 20
-- Claude Code CLI (via official Anthropic feature)
+- Claude CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
@@ -16,7 +16,7 @@ Authentication tokens, user settings, and session history under `~/.claude` are 
 
 ```json
 "mounts": [
-    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+    "source=claude-cli-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
 ]
 ```
 
@@ -31,11 +31,11 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:latest
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli:latest
 ```
 
 Or create a new project with the `create-devcontainer` helper:
 
 ```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-code ./my-project
+npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project
 ```
