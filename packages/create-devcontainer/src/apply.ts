@@ -144,6 +144,9 @@ function copyRecursive(
       mkdirSync(destPath, { recursive: true });
       copyRecursive(srcPath, destPath, defaults);
     } else {
+      if (entry.name === "devcontainer-template.json") {
+        continue;
+      }
       mkdirSync(dirname(destPath), { recursive: true });
       let content = readFileSync(srcPath, "utf-8");
       content = substituteOptions(content, defaults);
