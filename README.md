@@ -78,7 +78,7 @@ If you need GPU passthrough for containers launched inside the inner Docker daem
 
 ```json
 "features": {
-  "ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:1.1.0": {
+  "ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:0": {
     "enable": true
   }
 }
