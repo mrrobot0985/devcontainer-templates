@@ -9,6 +9,8 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname, join, relative } from "node:path";
+import { detectHostCapabilities } from "./detect.js";
+import { postProcessDevcontainer } from "./postprocess.js";
 import type { Template } from "./templates.js";
 
 export interface ApplyOptions {
@@ -98,6 +100,14 @@ function applyFromSource(template: Template, options: ApplyOptions): void {
   }
 
   copyRecursive(sourceDir, options.targetDir, template.defaults);
+
+  const caps = detectHostCapabilities();
+  if (caps.hasNvidiaGpu) {
+    console.log("Detected NVIDIA GPU — keeping GPU passthrough enabled.");
+  } else {
+    console.log("No NVIDIA GPU detected — removing GPU passthrough.");
+  }
+  postProcessDevcontainer(options.targetDir, caps);
 }
 
 /**
