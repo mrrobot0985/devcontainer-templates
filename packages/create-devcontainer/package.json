@@ -1,6 +1,6 @@
 {
   "name": "@mrrobot0985/create-devcontainer",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Instantiate devcontainer templates from the mrrobot0985 collection into any workspace",
   "license": "MIT",
   "author": "mrrobot0985",
@@ -18,12 +18,14 @@
   },
   "files": [
     "dist/",
+    "templates/",
     "README.md",
     "LICENSE",
     ".npmrc"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "npm run copy-templates && tsc",
+    "copy-templates": "node scripts/copy-templates.js",
     "dev": "tsx src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",

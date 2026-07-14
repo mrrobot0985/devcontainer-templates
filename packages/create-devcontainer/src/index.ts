@@ -6,19 +6,6 @@ import { program } from "commander";
 import { applyTemplate } from "./apply.js";
 import { getTemplate, listTemplates } from "./templates.js";
 
-function detectDevMode(): boolean {
-  try {
-    // When running from the repo source, the package sits at
-    // packages/create-devcontainer/ and the repo root is two levels up.
-    const pkgDir = new URL("..", import.meta.url).pathname;
-    const repoRoot = resolve(pkgDir, "..", "..");
-    const srcDir = resolve(repoRoot, "src");
-    return existsSync(srcDir);
-  } catch {
-    return false;
-  }
-}
-
 program
   .name("create-devcontainer")
   .description("Instantiate a devcontainer template into a workspace")
@@ -26,12 +13,8 @@ program
   .argument("[template]", "Template ID to apply")
   .argument("[target-folder]", "Target workspace folder (defaults to .)", ".")
   .option(
-    "--dev",
-    "Force local dev mode (copy files from repo source instead of using GHCR)"
-  )
-  .option(
     "--registry",
-    "Force GHCR registry mode (default when installed from npm)"
+    "Force GHCR registry mode (default is bundled local copy)"
   )
   .option("--force", "Overwrite an existing .devcontainer directory")
   .action((templateId: string | undefined, targetFolder: string, options) => {
@@ -63,14 +46,7 @@ program
       mkdirSync(targetDir, { recursive: true });
     }
 
-    let mode: "dev" | "registry";
-    if (options.dev) {
-      mode = "dev";
-    } else if (options.registry) {
-      mode = "registry";
-    } else {
-      mode = detectDevMode() ? "dev" : "registry";
-    }
+    const mode: "bundled" | "registry" = options.registry ? "registry" : "bundled";
 
     try {
       applyTemplate(template, {

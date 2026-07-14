@@ -14,7 +14,7 @@ import type { Template } from "./templates.js";
 export interface ApplyOptions {
   targetDir: string;
   force: boolean;
-  mode: "dev" | "registry";
+  mode: "bundled" | "registry" | "dev";
 }
 
 /**
@@ -73,7 +73,7 @@ function applyFromRegistry(template: Template, options: ApplyOptions): void {
           `This usually means the template has not been published to GHCR yet, ` +
           `or the GHCR package is private.\n\n` +
           `To apply the template from local source instead, run:\n` +
-          `  npx @mrrobot0985/create-devcontainer ${template.id} ${options.targetDir} --dev`
+          `  npx @mrrobot0985/create-devcontainer ${template.id} ${options.targetDir}`
       );
     }
 
@@ -101,13 +101,28 @@ function applyFromSource(template: Template, options: ApplyOptions): void {
 }
 
 /**
- * Resolve the source directory relative to the repository root.
- * When the package is inside packages/create-devcontainer/, the repo root is two levels up.
+ * Resolve the source directory.
+ * When the package is installed from npm, templates are bundled under templates/.
+ * When running from the repo source, they live two levels up under src/.
  */
 function resolveSourceDir(sourcePath: string): string {
   const pkgDir = dirname(import.meta.dirname ?? ".");
+
+  // 1. Bundled templates (installed from npm)
+  const bundledDir = join(pkgDir, "templates", sourcePath.replace(/^src\//, ""));
+  if (existsSync(bundledDir)) {
+    return bundledDir;
+  }
+
+  // 2. Repo source (running from git checkout)
   const repoRoot = join(pkgDir, "..", "..");
-  return join(repoRoot, sourcePath);
+  const repoDir = join(repoRoot, sourcePath);
+  if (existsSync(repoDir)) {
+    return repoDir;
+  }
+
+  // Return bundled path as fallback for error message
+  return bundledDir;
 }
 
 /**
