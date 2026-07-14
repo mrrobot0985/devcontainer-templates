@@ -1,5 +1,5 @@
 {
-	"name": "Ollama + Claude Code Studio + Docker",
+	"name": "Ollama + Claude CLI Studio",
 	"image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
 	"remoteUser": "vscode",
 	"containerEnv": {
@@ -8,10 +8,6 @@
 	},
 	"features": {
 		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
-		"ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
-			"moby": "false",
-			"dockerDashComposeVersion": "v2"
-		},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/devcontainers/features/node:2.1.0": {
 			"version": "20"
@@ -41,6 +37,10 @@
 			"installMisc": false,
 			"installPersonal": false
 		},
+		"ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
+			"moby": "false",
+			"dockerDashComposeVersion": "v2"
+		},
 		"ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:0": {
 			"enable": false,
 			"defaultRuntime": false,
@@ -55,7 +55,7 @@
 		11434
 	],
 	"mounts": [
-		"source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+		"source=claude-cli-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
 	],
 	"postCreateCommand": "bash .devcontainer/bootstrap.sh"
 }

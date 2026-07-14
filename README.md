@@ -14,10 +14,10 @@ Install templates into any workspace using the npm package:
 ![create-devcontainer CI](https://github.com/mrrobot0985/devcontainer-templates/actions/workflows/create-devcontainer-ci.yaml/badge.svg)
 
 ```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-code ./my-project
+npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project
 ```
 
-The CLI supports both **registry mode** (default, pulls from GHCR) and **dev mode** (`--dev`, copies local files). See [`packages/create-devcontainer/README.md`](packages/create-devcontainer/README.md) for full usage.
+The CLI copies the bundled template by default. To pull from the GHCR registry instead, pass `--registry`. See [`packages/create-devcontainer/README.md`](packages/create-devcontainer/README.md) for full usage.
 
 ## Templates
 
@@ -25,9 +25,8 @@ Each template is a distinct environment for a specific scenario. Choose the one 
 
 | Template | Version | Description |
 | -------- | ------- | ----------- |
-| `ollama-claude-code` | ![ollama-claude-code version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-code/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal — Claude Code with pre-configured Ollama backend. Privacy-hardened by default. GPU passthrough enabled. |
-| `ollama-claude-code-studio` | ![ollama-claude-code-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-code-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace — All features: backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
-| `ollama-claude-code-studio-docker` | ![ollama-claude-code-studio-docker version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-code-studio-docker/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace + Docker-in-Docker — Studio environment with Docker-in-Docker. GPU passthrough enabled. |
+| `ollama-claude-cli` | ![ollama-claude-cli version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-cli/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal — Claude CLI with pre-configured Ollama backend. Privacy-hardened by default. GPU passthrough enabled. |
+| `ollama-claude-cli-studio` | ![ollama-claude-cli-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-cli-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace — backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
 
 Published to GitHub Container Registry:
 
@@ -35,13 +34,13 @@ Published to GitHub Container Registry:
 ghcr.io/mrrobot0985/devcontainer-templates/<id>:<version>
 ```
 
-### `ollama-claude-code`
+### `ollama-claude-cli`
 
-A minimal development environment for Claude Code with a pre-configured Ollama backend (`http://host.docker.internal:11434`). Includes Node.js and the GitHub CLI.
+A minimal development environment for Claude CLI with a pre-configured Ollama backend (`http://host.docker.internal:11434`). Includes Node.js and the GitHub CLI.
 
 **Features:**
 
-- Claude Code CLI (via official Anthropic feature)
+- Claude CLI (via official Anthropic feature)
 - Custom backend configuration (`claude-code-backend`) pointing to Ollama
 - Privacy defaults (`claude-code-privacy`) — telemetry, error reporting, feedback, and automatic updates disabled
 - GPU passthrough enabled for CUDA workloads
@@ -58,10 +57,10 @@ A minimal development environment for Claude Code with a pre-configured Ollama b
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:1
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli:1
 ```
 
-### `ollama-claude-code-studio`
+### `ollama-claude-cli-studio`
 
 The full studio environment with Ollama backend pre-configured. Combines backend configuration, observability hooks, privacy defaults, governance rules, and skills.
 
@@ -70,19 +69,7 @@ The full studio environment with Ollama backend pre-configured. Combines backend
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio:1
-```
-
-### `ollama-claude-code-studio-docker`
-
-The full studio environment plus Docker-in-Docker. Use this when you need governance, observability, and container builds in one workspace. GPU passthrough enabled.
-
-**Usage:**
-
-```bash
-devcontainer templates apply \
-  --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio-docker:1
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:1
 ```
 
 ## Adding NVIDIA Container Toolkit
@@ -101,7 +88,7 @@ If you need GPU passthrough for containers launched inside the inner Docker daem
 
 Template changes are validated by [`.github/workflows/test-pr.yaml`](.github/workflows/test-pr.yaml):
 
-- Detects changed templates via `dorny/paths-filter@v3`
+- Detects changed templates via `dorny/paths-filter@v4`
 - Builds the template via the smoke-test composite action
 - Runs `test/<template>/test.sh` inside the built container
 
@@ -109,16 +96,12 @@ Run the local smoke test before pushing:
 
 ```bash
 # Minimal
-./.github/actions/smoke-test/build.sh ollama-claude-code
-./.github/actions/smoke-test/test.sh ollama-claude-code
+./.github/actions/smoke-test/build.sh ollama-claude-cli
+./.github/actions/smoke-test/test.sh ollama-claude-cli
 
 # Studio
-./.github/actions/smoke-test/build.sh ollama-claude-code-studio
-./.github/actions/smoke-test/test.sh ollama-claude-code-studio
-
-# Studio + Docker
-./.github/actions/smoke-test/build.sh ollama-claude-code-studio-docker
-./.github/actions/smoke-test/test.sh ollama-claude-code-studio-docker
+./.github/actions/smoke-test/build.sh ollama-claude-cli-studio
+./.github/actions/smoke-test/test.sh ollama-claude-cli-studio
 ```
 
 ## Development
@@ -159,10 +142,10 @@ npm install -g @devcontainers/cli
 ### Apply a template to a new workspace
 
 ```bash
-# Create a new project from the ollama-claude-code template
+# Create a new project from the ollama-claude-cli template
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:latest
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli:latest
 ```
 
 ### Build the devcontainer after applying the template

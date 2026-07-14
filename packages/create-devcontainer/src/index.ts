@@ -17,6 +17,7 @@ program
     "Force GHCR registry mode (default is bundled local copy)"
   )
   .option("--force", "Overwrite an existing .devcontainer directory")
+  .option("--name <name>", "Override the devcontainer configuration name")
   .action((templateId: string | undefined, targetFolder: string, options) => {
     const available = listTemplates();
 
@@ -53,6 +54,7 @@ program
         targetDir,
         force: options.force ?? false,
         mode,
+        name: options.name,
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);

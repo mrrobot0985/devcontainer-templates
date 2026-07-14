@@ -17,6 +17,7 @@ export interface ApplyOptions {
   targetDir: string;
   force: boolean;
   mode: "bundled" | "registry" | "dev";
+  name?: string;
 }
 
 /**
@@ -100,6 +101,25 @@ function applyFromSource(template: Template, options: ApplyOptions): void {
   }
 
   copyRecursive(sourceDir, options.targetDir, template.defaults);
+
+  if (options.name) {
+    const jsonPath = join(options.targetDir, ".devcontainer", "devcontainer.json");
+    if (existsSync(jsonPath)) {
+      const raw = readFileSync(jsonPath, "utf-8");
+      let config: Record<string, unknown>;
+      try {
+        config = JSON.parse(raw);
+      } catch {
+        config = {};
+      }
+      config.name = options.name;
+      writeFileSync(
+        jsonPath,
+        JSON.stringify(config, null, "\t") + "\n",
+        "utf-8"
+      );
+    }
+  }
 
   const caps = detectHostCapabilities();
   if (caps.hasNvidiaGpu) {

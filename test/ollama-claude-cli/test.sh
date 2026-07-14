@@ -4,7 +4,7 @@ set -euo pipefail
 # Test — verify the devcontainer was built with expected features.
 # Runs inside the built container.
 
-echo "Running ollama-claude-code-studio tests..."
+echo "Running ollama-claude-cli tests..."
 
 # Check Node.js is installed
 if ! command -v node > /dev/null 2>&1; then
@@ -14,7 +14,7 @@ fi
 node_version=$(node --version)
 echo "OK — node version: $node_version"
 
-# Check Claude Code CLI is installed
+# Check Claude CLI is installed
 if ! command -v claude > /dev/null 2>&1; then
     echo "ERROR: claude CLI is not installed"
     exit 1
@@ -29,14 +29,14 @@ fi
 gh_version=$(gh --version | head -1)
 echo "OK — gh CLI is installed ($gh_version)"
 
-# Check Claude Code settings exist
+# Check Claude CLI settings exist
 if [ ! -f "$HOME/.claude/settings.json" ]; then
     echo "ERROR: settings.json is missing"
     exit 1
 fi
 echo "OK — settings.json exists"
 
-# Check Claude Code config directory is persisted
+# Check Claude CLI config directory is persisted
 if [ ! -d "$HOME/.claude" ]; then
     echo "ERROR: .claude directory is missing"
     exit 1

@@ -14,25 +14,30 @@ npx @mrrobot0985/create-devcontainer <template-id> [target-folder]
 
 ### Examples
 
-Apply the minimal Ollama + Claude Code template to the current directory:
+Apply the minimal Ollama + Claude CLI template to the current directory:
 
 ```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-code .
+npx @mrrobot0985/create-devcontainer ollama-claude-cli .
 ```
 
-Apply the studio + Docker variant to a specific project:
+Apply the studio template to a specific project:
 
 ```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-code-studio-docker ./my-project
+npx @mrrobot0985/create-devcontainer ollama-claude-cli-studio ./my-project
+```
+
+Apply the minimal template with a custom devcontainer name:
+
+```bash
+npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --name "My Project"
 ```
 
 ## Templates
 
 | ID | Name |
 | -- | ---- |
-| `ollama-claude-code` | Ollama + Claude Code |
-| `ollama-claude-code-studio` | Ollama + Claude Code Studio |
-| `ollama-claude-code-studio-docker` | Ollama + Claude Code Studio + Docker |
+| `ollama-claude-cli` | Ollama + Claude CLI |
+| `ollama-claude-cli-studio` | Ollama + Claude CLI Studio |
 
 Run `create-devcontainer` with no arguments to see the full list.
 
@@ -40,9 +45,9 @@ Run `create-devcontainer` with no arguments to see the full list.
 
 | Flag | Description |
 | ---- | ----------- |
-| `--dev` | Force local dev mode (copies files from this repo instead of using GHCR) |
-| `--registry` | Force GHCR registry mode (default when installed from npm) |
+| `--registry` | Force GHCR registry mode (default is bundled local copy) |
 | `--force` | Overwrite an existing `.devcontainer` directory |
+| `--name` | Override the devcontainer configuration name |
 | `--help` | Show help |
 | `--version` | Show version |
 
@@ -53,7 +58,7 @@ Run from the repo source:
 ```bash
 cd packages/create-devcontainer
 npm install
-npx tsx src/index.ts ollama-claude-code ../../test-output
+npx tsx src/index.ts ollama-claude-cli ../../test-output
 ```
 
 Build and test:
