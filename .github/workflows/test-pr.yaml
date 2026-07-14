@@ -19,15 +19,19 @@ jobs:
           filters: |
             ollama-host-claude:
               - 'src/ollama-host-claude/**'
+              - 'test/ollama-host-claude/**'
               - '.github/actions/smoke-test/**'
             ollama-host-claude-docker:
               - 'src/ollama-host-claude-docker/**'
+              - 'test/ollama-host-claude-docker/**'
               - '.github/actions/smoke-test/**'
             ollama-host-studio:
               - 'src/ollama-host-studio/**'
+              - 'test/ollama-host-studio/**'
               - '.github/actions/smoke-test/**'
             ollama-host-studio-docker:
               - 'src/ollama-host-studio-docker/**'
+              - 'test/ollama-host-studio-docker/**'
               - '.github/actions/smoke-test/**'
 
   test:
