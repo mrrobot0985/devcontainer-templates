@@ -17,14 +17,6 @@ jobs:
         id: filter
         with:
           filters: |
-            claude-code:
-              - 'src/claude-code/**'
-              - 'test/claude-code/**'
-              - '.github/actions/smoke-test/**'
-            claude-code-studio:
-              - 'src/claude-code-studio/**'
-              - 'test/claude-code-studio/**'
-              - '.github/actions/smoke-test/**'
             ollama-claude-code:
               - 'src/ollama-claude-code/**'
               - 'test/ollama-claude-code/**'
