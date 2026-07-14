@@ -15,8 +15,8 @@ Thanks for helping improve this template collection.
 - Run the local smoke test before pushing:
 
   ```bash
-  ./.github/actions/smoke-test/build.sh ollama-host-claude
-  ./.github/actions/smoke-test/test.sh ollama-host-claude
+  ./.github/actions/smoke-test/build.sh ollama-claude-code
+  ./.github/actions/smoke-test/test.sh ollama-claude-code
   ```
 
 - Validate template JSON and shell scripts with `./scripts/local-ci.sh`.
@@ -35,12 +35,13 @@ This is a monorepo containing multiple dev container templates. To prevent git t
 
 Use `<template-name>-v<semver>` for every release. For example:
 
-- `ollama-host-claude-v0.3.0`
-- `typescript-node-v1.2.0`
+- `ollama-claude-code-v1.0.0`
+- `ollama-claude-code-studio-v1.0.0`
+- `ollama-claude-code-studio-docker-v1.0.0`
 
 ### Why Prefixed Tags?
 
-A single git tag namespace is shared across all templates. Without a prefix, `v0.3.0` is ambiguous — it could apply to any template. Prefixed tags keep release histories independent and readable.
+A single git tag namespace is shared across all templates. Without a prefix, `v1.0.0` is ambiguous — it could apply to any template. Prefixed tags keep release histories independent and readable.
 
 ### Release Steps
 
