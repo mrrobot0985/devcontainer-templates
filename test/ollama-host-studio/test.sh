@@ -56,11 +56,7 @@ fi
 echo "OK — hooks installed ($hook_count scripts)"
 
 # Check privacy settings are applied
-if [ ! -f "$HOME/.claude/settings.local.json" ]; then
-    echo "ERROR: settings.local.json is missing"
-    exit 1
-fi
-if ! jq -e '.["telemetry"] == false' "$HOME/.claude/settings.local.json" >/dev/null 2>&1; then
+if ! jq -e '.["telemetry"] == false' "$HOME/.claude/settings.json" >/dev/null 2>&1; then
     echo "ERROR: telemetry is not disabled in settings"
     exit 1
 fi
