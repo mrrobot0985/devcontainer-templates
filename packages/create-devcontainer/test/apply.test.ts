@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mkdtempSync, readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { applyTemplate } from "../src/apply.js";
@@ -26,6 +26,13 @@ describe("applyTemplate", () => {
   });
 
   it("throws when the source directory is missing in dev mode", () => {
+    // Clean up any fixture created by other tests so this test is deterministic
+    const repoRoot = new URL("../../../", import.meta.url).pathname;
+    const fixtureDir = join(repoRoot, "test", "fixtures", "test-template");
+    if (existsSync(fixtureDir)) {
+      rmSync(fixtureDir, { recursive: true, force: true });
+    }
+
     const tmp = mkdtempSync(join(tmpdir(), "create-devcontainer-"));
 
     expect(() =>

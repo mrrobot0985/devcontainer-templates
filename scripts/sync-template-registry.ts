@@ -81,7 +81,7 @@ export const templates: readonly Template[] = [`);
     lines.push(`    name: "${t.name}",`);
     lines.push(`    description: "${t.description}",`);
     lines.push(`    ghcrUri:`);
-    lines.push(`      "ghcr.io/mrrobot0985/devcontainer-templates/${t.id}:1",`);
+    lines.push(`      "ghcr.io/mrrobot0985/devcontainer-templates/${t.id}:latest",`);
     lines.push(`    sourcePath: "src/${t.id}",`);
     lines.push(`    defaults: { imageVariant: "${defaultStr}" },`);
     lines.push(`  },`);

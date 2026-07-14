@@ -53,14 +53,38 @@ function applyFromRegistry(template: Template, options: ApplyOptions): void {
   ];
 
   const result = spawnSync("npx", ["--yes", "@devcontainers/cli", ...args], {
-    stdio: "inherit",
+    stdio: "pipe",
     shell: false,
+    encoding: "utf-8",
   });
 
   if (result.status !== 0) {
+    const stderr = result.stderr ?? "";
+    const stdout = result.stdout ?? "";
+    const combined = stdout + stderr;
+
+    if (
+      combined.includes("Failed to fetch template") ||
+      combined.includes("manifest unknown") ||
+      combined.includes("not found")
+    ) {
+      throw new Error(
+        `Template "${template.id}" is not available from the registry (${template.ghcrUri}).\n\n` +
+          `This usually means the template has not been published to GHCR yet, ` +
+          `or the GHCR package is private.\n\n` +
+          `To apply the template from local source instead, run:\n` +
+          `  npx @mrrobot0985/create-devcontainer ${template.id} ${options.targetDir} --dev`
+      );
+    }
+
     throw new Error(
-      `devcontainer templates apply exited with code ${result.status ?? result.signal}`
+      `devcontainer templates apply exited with code ${result.status ?? result.signal}\n${combined}`
     );
+  }
+
+  // Print stdout so the user sees devcontainer CLI output on success
+  if (result.stdout) {
+    console.log(result.stdout);
   }
 }
 

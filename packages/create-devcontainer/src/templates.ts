@@ -21,7 +21,7 @@ export const templates: readonly Template[] = [
     name: "Ollama + Claude Code",
     description: "Minimal devcontainer for Claude Code with a pre-configured Ollama backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
     ghcrUri:
-      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:1",
+      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:latest",
     sourcePath: "src/ollama-claude-code",
     defaults: { imageVariant: "jammy" },
   },
@@ -30,7 +30,7 @@ export const templates: readonly Template[] = [
     name: "Ollama + Claude Code Studio",
     description: "Full-featured devcontainer for Claude Code with a pre-configured Ollama backend, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
     ghcrUri:
-      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio:1",
+      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio:latest",
     sourcePath: "src/ollama-claude-code-studio",
     defaults: { imageVariant: "jammy" },
   },
@@ -39,7 +39,7 @@ export const templates: readonly Template[] = [
     name: "Ollama + Claude Code Studio + Docker",
     description: "Full-featured devcontainer for Claude Code with a pre-configured Ollama backend, Docker-in-Docker, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
     ghcrUri:
-      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio-docker:1",
+      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio-docker:latest",
     sourcePath: "src/ollama-claude-code-studio-docker",
     defaults: { imageVariant: "jammy" },
   },

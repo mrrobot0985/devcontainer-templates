@@ -27,8 +27,16 @@ README_TEMPLATE = """# {name} ({id})
 
 ## Usage
 
+### Using the Dev Container CLI
+
 ```bash
 devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/{id}:{version_major}
+```
+
+### Using the `create-devcontainer` helper
+
+```bash
+npx @mrrobot0985/create-devcontainer {id} ./my-project
 ```
 """
 
