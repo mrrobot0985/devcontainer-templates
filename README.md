@@ -12,10 +12,8 @@ Each template is a distinct environment for a specific scenario. Choose the one 
 
 | Template | Version | Description |
 | -------- | ------- | ----------- |
-| `ollama-host-claude` | ![ollama-host-claude version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-host-claude/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal — Claude Code with Ollama backend. Privacy-hardened by default. GPU passthrough enabled. |
-| `ollama-host-claude-docker` | ![ollama-host-claude-docker version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-host-claude-docker/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal + Docker — Build and run containers from inside the devcontainer. GPU passthrough enabled for outer container and inner Docker daemon. |
-| `ollama-host-studio` | ![ollama-host-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-host-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace — All features: backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
-| `ollama-host-studio-docker` | ![ollama-host-studio-docker version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-host-studio-docker/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace + Docker — Studio environment with Docker-in-Docker. GPU passthrough enabled for outer container and inner Docker daemon. |
+| `claude-code` | ![claude-code version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/claude-code/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal — Claude Code with configurable LLM backend. Privacy-hardened by default. GPU passthrough enabled. |
+| `claude-code-studio` | ![claude-code-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/claude-code-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace — All features: backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
 
 Published to GitHub Container Registry:
 
@@ -23,7 +21,7 @@ Published to GitHub Container Registry:
 ghcr.io/mrrobot0985/devcontainer-templates/<id>:<version>
 ```
 
-### `ollama-host-claude`
+### `claude-code`
 
 A minimal development environment for running Claude Code against a local or self-hosted LLM backend (e.g., Ollama). Includes Node.js and the GitHub CLI.
 
@@ -45,22 +43,10 @@ A minimal development environment for running Claude Code against a local or sel
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-claude:0
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/claude-code:1
 ```
 
-### `ollama-host-claude-docker`
-
-Same as minimal, with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer. Includes the NVIDIA Container Toolkit (v1.1.0) for GPU-accelerated containers launched from the inner Docker daemon. Disabled by default — opt-in by setting `"enable": true` in your `devcontainer.json`.
-
-**Usage:**
-
-```bash
-devcontainer templates apply \
-  --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-claude-docker:0
-```
-
-### `ollama-host-studio`
+### `claude-code-studio`
 
 The full studio environment. Combines backend configuration, observability hooks, privacy defaults, governance rules, and skills.
 
@@ -69,19 +55,20 @@ The full studio environment. Combines backend configuration, observability hooks
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-studio:0
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/claude-code-studio:1
 ```
 
-### `ollama-host-studio-docker`
+## Adding Docker-in-Docker
 
-The full studio environment plus Docker-in-Docker. Use this when you need governance, observability, and container builds in one workspace. Includes the NVIDIA Container Toolkit (v1.1.0) for GPU-accelerated containers launched from the inner Docker daemon. Disabled by default — opt-in by setting `"enable": true` in your `devcontainer.json`.
+Both templates use a standard base image. If you need to build, run, or push container images from inside the devcontainer, add the official Docker-in-Docker feature to your `.devcontainer/devcontainer.json`:
 
-**Usage:**
-
-```bash
-devcontainer templates apply \
-  --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-studio-docker:0
+```json
+"features": {
+  "ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
+    "moby": "false",
+    "dockerDashComposeVersion": "v2"
+  }
+}
 ```
 
 ## CI
@@ -96,19 +83,12 @@ Run the local smoke test before pushing:
 
 ```bash
 # Minimal
-./.github/actions/smoke-test/build.sh ollama-host-claude
-./.github/actions/smoke-test/test.sh ollama-host-claude
+./.github/actions/smoke-test/build.sh claude-code
+./.github/actions/smoke-test/test.sh claude-code
 
 # Studio
-./.github/actions/smoke-test/build.sh ollama-host-studio
-./.github/actions/smoke-test/test.sh ollama-host-studio
-
-# Docker variants
-./.github/actions/smoke-test/build.sh ollama-host-claude-docker
-./.github/actions/smoke-test/test.sh ollama-host-claude-docker
-
-./.github/actions/smoke-test/build.sh ollama-host-studio-docker
-./.github/actions/smoke-test/test.sh ollama-host-studio-docker
+./.github/actions/smoke-test/build.sh claude-code-studio
+./.github/actions/smoke-test/test.sh claude-code-studio
 ```
 
 ## Development
@@ -149,10 +129,10 @@ npm install -g @devcontainers/cli
 ### Apply a template to a new workspace
 
 ```bash
-# Create a new project from the ollama-host-claude template
+# Create a new project from the claude-code template
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-claude:latest
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/claude-code:latest
 ```
 
 ### Build the devcontainer after applying the template

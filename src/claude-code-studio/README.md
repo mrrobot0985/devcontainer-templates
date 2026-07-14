@@ -1,6 +1,6 @@
-# Ollama + Claude Code Studio (Host, GPU) (ollama-host-studio)
+# Claude Code Studio (claude-code-studio)
 
-A complete template with all Claude Code features (backend, hooks, privacy, rules, skills), Node.js, and GitHub CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.
+Full-featured devcontainer for Claude Code with lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI.
 
 ## Includes
 
@@ -8,10 +8,10 @@ A complete template with all Claude Code features (backend, hooks, privacy, rule
 - Claude Code CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
-- Privacy defaults (`claude-code-privacy`)
 - Lifecycle hooks (`claude-code-hooks`)
-- Skills library (`claude-code-skills`)
+- Privacy defaults (`claude-code-privacy`)
 - Behavior rules (`claude-code-rules`)
+- Skills library (`claude-code-skills`)
 
 ## Persistence
 
@@ -34,5 +34,5 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-studio:0
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/claude-code-studio:1
 ```

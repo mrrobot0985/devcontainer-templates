@@ -1,6 +1,6 @@
-# Ollama + Claude Code (Host, GPU, DinD) (ollama-host-claude-docker)
+# Claude Code (claude-code)
 
-A minimal template with Ollama, Claude Code CLI, and Docker-in-Docker for local LLM development. Persists authentication and settings across rebuilds via a named volume.
+Minimal devcontainer for Claude Code with a configurable LLM backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI.
 
 ## Includes
 
@@ -8,8 +8,7 @@ A minimal template with Ollama, Claude Code CLI, and Docker-in-Docker for local 
 - Claude Code CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
-- Docker-in-Docker (`ghcr.io/devcontainers/features/docker-in-docker:4.0.0`)
-- NVIDIA Container Toolkit (`ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:1.1.0`) — enables GPU passthrough for containers launched inside the inner Docker daemon. **Disabled by default** (`enable: false`); set `"enable": true` in your `devcontainer.json` to activate it
+- Privacy defaults (`claude-code-privacy`)
 
 ## Persistence
 
@@ -32,5 +31,5 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-claude-docker:0
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/claude-code:1
 ```
