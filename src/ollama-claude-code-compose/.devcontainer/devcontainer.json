@@ -1,6 +1,9 @@
 {
-	"name": "Ollama + Claude Code + Docker",
-	"image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
+	"name": "Ollama + Claude Code (Compose)",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "devcontainer",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"shutdownAction": "stopCompose",
 	"remoteUser": "vscode",
 	"containerEnv": {
 		"OLLAMA_HOST": "http://host.docker.internal:11434",
@@ -14,21 +17,12 @@
 			"models": "haiku:minimax-m2.5:cloud,opus:glm-5.2:cloud,sonnet:kimi-k2.6:cloud,subagent:kimi-k2.7-code:cloud",
 			"logLevel": "error"
 		},
-		"ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
-			"moby": "false",
-			"dockerDashComposeVersion": "v2"
-		},
 		"ghcr.io/devcontainers/features/node:2.1.0": {
 			"version": "20"
 		},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
-	"runArgs": [
-		"--add-host=host.docker.internal:host-gateway"
-	],
-	"forwardPorts": [
-		11434
-	],
+	"forwardPorts": [11434],
 	"mounts": [
 		"source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
 	],

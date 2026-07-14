@@ -1,22 +1,46 @@
 #!/bin/bash
-cd $(dirname "$0")
-source test-utils.sh
+set -euo pipefail
 
-# Template specific tests
-check "distro" lsb_release -c
-check "node-installed" node --version
-check "claude-installed" which claude
-check "gh-installed" gh --version
-check "settings-exists" test -f ~/.claude/settings.json
-check "hooks-dir-exists" test -d ~/.claude/hooks
-check "claude-dir-persisted" test -d ~/.claude
+# Test — verify the devcontainer was built with expected features.
+# Runs inside the built container.
 
-# Ollama is only installed when using container-local instance
-# With the default http://host.docker.internal:11434, Ollama is expected on the host
-OLLAMA_BASE_URL="http://host.docker.internal:11434"
-if [ "$OLLAMA_BASE_URL" = "http://localhost:11434" ] || [ "$OLLAMA_BASE_URL" = "http://127.0.0.1:11434" ]; then
-	check "ollama-installed" which ollama
+echo "Running ollama-claude-code-build tests..."
+
+# Check Node.js is installed
+if ! command -v node >/dev/null 2>&1; then
+    echo "ERROR: node is not installed"
+    exit 1
 fi
+node_version=$(node --version)
+echo "OK — node version: $node_version"
 
-# Report result
-reportResults
+# Check Claude Code CLI is installed
+if ! command -v claude >/dev/null 2>&1; then
+    echo "ERROR: claude CLI is not installed"
+    exit 1
+fi
+echo "OK — claude CLI is installed"
+
+# Check GitHub CLI is installed
+if ! command -v gh >/dev/null 2>&1; then
+    echo "ERROR: gh is not installed"
+    exit 1
+fi
+gh_version=$(gh --version | head -1)
+echo "OK — gh CLI is installed ($gh_version)"
+
+# Check Claude Code settings exist
+if [ ! -f "$HOME/.claude/settings.json" ]; then
+    echo "ERROR: settings.json is missing"
+    exit 1
+fi
+echo "OK — settings.json exists"
+
+# Check Claude Code config directory is persisted
+if [ ! -d "$HOME/.claude" ]; then
+    echo "ERROR: .claude directory is missing"
+    exit 1
+fi
+echo "OK — .claude directory persisted"
+
+echo "All tests passed!"

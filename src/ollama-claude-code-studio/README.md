@@ -1,12 +1,16 @@
-# Ollama + Claude Code (ollama-claude-code)
+# Ollama + Claude Code Studio (ollama-claude-code-studio)
 
-A minimal template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.
+A complete template with all Claude Code features (backend, hooks, privacy, rules, skills), Node.js, and GitHub CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.
 ## Includes
 
 - Node.js 20
 - Claude Code CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
+- Privacy defaults (`claude-code-privacy`)
+- Lifecycle hooks (`claude-code-hooks`)
+- Skills library (`claude-code-skills-matt-pocock`)
+- Behavior rules (`claude-code-rules`)
 
 ## Persistence
 
@@ -29,6 +33,6 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:0
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio:0
 ```
 

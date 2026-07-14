@@ -8,12 +8,18 @@ A focused collection of custom [Dev Container Templates](https://containers.dev/
 
 ## Templates
 
-| Template                           | Description                                                                                           |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `ollama-claude-code`               | Ollama + Claude Code CLI with privacy-hardened defaults and custom backend support.                 |
-| `ollama-claude-code-dind`          | Same as above, plus Docker-in-Docker for building and running containers inside the devcontainer.   |
-| `ollama-claude-code-build`         | Same as `ollama-claude-code`, but uses a custom `Dockerfile` via the `build` property.               |
-| `ollama-claude-code-build-dind`    | Same as `ollama-claude-code-dind`, but uses a custom `Dockerfile` via the `build` property.         |
+Each template is a distinct environment for a specific scenario. Choose the one that matches your needs rather than stripping or adding features after the fact.
+
+| Template | Scenario |
+|----------|----------|
+| `ollama-claude-code` | **Minimal** — Just Claude Code with Ollama backend. |
+| `ollama-claude-code-privacy` | **Compliance** — Minimal + telemetry, errors, feedback, and updates disabled. |
+| `ollama-claude-code-governed` | **Regulated** — Minimal + safety rules, workflow discipline, and git protection. |
+| `ollama-claude-code-studio` | **Full workspace** — All features: backend, hooks, privacy, rules, and skills. |
+| `ollama-claude-code-dind` | **Minimal + Docker** — Build and run containers from inside the devcontainer. |
+| `ollama-claude-code-studio-dind` | **Full workspace + Docker** — Studio environment with Docker-in-Docker. |
+| `ollama-claude-code-build` | **Method demo** — Same as minimal, but uses a `Dockerfile` via the `build` property. |
+| `ollama-claude-code-compose` | **Method demo** — Same as minimal, but uses `dockerComposeFile`. |
 
 Published to GitHub Container Registry:
 
@@ -23,15 +29,12 @@ ghcr.io/mrrobot0985/devcontainer-templates/<id>:<version>
 
 ### `ollama-claude-code`
 
-A complete development environment for running Claude Code against a local or self-hosted LLM backend (e.g., Ollama).
+A minimal development environment for running Claude Code against a local or self-hosted LLM backend (e.g., Ollama). Includes Node.js and the GitHub CLI.
 
-**Includes:**
+**Features:**
 
-- Node.js 20
 - Claude Code CLI (via official Anthropic feature)
 - Custom backend configuration (`claude-code-backend`)
-- Privacy defaults (`claude-code-privacy`)
-- Lifecycle hooks (`claude-code-hooks`)
 
 **Options:**
 
@@ -47,9 +50,45 @@ devcontainer templates apply \
   --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:0
 ```
 
+### `ollama-claude-code-privacy`
+
+Same as minimal, but with privacy-hardened defaults. Telemetry, error reporting, the `/feedback` command, and automatic updates are disabled.
+
+**Usage:**
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-privacy:0
+```
+
+### `ollama-claude-code-governed`
+
+Same as minimal, but with governance rules installed. Safety, workflow discipline, and git protection guardrails shape Claude Code's behavior.
+
+**Usage:**
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-governed:0
+```
+
+### `ollama-claude-code-studio`
+
+The full studio environment. Combines backend configuration, observability hooks, privacy defaults, governance rules, and Matt Pocock's engineering/productivity skills.
+
+**Usage:**
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio:0
+```
+
 ### `ollama-claude-code-dind`
 
-Same environment as `ollama-claude-code`, but with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer.
+Same as minimal, with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer.
 
 **Usage:**
 
@@ -59,9 +98,21 @@ devcontainer templates apply \
   --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-dind:0
 ```
 
+### `ollama-claude-code-studio-dind`
+
+The full studio environment plus Docker-in-Docker. Use this when you need governance, observability, and container builds in one workspace.
+
+**Usage:**
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio-dind:0
+```
+
 ### `ollama-claude-code-build`
 
-Same environment as `ollama-claude-code`, but uses a custom `Dockerfile` via the `build` property in `devcontainer.json`. This demonstrates the Dockerfile-based method for building the devcontainer image.
+Same feature set as minimal, but uses a custom `Dockerfile` via the `build` property in `devcontainer.json`. Demonstrates the Dockerfile-based deployment method.
 
 **Usage:**
 
@@ -71,16 +122,16 @@ devcontainer templates apply \
   --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-build:0
 ```
 
-### `ollama-claude-code-build-dind`
+### `ollama-claude-code-compose`
 
-Same environment as `ollama-claude-code-dind`, but uses a custom `Dockerfile` via the `build` property in `devcontainer.json`. This demonstrates the Dockerfile-based method combined with Docker-in-Docker.
+Same feature set as minimal, but uses `dockerComposeFile` in `devcontainer.json`. Demonstrates the Docker Compose-based deployment method.
 
 **Usage:**
 
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-build-dind:0
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-compose:0
 ```
 
 ## CI
@@ -94,20 +145,35 @@ Template changes are validated by [`.github/workflows/test-pr.yaml`](.github/wor
 Run the local smoke test before pushing:
 
 ```bash
-# For the base template
+# Minimal
 ./.github/actions/smoke-test/build.sh ollama-claude-code
 ./.github/actions/smoke-test/test.sh ollama-claude-code
 
-# For the Docker-in-Docker variant
+# Privacy
+./.github/actions/smoke-test/build.sh ollama-claude-code-privacy
+./.github/actions/smoke-test/test.sh ollama-claude-code-privacy
+
+# Governed
+./.github/actions/smoke-test/build.sh ollama-claude-code-governed
+./.github/actions/smoke-test/test.sh ollama-claude-code-governed
+
+# Studio
+./.github/actions/smoke-test/build.sh ollama-claude-code-studio
+./.github/actions/smoke-test/test.sh ollama-claude-code-studio
+
+# Docker variants
 ./.github/actions/smoke-test/build.sh ollama-claude-code-dind
 ./.github/actions/smoke-test/test.sh ollama-claude-code-dind
 
-# For the Dockerfile-based variants
+./.github/actions/smoke-test/build.sh ollama-claude-code-studio-dind
+./.github/actions/smoke-test/test.sh ollama-claude-code-studio-dind
+
+# Method demos
 ./.github/actions/smoke-test/build.sh ollama-claude-code-build
 ./.github/actions/smoke-test/test.sh ollama-claude-code-build
 
-./.github/actions/smoke-test/build.sh ollama-claude-code-build-dind
-./.github/actions/smoke-test/test.sh ollama-claude-code-build-dind
+./.github/actions/smoke-test/build.sh ollama-claude-code-compose
+./.github/actions/smoke-test/test.sh ollama-claude-code-compose
 ```
 
 ## Development

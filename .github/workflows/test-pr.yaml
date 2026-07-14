@@ -26,8 +26,20 @@ jobs:
             ollama-claude-code-build:
               - 'src/ollama-claude-code-build/**'
               - '.github/actions/smoke-test/**'
-            ollama-claude-code-build-dind:
-              - 'src/ollama-claude-code-build-dind/**'
+            ollama-claude-code-studio-dind:
+              - 'src/ollama-claude-code-studio-dind/**'
+              - '.github/actions/smoke-test/**'
+            ollama-claude-code-privacy:
+              - 'src/ollama-claude-code-privacy/**'
+              - '.github/actions/smoke-test/**'
+            ollama-claude-code-governed:
+              - 'src/ollama-claude-code-governed/**'
+              - '.github/actions/smoke-test/**'
+            ollama-claude-code-studio:
+              - 'src/ollama-claude-code-studio/**'
+              - '.github/actions/smoke-test/**'
+            ollama-claude-code-compose:
+              - 'src/ollama-claude-code-compose/**'
               - '.github/actions/smoke-test/**'
 
   test:

@@ -4,7 +4,7 @@ set -euo pipefail
 # Test — verify the devcontainer was built with expected features.
 # Runs inside the built container.
 
-echo "Running ollama-claude-code tests..."
+echo "Running ollama-claude-code-governed tests..."
 
 # Check Node.js is installed
 if ! command -v node >/dev/null 2>&1; then
@@ -42,5 +42,17 @@ if [ ! -d "$HOME/.claude" ]; then
     exit 1
 fi
 echo "OK — .claude directory persisted"
+
+# Check behavior rules are installed
+if [ ! -d "$HOME/.claude/rules" ]; then
+    echo "ERROR: rules directory is missing at $HOME/.claude/rules"
+    exit 1
+fi
+rules_count=$(find "$HOME/.claude/rules" -type f | wc -l)
+if [ "$rules_count" -eq 0 ]; then
+    echo "ERROR: no rule files found in $HOME/.claude/rules"
+    exit 1
+fi
+echo "OK — rules installed ($rules_count files)"
 
 echo "All tests passed!"

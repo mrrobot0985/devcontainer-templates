@@ -1,6 +1,6 @@
-# Ollama + Claude Code (ollama-claude-code)
+# Ollama + Claude Code (Compose) (ollama-claude-code-compose)
 
-A minimal template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.
+A Docker Compose-based minimal template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.
 ## Includes
 
 - Node.js 20
@@ -20,6 +20,11 @@ Authentication tokens, user settings, and session history under `~/.claude` are 
 
 The `${devcontainerId}` suffix isolates state per project so that settings from one workspace do not leak into another.
 
+
+## Build Method
+
+This template uses the `dockerComposeFile` property in `devcontainer.json` instead of a standalone image.
+
 ## Options
 
 | Options Id | Description | Type | Default Value |
@@ -29,6 +34,6 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:0
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-compose:0
 ```
 

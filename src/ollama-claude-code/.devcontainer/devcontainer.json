@@ -2,12 +2,10 @@
 	"name": "Ollama + Claude Code",
 	"image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
 	"remoteUser": "vscode",
-
 	"containerEnv": {
 		"OLLAMA_HOST": "http://host.docker.internal:11434",
 		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
 	},
-
 	"features": {
 		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-backend:latest": {
@@ -16,40 +14,19 @@
 			"models": "haiku:minimax-m2.5:cloud,opus:glm-5.2:cloud,sonnet:kimi-k2.6:cloud,subagent:kimi-k2.7-code:cloud",
 			"logLevel": "error"
 		},
-		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-hooks:latest": {},
-		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-privacy:latest": {
-			"disableTelemetry": true,
-			"disableErrorReporting": true,
-			"disableFeedback": true,
-			"disableUpdates": true
-		},
-		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-rules:latest": {
-			"enforceSafety": true,
-			"standardizeWorkflow": true,
-			"protectGit": true,
-			"preferPythonTooling": false
-		},
-		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-skills-matt-pocock:latest": {
-			"installEngineering": true,
-			"installProductivity": true,
-			"installMisc": false,
-			"installPersonal": false
-		},
 		"ghcr.io/devcontainers/features/node:2.1.0": {
 			"version": "20"
 		},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
-
 	"runArgs": [
 		"--add-host=host.docker.internal:host-gateway"
 	],
-
-	"forwardPorts": [11434],
-
+	"forwardPorts": [
+		11434
+	],
 	"mounts": [
 		"source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
 	],
-
 	"postCreateCommand": "bash .devcontainer/bootstrap.sh"
 }

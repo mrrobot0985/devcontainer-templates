@@ -1,0 +1,9 @@
+services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}
+    container_name: ollama-claude-code-compose
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces:cached
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

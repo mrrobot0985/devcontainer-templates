@@ -1,12 +1,17 @@
-# Ollama + Claude Code (ollama-claude-code)
+# Ollama + Claude Code Studio + Docker (ollama-claude-code-studio-dind)
 
-A minimal template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.
+A Dockerfile-based template with all Claude Code features (backend, hooks, privacy, rules, skills), Docker-in-Docker, Node.js, and GitHub CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.
 ## Includes
 
 - Node.js 20
 - Claude Code CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
+- Privacy defaults (`claude-code-privacy`)
+- Lifecycle hooks (`claude-code-hooks`)
+- Skills library (`claude-code-skills-matt-pocock`)
+- Behavior rules (`claude-code-rules`)
+- Docker-in-Docker (`ghcr.io/devcontainers/features/docker-in-docker:4.0.0`)
 
 ## Persistence
 
@@ -20,6 +25,11 @@ Authentication tokens, user settings, and session history under `~/.claude` are 
 
 The `${devcontainerId}` suffix isolates state per project so that settings from one workspace do not leak into another.
 
+
+## Build Method
+
+This template uses the `build.dockerfile` property in `devcontainer.json` combined with Docker-in-Docker.
+
 ## Options
 
 | Options Id | Description | Type | Default Value |
@@ -29,6 +39,6 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:0
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio-dind:0
 ```
 

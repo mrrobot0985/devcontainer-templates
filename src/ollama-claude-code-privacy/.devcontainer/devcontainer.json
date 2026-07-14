@@ -1,5 +1,5 @@
 {
-	"name": "Ollama + Claude Code + Docker",
+	"name": "Ollama + Claude Code + Privacy",
 	"image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
 	"remoteUser": "vscode",
 	"containerEnv": {
@@ -14,9 +14,11 @@
 			"models": "haiku:minimax-m2.5:cloud,opus:glm-5.2:cloud,sonnet:kimi-k2.6:cloud,subagent:kimi-k2.7-code:cloud",
 			"logLevel": "error"
 		},
-		"ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
-			"moby": "false",
-			"dockerDashComposeVersion": "v2"
+		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-privacy:latest": {
+			"disableTelemetry": true,
+			"disableErrorReporting": true,
+			"disableFeedback": true,
+			"disableUpdates": true
 		},
 		"ghcr.io/devcontainers/features/node:2.1.0": {
 			"version": "20"

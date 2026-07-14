@@ -1,9 +1,9 @@
 {
-  "id": "ollama-claude-code",
+  "id": "ollama-claude-code-privacy",
   "version": "0.1.0",
-  "name": "Ollama + Claude Code",
-  "description": "A minimal template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.",
-  "documentationURL": "https://github.com/devcontainers/devcontainer-templates/tree/main/src/ollama-claude-code",
+  "name": "Ollama + Claude Code + Privacy",
+  "description": "A minimal template with privacy defaults added for Ollama and Claude Code CLI. Persists authentication and settings across rebuilds via a named volume.",
+  "documentationURL": "https://github.com/devcontainers/devcontainer-templates/tree/main/src/ollama-claude-code-privacy",
   "licenseURL": "https://github.com/devcontainers/devcontainer-templates/blob/main/LICENSE",
   "options": {
     "imageVariant": {

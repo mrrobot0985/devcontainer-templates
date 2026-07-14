@@ -1,0 +1,22 @@
+{
+  "id": "ollama-claude-code-studio-dind",
+  "version": "0.1.0",
+  "name": "Ollama + Claude Code Studio + Docker",
+  "description": "A Dockerfile-based template with all Claude Code features (backend, hooks, privacy, rules, skills), Docker-in-Docker, Node.js, and GitHub CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.",
+  "documentationURL": "https://github.com/devcontainers/devcontainer-templates/tree/main/src/ollama-claude-code-studio-dind",
+  "licenseURL": "https://github.com/devcontainers/devcontainer-templates/blob/main/LICENSE",
+  "options": {
+    "imageVariant": {
+      "type": "string",
+      "description": "Ubuntu version (use ubuntu-22.04 or ubuntu-18.04 on local arm64/Apple Silicon):",
+      "proposals": [
+        "jammy",
+        "focal"
+      ],
+      "default": "jammy"
+    }
+  },
+  "platforms": [
+    "Any"
+  ]
+}

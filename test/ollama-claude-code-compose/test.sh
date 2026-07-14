@@ -4,7 +4,7 @@ set -euo pipefail
 # Test — verify the devcontainer was built with expected features.
 # Runs inside the built container.
 
-echo "Running ollama-claude-code tests..."
+echo "Running ollama-claude-code-compose tests..."
 
 # Check Node.js is installed
 if ! command -v node >/dev/null 2>&1; then
