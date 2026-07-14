@@ -8,10 +8,14 @@ A focused collection of custom [Dev Container Templates](https://containers.dev/
 
 ## Templates
 
-| Template                   | Description                                                                               |
-| -------------------------- | ------------------------------------------------------------------------------------------- |
-| `private-claude-code`      | Ollama + Claude Code CLI with privacy-hardened defaults and custom backend support.       |
-| `private-claude-code-dind` | Same as above, plus Docker-in-Docker for building and running containers inside the devcontainer. |
+Each template is a distinct environment for a specific scenario. Choose the one that matches your needs rather than stripping or adding features after the fact.
+
+| Template | Scenario |
+|----------|----------|
+| `ollama-host-claude` | **Minimal** — Claude Code with Ollama backend. Privacy-hardened by default. GPU passthrough enabled. |
+| `ollama-host-claude-docker` | **Minimal + Docker** — Build and run containers from inside the devcontainer. GPU passthrough enabled. |
+| `ollama-host-studio` | **Full workspace** — All features: backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
+| `ollama-host-studio-docker` | **Full workspace + Docker** — Studio environment with Docker-in-Docker. GPU passthrough enabled. |
 
 Published to GitHub Container Registry:
 
@@ -19,17 +23,16 @@ Published to GitHub Container Registry:
 ghcr.io/mrrobot0985/devcontainer-templates/<id>:<version>
 ```
 
-### `private-claude-code`
+### `ollama-host-claude`
 
-A complete development environment for running Claude Code against a local or self-hosted LLM backend (e.g., Ollama).
+A minimal development environment for running Claude Code against a local or self-hosted LLM backend (e.g., Ollama). Includes Node.js and the GitHub CLI.
 
-**Includes:**
+**Features:**
 
-- Node.js 20
 - Claude Code CLI (via official Anthropic feature)
 - Custom backend configuration (`claude-code-backend`)
-- Privacy defaults (`claude-code-privacy`)
-- Lifecycle hooks (`claude-code-hooks`)
+- Privacy defaults (`claude-code-privacy`) — telemetry, error reporting, feedback, and automatic updates disabled
+- GPU passthrough enabled for CUDA workloads
 
 **Options:**
 
@@ -42,19 +45,43 @@ A complete development environment for running Claude Code against a local or se
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/private-claude-code:0
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-claude:0
 ```
 
-### `private-claude-code-dind`
+### `ollama-host-claude-docker`
 
-Same environment as `private-claude-code`, but with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer.
+Same as minimal, with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer.
 
 **Usage:**
 
 ```bash
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/private-claude-code-dind:0
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-claude-docker:0
+```
+
+### `ollama-host-studio`
+
+The full studio environment. Combines backend configuration, observability hooks, privacy defaults, governance rules, and skills.
+
+**Usage:**
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-studio:0
+```
+
+### `ollama-host-studio-docker`
+
+The full studio environment plus Docker-in-Docker. Use this when you need governance, observability, and container builds in one workspace.
+
+**Usage:**
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-studio-docker:0
 ```
 
 ## CI
@@ -68,13 +95,20 @@ Template changes are validated by [`.github/workflows/test-pr.yaml`](.github/wor
 Run the local smoke test before pushing:
 
 ```bash
-# For the base template
-./.github/actions/smoke-test/build.sh private-claude-code
-./.github/actions/smoke-test/test.sh private-claude-code
+# Minimal
+./.github/actions/smoke-test/build.sh ollama-host-claude
+./.github/actions/smoke-test/test.sh ollama-host-claude
 
-# For the Docker-in-Docker variant
-./.github/actions/smoke-test/build.sh private-claude-code-dind
-./.github/actions/smoke-test/test.sh private-claude-code-dind
+# Studio
+./.github/actions/smoke-test/build.sh ollama-host-studio
+./.github/actions/smoke-test/test.sh ollama-host-studio
+
+# Docker variants
+./.github/actions/smoke-test/build.sh ollama-host-claude-docker
+./.github/actions/smoke-test/test.sh ollama-host-claude-docker
+
+./.github/actions/smoke-test/build.sh ollama-host-studio-docker
+./.github/actions/smoke-test/test.sh ollama-host-studio-docker
 ```
 
 ## Development
@@ -115,10 +149,10 @@ npm install -g @devcontainers/cli
 ### Apply a template to a new workspace
 
 ```bash
-# Create a new project from the private-claude-code template
+# Create a new project from the ollama-host-claude template
 devcontainer templates apply \
   --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/private-claude-code:latest
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-host-claude:latest
 ```
 
 ### Build the devcontainer after applying the template

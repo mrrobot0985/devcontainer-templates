@@ -1,9 +1,9 @@
 {
-  "id": "private-claude-code",
+  "id": "ollama-host-claude",
   "version": "0.1.0",
   "name": "Ollama + Claude Code",
-  "description": "A template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.",
-  "documentationURL": "https://github.com/devcontainers/devcontainer-templates/tree/main/src/private-claude-code",
+  "description": "A minimal template with Ollama and Claude Code CLI for local LLM development. Persists authentication and settings across rebuilds via a named volume.",
+  "documentationURL": "https://github.com/devcontainers/devcontainer-templates/tree/main/src/ollama-host-claude",
   "licenseURL": "https://github.com/devcontainers/devcontainer-templates/blob/main/LICENSE",
   "options": {
     "imageVariant": {
