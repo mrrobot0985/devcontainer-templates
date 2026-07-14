@@ -13,7 +13,7 @@ A Dockerfile-based template with all Claude Code features (backend, hooks, priva
 - Skills library (`claude-code-skills`)
 - Behavior rules (`claude-code-rules`)
 - Docker-in-Docker (`ghcr.io/devcontainers/features/docker-in-docker:4.0.0`)
-- NVIDIA Container Toolkit (`ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:latest`) — enables GPU passthrough for containers launched inside the inner Docker daemon
+- NVIDIA Container Toolkit (`ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:1.1.0`) — enables GPU passthrough for containers launched inside the inner Docker daemon. **Disabled by default** (`enable: false`); set `"enable": true` in your `devcontainer.json` to activate it
 
 ## Persistence
 

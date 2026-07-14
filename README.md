@@ -50,7 +50,7 @@ devcontainer templates apply \
 
 ### `ollama-host-claude-docker`
 
-Same as minimal, with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer. Includes the NVIDIA Container Toolkit for GPU-accelerated containers launched from the inner Docker daemon.
+Same as minimal, with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer. Includes the NVIDIA Container Toolkit (v1.1.0) for GPU-accelerated containers launched from the inner Docker daemon. Disabled by default — opt-in by setting `"enable": true` in your `devcontainer.json`.
 
 **Usage:**
 
@@ -74,7 +74,7 @@ devcontainer templates apply \
 
 ### `ollama-host-studio-docker`
 
-The full studio environment plus Docker-in-Docker. Use this when you need governance, observability, and container builds in one workspace. Includes the NVIDIA Container Toolkit for GPU-accelerated containers launched from the inner Docker daemon.
+The full studio environment plus Docker-in-Docker. Use this when you need governance, observability, and container builds in one workspace. Includes the NVIDIA Container Toolkit (v1.1.0) for GPU-accelerated containers launched from the inner Docker daemon. Disabled by default — opt-in by setting `"enable": true` in your `devcontainer.json`.
 
 **Usage:**
 
