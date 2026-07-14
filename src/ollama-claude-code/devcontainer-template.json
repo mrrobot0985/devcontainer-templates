@@ -1,9 +1,9 @@
 {
-  "id": "claude-code",
+  "id": "ollama-claude-code",
   "version": "1.0.0",
-  "name": "Claude Code",
-  "description": "Minimal devcontainer for Claude Code with privacy defaults and persistent settings. Includes Node.js and GitHub CLI. Uses the default Anthropic backend; configure a custom backend after applying the template.",
-  "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/claude-code",
+  "name": "Ollama + Claude Code",
+  "description": "Minimal devcontainer for Claude Code with a pre-configured Ollama backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+  "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/ollama-claude-code",
   "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
   "options": {
     "imageVariant": {

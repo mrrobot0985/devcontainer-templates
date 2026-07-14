@@ -2,7 +2,7 @@
   "id": "claude-code-studio",
   "version": "1.0.0",
   "name": "Claude Code Studio",
-  "description": "Full-featured devcontainer for Claude Code with lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI.",
+  "description": "Full-featured devcontainer for Claude Code with lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Uses the default Anthropic backend; configure a custom backend after applying the template.",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/claude-code-studio",
   "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
   "options": {

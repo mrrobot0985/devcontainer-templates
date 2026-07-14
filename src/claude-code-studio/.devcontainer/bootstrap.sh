@@ -1,43 +1,45 @@
 #!/bin/bash
 set -euo pipefail
 
-# Bootstrap — ensures consistent configuration for ephemeral/disposable sessions.
-# Does NOT install software. Expects Ollama to be available externally.
+# Bootstrap — verify expected tooling is present after feature installation.
 
-OLLAMA_BASE_URL="http://host.docker.internal:11434"
-OLLAMA_HOST="${OLLAMA_BASE_URL#http://}"
-OLLAMA_HOST="${OLLAMA_HOST#https://}"
-export OLLAMA_HOST
+echo "Bootstrap starting..."
 
-# --- Persist environment for interactive shells ---
-for rcfile in "$HOME/.bashrc" "$HOME/.zshrc"; do
-    if [ -f "$rcfile" ]; then
-        # Idempotent: remove old export, then append current value
-        sed -i '/^export OLLAMA_HOST=/d' "$rcfile" 2>/dev/null || true
-        echo "export OLLAMA_HOST="$OLLAMA_HOST"" >> "$rcfile"
-    fi
-done
-
-# --- Verify backend reachability (diagnostic only) ---
-if curl -fsSL "$OLLAMA_BASE_URL/api/tags" >/dev/null 2>&1; then
-    echo "Bootstrap OK — Ollama backend reachable at $OLLAMA_BASE_URL"
-else
-    echo "Bootstrap WARN — Ollama backend not reachable at $OLLAMA_BASE_URL"
-    echo "  Ensure Ollama is running on the host and accessible via host.docker.internal:11434"
+# Check Node.js is installed
+if ! command -v node > /dev/null 2>&1; then
+    echo "Bootstrap ERROR: node is not installed"
+    exit 1
 fi
+node_version=$(node --version)
+echo "Bootstrap OK — node version: $node_version"
 
-# --- Verify GitHub CLI is available ---
-if command -v gh >/dev/null 2>&1; then
-    echo "Bootstrap OK — GitHub CLI installed: $(gh --version | head -1)"
-else
-    echo "Bootstrap WARN — GitHub CLI not found"
+# Check Claude Code CLI is installed
+if ! command -v claude > /dev/null 2>&1; then
+    echo "Bootstrap ERROR: claude CLI is not installed"
+    exit 1
 fi
+echo "Bootstrap OK — claude CLI is installed"
 
-# --- Ensure Claude Code config directory exists for the remote user ---
-CLAUDE_DIR="${_REMOTE_USER_HOME:-$HOME}/.claude"
-if [ -d "$CLAUDE_DIR" ]; then
-    echo "Bootstrap OK — Claude Code config directory exists at $CLAUDE_DIR"
-else
-    echo "Bootstrap WARN — Claude Code config directory missing at $CLAUDE_DIR"
+# Check GitHub CLI is installed
+if ! command -v gh > /dev/null 2>&1; then
+    echo "Bootstrap ERROR: gh is not installed"
+    exit 1
 fi
+gh_version=$(gh --version | head -1)
+echo "Bootstrap OK — gh CLI is installed ($gh_version)"
 
+# Check Claude Code settings exist
+if [ ! -f "$HOME/.claude/settings.json" ]; then
+    echo "Bootstrap ERROR: settings.json is missing"
+    exit 1
+fi
+echo "Bootstrap OK — settings.json exists"
+
+# Check Claude Code config directory is persisted
+if [ ! -d "$HOME/.claude" ]; then
+    echo "Bootstrap ERROR: .claude directory is missing"
+    exit 1
+fi
+echo "Bootstrap OK — .claude directory persisted"
+
+echo "Bootstrap complete."

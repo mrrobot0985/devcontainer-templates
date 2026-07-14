@@ -1,13 +1,12 @@
 # Claude Code (claude-code)
 
-Minimal devcontainer for Claude Code with a configurable LLM backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI.
+Minimal devcontainer for Claude Code with privacy defaults and persistent settings. Includes Node.js and GitHub CLI. Uses the default Anthropic backend; configure a custom backend after applying the template.
 
 ## Includes
 
 - Node.js 20
 - Claude Code CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
-- Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
 
 ## Persistence

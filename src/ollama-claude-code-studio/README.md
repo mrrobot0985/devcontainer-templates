@@ -1,12 +1,13 @@
 # Claude Code Studio (claude-code-studio)
 
-Full-featured devcontainer for Claude Code with lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Uses the default Anthropic backend; configure a custom backend after applying the template.
+Full-featured devcontainer for Claude Code with lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI.
 
 ## Includes
 
 - Node.js 20
 - Claude Code CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
+- Custom backend configuration (`claude-code-backend`)
 - Lifecycle hooks (`claude-code-hooks`)
 - Privacy defaults (`claude-code-privacy`)
 - Behavior rules (`claude-code-rules`)

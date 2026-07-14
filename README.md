@@ -10,10 +10,19 @@ A focused collection of custom [Dev Container Templates](https://containers.dev/
 
 Each template is a distinct environment for a specific scenario. Choose the one that matches your needs rather than stripping or adding features after the fact.
 
+### Generic (Anthropic backend by default)
+
 | Template | Version | Description |
 | -------- | ------- | ----------- |
-| `claude-code` | ![claude-code version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/claude-code/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal — Claude Code with configurable LLM backend. Privacy-hardened by default. GPU passthrough enabled. |
-| `claude-code-studio` | ![claude-code-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/claude-code-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace — All features: backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
+| `claude-code` | ![claude-code version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/claude-code/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal — Claude Code CLI, privacy defaults, Node.js, GitHub CLI. |
+| `claude-code-studio` | ![claude-code-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/claude-code-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace — Adds lifecycle hooks, behavior rules, and skills library. |
+
+### Ollama backend (requires Ollama on the host)
+
+| Template | Version | Description |
+| -------- | ------- | ----------- |
+| `ollama-claude-code` | ![ollama-claude-code version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-code/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal + Ollama backend — Claude Code pre-configured for a local Ollama instance. GPU passthrough enabled. |
+| `ollama-claude-code-studio` | ![ollama-claude-code-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-code-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace + Ollama backend — Studio features with pre-configured Ollama. GPU passthrough enabled. |
 
 Published to GitHub Container Registry:
 
@@ -23,14 +32,12 @@ ghcr.io/mrrobot0985/devcontainer-templates/<id>:<version>
 
 ### `claude-code`
 
-A minimal development environment for running Claude Code against a local or self-hosted LLM backend (e.g., Ollama). Includes Node.js and the GitHub CLI.
+A minimal development environment for Claude Code using the default Anthropic backend. Includes Node.js and the GitHub CLI.
 
 **Features:**
 
 - Claude Code CLI (via official Anthropic feature)
-- Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`) — telemetry, error reporting, feedback, and automatic updates disabled
-- GPU passthrough enabled for CUDA workloads
 
 **Options:**
 
@@ -48,7 +55,7 @@ devcontainer templates apply \
 
 ### `claude-code-studio`
 
-The full studio environment. Combines backend configuration, observability hooks, privacy defaults, governance rules, and skills.
+The full studio environment with lifecycle hooks, behavior rules, and skills. Uses the default Anthropic backend.
 
 **Usage:**
 
@@ -58,9 +65,41 @@ devcontainer templates apply \
   --template-id ghcr.io/mrrobot0985/devcontainer-templates/claude-code-studio:1
 ```
 
+### `ollama-claude-code`
+
+Same as minimal, but with the Claude Code backend pre-configured for a local Ollama instance (`http://host.docker.internal:11434`). Includes GPU passthrough for CUDA workloads. Requires Ollama to be running on the host machine.
+
+**Features:**
+
+- Claude Code CLI (via official Anthropic feature)
+- Custom backend configuration (`claude-code-backend`) pointing to Ollama
+- Privacy defaults (`claude-code-privacy`)
+- GPU passthrough enabled (`--gpus=all`)
+- Port forwarding for Ollama (`11434`)
+
+**Usage:**
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code:1
+```
+
+### `ollama-claude-code-studio`
+
+The full studio environment with Ollama backend pre-configured. Requires Ollama to be running on the host machine.
+
+**Usage:**
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-code-studio:1
+```
+
 ## Adding Docker-in-Docker
 
-Both templates use a standard base image. If you need to build, run, or push container images from inside the devcontainer, add the official Docker-in-Docker feature to your `.devcontainer/devcontainer.json`:
+All templates use a standard base image. If you need to build, run, or push container images from inside the devcontainer, add the official Docker-in-Docker feature to your `.devcontainer/devcontainer.json`:
 
 ```json
 "features": {
@@ -82,13 +121,21 @@ Template changes are validated by [`.github/workflows/test-pr.yaml`](.github/wor
 Run the local smoke test before pushing:
 
 ```bash
-# Minimal
+# Generic minimal
 ./.github/actions/smoke-test/build.sh claude-code
 ./.github/actions/smoke-test/test.sh claude-code
 
-# Studio
+# Generic studio
 ./.github/actions/smoke-test/build.sh claude-code-studio
 ./.github/actions/smoke-test/test.sh claude-code-studio
+
+# Ollama minimal
+./.github/actions/smoke-test/build.sh ollama-claude-code
+./.github/actions/smoke-test/test.sh ollama-claude-code
+
+# Ollama studio
+./.github/actions/smoke-test/build.sh ollama-claude-code-studio
+./.github/actions/smoke-test/test.sh ollama-claude-code-studio
 ```
 
 ## Development

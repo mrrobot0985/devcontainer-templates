@@ -1,12 +1,19 @@
 {
-	"name": "Claude Code Studio",
+	"name": "Ollama + Claude Code Studio",
 	"image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
 	"remoteUser": "vscode",
 	"containerEnv": {
+		"OLLAMA_HOST": "http://host.docker.internal:11434",
 		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
 	},
 	"features": {
 		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
+		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-backend:latest": {
+			"baseUrl": "http://host.docker.internal:11434",
+			"authToken": "ollama",
+			"models": "haiku:minimax-m2.5:cloud,opus:glm-5.2:cloud,sonnet:kimi-k2.6:cloud,subagent:kimi-k2.7-code:cloud",
+			"logLevel": "error"
+		},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-hooks:latest": {},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-privacy:latest": {
 			"disableTelemetry": true,
@@ -31,6 +38,13 @@
 		},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
+	"runArgs": [
+		"--add-host=host.docker.internal:host-gateway",
+		"--gpus=all"
+	],
+	"forwardPorts": [
+		11434
+	],
 	"mounts": [
 		"source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
 	],

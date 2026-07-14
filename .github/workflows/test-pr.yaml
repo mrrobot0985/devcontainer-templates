@@ -25,6 +25,14 @@ jobs:
               - 'src/claude-code-studio/**'
               - 'test/claude-code-studio/**'
               - '.github/actions/smoke-test/**'
+            ollama-claude-code:
+              - 'src/ollama-claude-code/**'
+              - 'test/ollama-claude-code/**'
+              - '.github/actions/smoke-test/**'
+            ollama-claude-code-studio:
+              - 'src/ollama-claude-code-studio/**'
+              - 'test/ollama-claude-code-studio/**'
+              - '.github/actions/smoke-test/**'
 
   test:
     needs: [detect-changes]

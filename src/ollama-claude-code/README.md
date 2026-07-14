@@ -1,16 +1,14 @@
-# Claude Code Studio (claude-code-studio)
+# Claude Code (claude-code)
 
-Full-featured devcontainer for Claude Code with lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Uses the default Anthropic backend; configure a custom backend after applying the template.
+Minimal devcontainer for Claude Code with a configurable LLM backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI.
 
 ## Includes
 
 - Node.js 20
 - Claude Code CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
-- Lifecycle hooks (`claude-code-hooks`)
+- Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
-- Behavior rules (`claude-code-rules`)
-- Skills library (`claude-code-skills`)
 
 ## Persistence
 
@@ -33,5 +31,5 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/claude-code-studio:1
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/claude-code:1
 ```

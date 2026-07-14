@@ -37,6 +37,8 @@ Use `<template-name>-v<semver>` for every release. For example:
 
 - `claude-code-v1.0.0`
 - `claude-code-studio-v1.0.0`
+- `ollama-claude-code-v1.0.0`
+- `ollama-claude-code-studio-v1.0.0`
 
 ### Why Prefixed Tags?
 
