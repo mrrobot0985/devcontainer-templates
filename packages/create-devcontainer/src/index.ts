@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { program } from "commander";
 import { applyTemplate } from "./apply.js";
@@ -60,11 +60,7 @@ program
 
     const targetDir = resolve(targetFolder);
     if (!existsSync(targetDir)) {
-      console.error(
-        `Error: Target directory does not exist: ${targetDir}\n` +
-          "Create it first, then run this command again."
-      );
-      process.exit(1);
+      mkdirSync(targetDir, { recursive: true });
     }
 
     let mode: "dev" | "registry";
