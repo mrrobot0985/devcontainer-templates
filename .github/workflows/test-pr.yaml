@@ -17,29 +17,17 @@ jobs:
         id: filter
         with:
           filters: |
-            ollama-claude-code:
-              - 'src/ollama-claude-code/**'
+            ollama-host-claude:
+              - 'src/ollama-host-claude/**'
               - '.github/actions/smoke-test/**'
-            ollama-claude-code-dind:
-              - 'src/ollama-claude-code-dind/**'
+            ollama-host-claude-docker:
+              - 'src/ollama-host-claude-docker/**'
               - '.github/actions/smoke-test/**'
-            ollama-claude-code-build:
-              - 'src/ollama-claude-code-build/**'
+            ollama-host-studio:
+              - 'src/ollama-host-studio/**'
               - '.github/actions/smoke-test/**'
-            ollama-claude-code-studio-dind:
-              - 'src/ollama-claude-code-studio-dind/**'
-              - '.github/actions/smoke-test/**'
-            ollama-claude-code-privacy:
-              - 'src/ollama-claude-code-privacy/**'
-              - '.github/actions/smoke-test/**'
-            ollama-claude-code-governed:
-              - 'src/ollama-claude-code-governed/**'
-              - '.github/actions/smoke-test/**'
-            ollama-claude-code-studio:
-              - 'src/ollama-claude-code-studio/**'
-              - '.github/actions/smoke-test/**'
-            ollama-claude-code-compose:
-              - 'src/ollama-claude-code-compose/**'
+            ollama-host-studio-docker:
+              - 'src/ollama-host-studio-docker/**'
               - '.github/actions/smoke-test/**'
 
   test:
