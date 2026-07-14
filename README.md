@@ -13,9 +13,9 @@ Each template is a distinct environment for a specific scenario. Choose the one 
 | Template | Scenario |
 |----------|----------|
 | `ollama-host-claude` | **Minimal** — Claude Code with Ollama backend. Privacy-hardened by default. GPU passthrough enabled. |
-| `ollama-host-claude-docker` | **Minimal + Docker** — Build and run containers from inside the devcontainer. GPU passthrough enabled. |
+| `ollama-host-claude-docker` | **Minimal + Docker** — Build and run containers from inside the devcontainer. GPU passthrough enabled for outer container and inner Docker daemon. |
 | `ollama-host-studio` | **Full workspace** — All features: backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
-| `ollama-host-studio-docker` | **Full workspace + Docker** — Studio environment with Docker-in-Docker. GPU passthrough enabled. |
+| `ollama-host-studio-docker` | **Full workspace + Docker** — Studio environment with Docker-in-Docker. GPU passthrough enabled for outer container and inner Docker daemon. |
 
 Published to GitHub Container Registry:
 
@@ -50,7 +50,7 @@ devcontainer templates apply \
 
 ### `ollama-host-claude-docker`
 
-Same as minimal, with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer.
+Same as minimal, with Docker-in-Docker so you can build, run, and push container images from inside the devcontainer. Includes the NVIDIA Container Toolkit for GPU-accelerated containers launched from the inner Docker daemon.
 
 **Usage:**
 
@@ -74,7 +74,7 @@ devcontainer templates apply \
 
 ### `ollama-host-studio-docker`
 
-The full studio environment plus Docker-in-Docker. Use this when you need governance, observability, and container builds in one workspace.
+The full studio environment plus Docker-in-Docker. Use this when you need governance, observability, and container builds in one workspace. Includes the NVIDIA Container Toolkit for GPU-accelerated containers launched from the inner Docker daemon.
 
 **Usage:**
 
