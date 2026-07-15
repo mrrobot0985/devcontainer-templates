@@ -1,5 +1,7 @@
 # Ollama + Claude CLI (ollama-claude-cli)
 
+![Version](https://img.shields.io/badge/version-0.1.0-blue?style=flat-square)
+
 Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI.
 
 ## Includes
