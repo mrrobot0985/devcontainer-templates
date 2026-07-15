@@ -527,6 +527,14 @@ EOF
     cp "$SCRIPT_DIR/sandcastle/ralph-loop.sh" "$WORKSPACE_DIR/.devcontainer/sandcastle/ralph-loop.sh"
     chmod +x "$WORKSPACE_DIR/.devcontainer/sandcastle/"*.sh
 
+    # Copy headless skill wrappers for AFK automation
+    if [ -d "$SCRIPT_DIR/skills/headless" ]; then
+        mkdir -p "$WORKSPACE_DIR/.devcontainer/skills/headless"
+        cp "$SCRIPT_DIR/skills/headless/"*.sh "$WORKSPACE_DIR/.devcontainer/skills/headless/"
+        chmod +x "$WORKSPACE_DIR/.devcontainer/skills/headless/"*.sh
+        echo "Copied headless skill wrappers to .devcontainer/skills/headless/"
+    fi
+
     # Set up ralph state directory
     mkdir -p "$RALPH_DIR/state" "$RALPH_DIR/logs" "$RALPH_DIR/notes"
 
@@ -811,44 +819,200 @@ phase_status() {
 }
 
 # ============================================================================
-# Main entrypoint — long-running daemon
+# Phase: auto — self-driving lifecycle via headless Matt Pocock skill wrappers
 # ============================================================================
 
-case "${1:-}" in
-    init)
-        phase_init
-        ;;
-    hitl)
-        phase_hitl
-        ;;
-    afk)
-        phase_afk_daemon
-        ;;
-    verify)
-        phase_verify
-        ;;
-    status)
+phase_auto() {
+    echo "============================================"
+    echo "  Phase: AUTO — Self-driving lifecycle"
+    echo "  Using Matt Pocock skills headlessly"
+    echo "============================================"
+    echo ""
+
+    local max_iterations="${MAX_AUTO_ITERATIONS:-10}"
+    local max_tickets="${MAX_TICKETS_PER_CYCLE:-3}"
+    local sleep_seconds="${AUTO_SLEEP_SECONDS:-30}"
+    local auto_merge="${AUTO_MERGE:-false}"
+    local iteration=0
+    local actionable_work_found=true
+
+    export MAX_TICKETS_PER_CYCLE="$max_tickets"
+    export AUTO_MERGE="$auto_merge"
+
+    # Ensure headless wrappers are available
+    local wrappers_dir="$WORKSPACE_DIR/.devcontainer/skills/headless"
+    if [ ! -d "$wrappers_dir" ]; then
+        echo "ERROR: Headless skill wrappers not found at $wrappers_dir"
+        echo "Run bootstrap.sh init first to copy wrappers."
+        exit 1
+    fi
+
+    while [ "$iteration" -lt "$max_iterations" ] && [ "$actionable_work_found" = "true" ]; do
+        iteration=$((iteration + 1))
+        echo ""
+        echo "=== AUTO Iteration $iteration / $max_iterations ==="
+        actionable_work_found=false
+
+        # 1. Spec creation
+        if [ ! -f "$WORKSPACE_DIR/SPEC.md" ]; then
+            echo "--> SPEC.md missing. Running headless-to-spec.sh ..."
+            if bash "$wrappers_dir/headless-to-spec.sh" "$WORKSPACE_DIR"; then
+                echo "SPEC.md created."
+                actionable_work_found=true
+            else
+                echo "WARNING: headless-to-spec.sh failed."
+            fi
+        fi
+
+        # 2. Wayfinder mapping
+        if [ -f "$WORKSPACE_DIR/SPEC.md" ] && [ ! -f "$WORKSPACE_DIR/WAYFINDER.md" ]; then
+            echo "--> WAYFINDER.md missing. Running headless-wayfinder.sh ..."
+            if bash "$wrappers_dir/headless-wayfinder.sh" "$WORKSPACE_DIR"; then
+                echo "WAYFINDER.md created."
+                actionable_work_found=true
+            else
+                echo "WARNING: headless-wayfinder.sh failed."
+            fi
+        fi
+
+        # 3. Ticket generation
+        if [ -f "$WORKSPACE_DIR/WAYFINDER.md" ]; then
+            local ticket_count
+            ticket_count="$(find "$WORKSPACE_DIR/wayfinder/tickets" -maxdepth 1 -name '*.md' 2>/dev/null | wc -l)"
+            if [ "$ticket_count" -eq 0 ]; then
+                echo "--> No tickets found. Running headless-to-tickets.sh ..."
+                if bash "$wrappers_dir/headless-to-tickets.sh" "$WORKSPACE_DIR"; then
+                    echo "Tickets created."
+                    actionable_work_found=true
+                else
+                    echo "WARNING: headless-to-tickets.sh failed."
+                fi
+            fi
+        fi
+
+        # 4. AFK implementation
+        if [ -d "$WORKSPACE_DIR/wayfinder/tickets" ]; then
+            local open_afk
+            open_afk="$(find "$WORKSPACE_DIR/wayfinder/tickets" -maxdepth 1 -name '*.md' -exec grep -lE '^status: open' {} + 2>/dev/null | wc -l)"
+            if [ "$open_afk" -gt 0 ]; then
+                echo "--> Found $open_afk open ticket(s). Running headless-implement.sh ..."
+                if bash "$wrappers_dir/headless-implement.sh" "$WORKSPACE_DIR"; then
+                    echo "Implementation cycle complete."
+                    actionable_work_found=true
+                else
+                    echo "WARNING: headless-implement.sh had failures."
+                fi
+            fi
+        fi
+
+        # 5. Code review
+        if [ -d "$WORKSPACE_DIR/wayfinder/tickets" ]; then
+            local pending_review
+            pending_review="$(find "$WORKSPACE_DIR/wayfinder/tickets" -maxdepth 1 -name '*.md' -exec grep -lE '^status: pending-review' {} + 2>/dev/null | wc -l)"
+            if [ "$pending_review" -gt 0 ]; then
+                echo "--> Found $pending_review pending-review ticket(s). Running headless-code-review.sh ..."
+                if bash "$wrappers_dir/headless-code-review.sh" "$WORKSPACE_DIR"; then
+                    echo "Code review complete."
+                    actionable_work_found=true
+                else
+                    echo "WARNING: headless-code-review.sh had failures."
+                fi
+            fi
+        fi
+
+        # 6. Summary
+        echo ""
+        echo "--- Iteration $iteration Summary ---"
         phase_status
-        ;;
-    *)
-        # Auto-detect phase and run the appropriate blocking/continuous phase
-        while true; do
-            PHASE="$(detect_phase)"
-            case "$PHASE" in
-                init)
-                    phase_init
-                    # After init, immediately check next phase (should be hitl)
-                    ;;
-                hitl)
-                    phase_hitl
-                    # After HITL completes, loop back to detect (should transition to afk)
-                    ;;
-                afk|verify)
-                    # Once HITL is done, enter the never-ending AFK daemon
-                    phase_afk_daemon
-                    # This never returns under normal operation
-                    ;;
-            esac
-        done
-        ;;
-esac
+        echo ""
+
+        if [ "$actionable_work_found" = "false" ]; then
+            echo "No actionable work found. Auto mode halting."
+            break
+        fi
+
+        echo "Sleeping ${sleep_seconds}s before next iteration..."
+        sleep "$sleep_seconds"
+    done
+
+    if [ "$iteration" -ge "$max_iterations" ]; then
+        echo "Reached MAX_AUTO_ITERATIONS ($max_iterations). Halting."
+    fi
+
+    echo ""
+    echo "============================================"
+    echo "  AUTO phase complete"
+    echo "============================================"
+}
+
+# ============================================================================
+# Phase: prototype — headless prototype generation
+# ============================================================================
+
+phase_prototype() {
+    echo "============================================"
+    echo "  Phase: PROTOTYPE — Headless prototype"
+    echo "============================================"
+    echo ""
+
+    local question="${2:-}"
+    if [ -z "$question" ]; then
+        echo "Usage: bootstrap.sh prototype '<question>'"
+        echo "Example: bootstrap.sh prototype 'Does this state machine feel right?'"
+        exit 1
+    fi
+
+    local wrappers_dir="$WORKSPACE_DIR/.devcontainer/skills/headless"
+    if [ ! -f "$wrappers_dir/headless-prototype.sh" ]; then
+        echo "ERROR: headless-prototype.sh not found. Run bootstrap.sh init first."
+        exit 1
+    fi
+
+    bash "$wrappers_dir/headless-prototype.sh" "$question" "$WORKSPACE_DIR"
+}
+
+# ============================================================================
+# Fixed workflow — runs at container boot, no arguments required
+# ============================================================================
+
+# This script is the postCreateCommand. It auto-detects its phase and runs
+# the appropriate workflow without blocking on human input. HITL instructions
+# are printed but the container continues into AFK/auto mode.
+
+phase_detect_and_run() {
+    PHASE="$(detect_phase)"
+    case "$PHASE" in
+        init)
+            phase_init
+            # After init, print HITL instructions and fall through to auto
+            print_hitl_instructions
+            ;;
+        hitl)
+            print_hitl_instructions
+            ;;
+        afk|verify)
+            # Already past init/HITL, enter auto daemon
+            ;;
+    esac
+}
+
+print_hitl_instructions() {
+    echo ""
+    echo "╔════════════════════════════════════════════════════════════════╗"
+    echo "║  HITL — Human-In-The-Loop (non-blocking)                     ║"
+    echo "║                                                                ║"
+    echo "║  The wayfinder map has been seeded from README.md.             ║"
+    echo "║                                                                ║"
+    echo "║  OPTIONAL: Define the destination interactively:             ║"
+    echo "║    claude                                                      ║"
+    echo "║    /grilling                                                   ║"
+    echo "║    /wayfinder                                                  ║"
+    echo "║                                                                ║"
+    echo "║  Or let the auto daemon create a spec headlessly.              ║"
+    echo "╚════════════════════════════════════════════════════════════════╝"
+    echo ""
+}
+
+# Main loop — never exits during normal operation
+phase_detect_and_run
+phase_auto

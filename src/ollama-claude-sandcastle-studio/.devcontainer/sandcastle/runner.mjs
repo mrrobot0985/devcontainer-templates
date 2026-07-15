@@ -105,6 +105,9 @@ function main() {
   } else if (taskLower.includes("implement") || taskLower.includes("build")) {
     console.log("Task type: IMPLEMENT (AFK)");
     taskResult = runImplementTask(ws, task);
+  } else if (taskLower.includes("prototype")) {
+    console.log("Task type: PROTOTYPE (AFK)");
+    taskResult = runPrototypeTask(ws, task);
   } else if (taskLower.includes("lint") || taskLower.includes("format")) {
     console.log("Task type: QUALITY (AFK)");
     taskResult = runQualityTask(ws, task);
@@ -195,10 +198,47 @@ function runSpecTask(ws, task) {
 }
 
 function runImplementTask(ws, task) {
-  // Implement: placeholder — in a real sandcastle setup this would invoke the agent
+  // Implement: invoke Matt Pocock's /implement skill headlessly via wrapper
+  const wrappersDir = join(ws, ".devcontainer", "skills", "headless");
+  const implementScript = join(wrappersDir, "headless-implement.sh");
+
+  if (existsSync(implementScript)) {
+    console.log(`Implementation task: ${task}`);
+    console.log(`  Invoking ${implementScript}`);
+    const result = exec("bash", [implementScript, ws], { cwd: ws, ignoreFailure: true });
+    return {
+      status: result.status === 0 ? "ok" : "blocked",
+      outputs: [
+        { type: "implement", command: implementScript, exitCode: result.status, stdout: result.stdout }
+      ]
+    };
+  }
+
   console.log(`Implementation task: ${task}`);
-  console.log("  NOTE: Implementation requires an agent provider. Marking as blocked for human review.");
-  return { status: "blocked", reason: "Requires agent provider for implementation." };
+  console.log("  NOTE: headless-implement.sh not found. Run bootstrap.sh init to copy wrappers.");
+  return { status: "blocked", reason: "headless-implement.sh not found" };
+}
+
+function runPrototypeTask(ws, task) {
+  // Prototype: invoke Matt Pocock's /prototype skill headlessly via wrapper
+  const wrappersDir = join(ws, ".devcontainer", "skills", "headless");
+  const prototypeScript = join(wrappersDir, "headless-prototype.sh");
+
+  if (existsSync(prototypeScript)) {
+    console.log(`Prototype task: ${task}`);
+    console.log(`  Invoking ${prototypeScript}`);
+    const result = exec("bash", [prototypeScript, task, ws], { cwd: ws, ignoreFailure: true });
+    return {
+      status: result.status === 0 ? "ok" : "blocked",
+      outputs: [
+        { type: "prototype", command: prototypeScript, exitCode: result.status, stdout: result.stdout }
+      ]
+    };
+  }
+
+  console.log(`Prototype task: ${task}`);
+  console.log("  NOTE: headless-prototype.sh not found. Run bootstrap.sh init to copy wrappers.");
+  return { status: "blocked", reason: "headless-prototype.sh not found" };
 }
 
 function runQualityTask(ws, task) {

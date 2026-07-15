@@ -128,11 +128,39 @@ The selected models are written into Claude Code settings as environment overrid
 ## Subcommands
 
 ```bash
-bash .devcontainer/bootstrap.sh        # Auto-detect phase and run
+bash .devcontainer/bootstrap.sh         # Auto-detect phase and run
 bash .devcontainer/bootstrap.sh init    # Force init phase
-bash .devcontainer/bootstrap.sh afk     # Force AFK ralph loops
+bash .devcontainer/bootstrap.sh hitl    # Force HITL blocking
+bash .devcontainer/bootstrap.sh afk     # Force AFK ralph loops (daemon)
+bash .devcontainer/bootstrap.sh auto    # Self-driving lifecycle via headless Matt Pocock skills
+bash .devcontainer/bootstrap.sh prototype "<question>"  # Headless prototype generation
 bash .devcontainer/bootstrap.sh verify  # Force branch validation
 bash .devcontainer/bootstrap.sh status  # Show current phase and tickets
+```
+
+### Auto Mode
+
+The `auto` subcommand self-drives the full project lifecycle using [Matt Pocock's skills](https://github.com/mattpocock/skills) headlessly:
+
+1. If no `SPEC.md` exists → runs `/to-spec` via `headless-to-spec.sh`
+2. If no `WAYFINDER.md` exists → runs `/wayfinder` via `headless-wayfinder.sh`
+3. If no tickets exist → runs `/to-tickets` via `headless-to-tickets.sh`
+4. If open AFK tickets exist → runs `/implement` via `headless-implement.sh`
+5. If pending-review tickets exist → runs `/code-review` via `headless-code-review.sh`
+
+Safety limits (configurable via environment):
+
+- `MAX_AUTO_ITERATIONS=10` — max cycles before halting
+- `MAX_TICKETS_PER_CYCLE=3` — max tickets implemented per cycle
+- `AUTO_SLEEP_SECONDS=30` — pause between cycles
+- `AUTO_MERGE=false` — set to `true` to auto-merge approved branches
+
+### Prototype Mode
+
+The `prototype` subcommand invokes `/prototype` headlessly to answer a design question with throwaway code. Example:
+
+```bash
+bash .devcontainer/bootstrap.sh prototype "Does this state machine feel right?"
 ```
 
 ## Includes
