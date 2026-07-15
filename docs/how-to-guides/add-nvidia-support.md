@@ -48,11 +48,11 @@ Paste the feature into the `features` object of `.devcontainer/devcontainer.json
 
 ## What each option does
 
-| Option | Default | Effect |
-| ------ | ------- | ------ |
-| `enable` | `false` | Installs and configures the NVIDIA Container Toolkit inside the devcontainer. |
+| Option           | Default | Effect                                                                                            |
+| ---------------- | ------- | ------------------------------------------------------------------------------------------------- |
+| `enable`         | `false` | Installs and configures the NVIDIA Container Toolkit inside the devcontainer.                     |
 | `defaultRuntime` | `false` | Sets `nvidia` as the default Docker runtime so `docker run` uses GPUs without `--runtime=nvidia`. |
-| `restartDockerd` | `true` | Restarts the inner Docker daemon after changing the runtime configuration. |
+| `restartDockerd` | `true`  | Restarts the inner Docker daemon after changing the runtime configuration.                        |
 
 ## GPU passthrough with Docker-in-Docker
 

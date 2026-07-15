@@ -104,6 +104,12 @@ jobs:
       - name: Run Python unit tests
         run: pytest test/
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Check markdown formatting
+        run: uvx --with mdformat-gfm mdformat --check docs/ packages/create-devcontainer/README.md .github/CONTRIBUTING.md .github/CODE_OF_CONDUCT.md .github/SECURITY.md
+
   detect-changes:
     runs-on: ubuntu-latest
     outputs:

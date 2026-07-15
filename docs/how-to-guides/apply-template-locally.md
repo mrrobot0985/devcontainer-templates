@@ -18,12 +18,12 @@ npx @mrrobot0985/create-devcontainer ollama-claude-cli .
 
 Useful flags:
 
-| Flag | Purpose |
-| ---- | ------- |
-| `--registry` | Pull the template from GHCR instead of using the bundled copy |
-| `--force` | Overwrite an existing `.devcontainer` directory |
-| `--name "My Project"` | Override the devcontainer configuration name |
-| `--readme` | Create a `README.md` skeleton in the target directory |
+| Flag                  | Purpose                                                       |
+| --------------------- | ------------------------------------------------------------- |
+| `--registry`          | Pull the template from GHCR instead of using the bundled copy |
+| `--force`             | Overwrite an existing `.devcontainer` directory               |
+| `--name "My Project"` | Override the devcontainer configuration name                  |
+| `--readme`            | Create a `README.md` skeleton in the target directory         |
 
 Combine flags:
 

@@ -56,4 +56,33 @@ if [ -n "$STAGED_JSONS" ]; then
     fi
 fi
 
+# --- Docs markdown formatting check ---
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^docs/.*\.md$' || true)
+if [ -n "$STAGED_MD" ]; then
+    if command -v uv >/dev/null 2>&1; then
+        if ! uvx --with mdformat-gfm mdformat --check $STAGED_MD; then
+            echo ""
+            echo "ERROR: Staged markdown files in docs/ are not properly formatted."
+            echo "Run the following to fix them:"
+            echo "  uvx --with mdformat-gfm mdformat $STAGED_MD"
+            echo "Then stage the changes and commit again."
+            exit 1
+        fi
+    elif command -v mdformat >/dev/null 2>&1; then
+        if ! mdformat --check $STAGED_MD; then
+            echo ""
+            echo "ERROR: Staged markdown files in docs/ are not properly formatted."
+            echo "Run the following to fix them:"
+            echo "  mdformat $STAGED_MD"
+            echo "Then stage the changes and commit again."
+            exit 1
+        fi
+    else
+        echo ""
+        echo "WARNING: mdformat is not installed. Skipping markdown format check."
+        echo "Install it with: uv tool install mdformat-gfm"
+        echo ""
+    fi
+fi
+
 exit 0

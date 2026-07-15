@@ -14,23 +14,23 @@ If you do not provide a target folder, the current directory is used.
 
 ## Templates
 
-| ID | Name |
-| -- | ---- |
-| `ollama-claude-cli` | Ollama + Claude CLI |
+| ID                         | Name                       |
+| -------------------------- | -------------------------- |
+| `ollama-claude-cli`        | Ollama + Claude CLI        |
 | `ollama-claude-cli-studio` | Ollama + Claude CLI Studio |
 
 Run the command with no arguments to see the full list.
 
 ## Options
 
-| Flag | Description |
-| ---- | ----------- |
-| `--registry` | Force GHCR registry mode. The default is the bundled local copy. |
-| `--force` | Overwrite an existing `.devcontainer` directory. |
-| `--name <name>` | Override the devcontainer configuration name. |
-| `--readme` | Create a `README.md` skeleton in the target directory. |
-| `--help` | Show help. |
-| `--version` | Show version. |
+| Flag            | Description                                                      |
+| --------------- | ---------------------------------------------------------------- |
+| `--registry`    | Force GHCR registry mode. The default is the bundled local copy. |
+| `--force`       | Overwrite an existing `.devcontainer` directory.                 |
+| `--name <name>` | Override the devcontainer configuration name.                    |
+| `--readme`      | Create a `README.md` skeleton in the target directory.           |
+| `--help`        | Show help.                                                       |
+| `--version`     | Show version.                                                    |
 
 ## Examples
 

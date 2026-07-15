@@ -32,8 +32,8 @@ Both commands create a `.devcontainer/devcontainer.json` file inside `./my-proje
 Open the folder in VS Code: and select the command palette action:
 
 1. `File` > `Open Folder...` and choose `./my-project`.
-2. Run `Dev Containers: Rebuild and Reopen in Container` from the command palette.
-3. Wait while VS Code: builds the image and starts the container.
+1. Run `Dev Containers: Rebuild and Reopen in Container` from the command palette.
+1. Wait while VS Code: builds the image and starts the container.
 
 If you prefer the terminal, run:
 

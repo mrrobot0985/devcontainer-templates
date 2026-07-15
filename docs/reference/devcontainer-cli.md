@@ -82,19 +82,19 @@ devcontainer up --workspace-folder . --build-no-cache
 
 ## Common commands reference
 
-| Command | Purpose |
-| ------- | ------- |
-| `devcontainer templates apply` | Apply a template to a workspace folder |
-| `devcontainer up` | Build and start the devcontainer |
-| `devcontainer build` | Build the devcontainer image without starting it |
-| `devcontainer exec` | Run a command inside the running container |
-| `devcontainer --version` | Show the installed CLI version |
+| Command                        | Purpose                                          |
+| ------------------------------ | ------------------------------------------------ |
+| `devcontainer templates apply` | Apply a template to a workspace folder           |
+| `devcontainer up`              | Build and start the devcontainer                 |
+| `devcontainer build`           | Build the devcontainer image without starting it |
+| `devcontainer exec`            | Run a command inside the running container       |
+| `devcontainer --version`       | Show the installed CLI version                   |
 
 ## Useful flags
 
-| Flag | Effect |
-| ---- | ------ |
-| `--workspace-folder <path>` | Target directory containing `.devcontainer` |
-| `--build-no-cache` | Force a fresh image build |
-| `--id-label <label>` | Tag the container with a custom label |
-| `--remove-existing-container` | Replace an existing container on `up` |
+| Flag                          | Effect                                      |
+| ----------------------------- | ------------------------------------------- |
+| `--workspace-folder <path>`   | Target directory containing `.devcontainer` |
+| `--build-no-cache`            | Force a fresh image build                   |
+| `--id-label <label>`          | Tag the container with a custom label       |
+| `--remove-existing-container` | Replace an existing container on `up`       |

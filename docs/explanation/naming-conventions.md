@@ -178,16 +178,16 @@ The spec explicitly supports the `options` property so a single generic template
 
 Across the official and community indexes, the following patterns appear consistently:
 
-| Pattern | Examples | Use case |
-| ------- | -------- | -------- |
-| Base image / OS | `alpine`, `debian`, `ubuntu`, `universal` | Minimal starting environment |
-| Single language/runtime | `python`, `go`, `java`, `rust`, `dotnet` | Language-specific development |
-| Language variant | `dotnet-fsharp`, `typescript-node` | Same runtime family, different primary language |
-| Language + database | `go-postgres`, `java-postgres`, `python-mssql` | Full-stack development with a database |
-| Framework + database | `ruby-rails-postgres` | Framework-specific full-stack setup |
-| Tooling role | `docker-in-docker`, `docker-outside-of-docker`, `kubernetes-helm` | Operations or infrastructure tooling |
-| Product/platform | `azure-functions-python`, `aws-lambda-dotnet`, `sap-cap-typescript-node` | Vendor- or product-specific setup |
-| Workflow/job | `github-actions-runner-devcontainer`, `datascience-python-r` | Specific team workflow |
+| Pattern                 | Examples                                                                 | Use case                                        |
+| ----------------------- | ------------------------------------------------------------------------ | ----------------------------------------------- |
+| Base image / OS         | `alpine`, `debian`, `ubuntu`, `universal`                                | Minimal starting environment                    |
+| Single language/runtime | `python`, `go`, `java`, `rust`, `dotnet`                                 | Language-specific development                   |
+| Language variant        | `dotnet-fsharp`, `typescript-node`                                       | Same runtime family, different primary language |
+| Language + database     | `go-postgres`, `java-postgres`, `python-mssql`                           | Full-stack development with a database          |
+| Framework + database    | `ruby-rails-postgres`                                                    | Framework-specific full-stack setup             |
+| Tooling role            | `docker-in-docker`, `docker-outside-of-docker`, `kubernetes-helm`        | Operations or infrastructure tooling            |
+| Product/platform        | `azure-functions-python`, `aws-lambda-dotnet`, `sap-cap-typescript-node` | Vendor- or product-specific setup               |
+| Workflow/job            | `github-actions-runner-devcontainer`, `datascience-python-r`             | Specific team workflow                          |
 
 There is no evidence in the spec or official tooling of mandated prefixes such as `lang-`, `stack-`, or `role-`. The community generally prefers self-describing compound names over category prefixes.
 
@@ -230,8 +230,8 @@ This convention is for repository-local configurations, not for published templa
 ## Recommendations for this repository
 
 1. Use kebab-case for every template ID and directory name.
-2. Make the directory name and `id` identical.
-3. Prefer self-describing compound IDs over category prefixes.
-4. Distinguish generic from purpose-driven templates: use `options` for common variants and new templates for distinct stacks or workflows.
-5. Mirror directory names in `test/` and keep the namespace aligned with the repo path.
-6. Keep template collections separate from feature collections. The spec requires different namespaces for templates and features.
+1. Make the directory name and `id` identical.
+1. Prefer self-describing compound IDs over category prefixes.
+1. Distinguish generic from purpose-driven templates: use `options` for common variants and new templates for distinct stacks or workflows.
+1. Mirror directory names in `test/` and keep the namespace aligned with the repo path.
+1. Keep template collections separate from feature collections. The spec requires different namespaces for templates and features.

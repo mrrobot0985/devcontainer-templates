@@ -2,12 +2,12 @@
 
 The repository provides local scripts for validation, documentation generation, registry maintenance, and manual template rendering.
 
-| Script | Path | Purpose |
-| ------ | ---- | ------- |
-| Local CI gate | `scripts/local-ci.sh` | Run the same static checks as CI locally, with optional smoke tests |
-| README generator | `scripts/generate-template-readmes.py` | Create missing `src/<template>/README.md` files from metadata |
-| Registry sync | `scripts/sync-template-registry.ts` | Validate or regenerate the create-devcontainer template registry |
-| Template renderer | `scripts/render-template.sh` | Copy a template and substitute options with their defaults |
+| Script            | Path                                   | Purpose                                                             |
+| ----------------- | -------------------------------------- | ------------------------------------------------------------------- |
+| Local CI gate     | `scripts/local-ci.sh`                  | Run the same static checks as CI locally, with optional smoke tests |
+| README generator  | `scripts/generate-template-readmes.py` | Create missing `src/<template>/README.md` files from metadata       |
+| Registry sync     | `scripts/sync-template-registry.ts`    | Validate or regenerate the create-devcontainer template registry    |
+| Template renderer | `scripts/render-template.sh`           | Copy a template and substitute options with their defaults          |
 
 ## `scripts/local-ci.sh`
 
@@ -29,13 +29,13 @@ Runs the same checks as the `lint` job in `test-pr.yaml`. If Docker and the Dev 
 ### Checks performed
 
 1. Validates `devcontainer-template.json` files are valid JSON.
-2. Verifies every `${templateOption:<key>}` placeholder has a matching option.
-3. Runs `shellcheck` on `src/*/.devcontainer/bootstrap.sh`.
-4. Runs `ruff check scripts/ test/`.
-5. Checks generated template READMEs with `python3 scripts/generate-template-readmes.py --check`.
-6. Checks template registry sync with `npx tsx scripts/sync-template-registry.ts`.
-7. Runs `pytest test/`.
-8. Runs smoke tests if Docker and the devcontainer CLI are available.
+1. Verifies every `${templateOption:<key>}` placeholder has a matching option.
+1. Runs `shellcheck` on `src/*/.devcontainer/bootstrap.sh`.
+1. Runs `ruff check scripts/ test/`.
+1. Checks generated template READMEs with `python3 scripts/generate-template-readmes.py --check`.
+1. Checks template registry sync with `npx tsx scripts/sync-template-registry.ts`.
+1. Runs `pytest test/`.
+1. Runs smoke tests if Docker and the devcontainer CLI are available.
 
 ## `scripts/generate-template-readmes.py`
 
@@ -94,7 +94,7 @@ Example:
 ### Steps
 
 1. Copy `src/<template-id>` to `<destination-dir>`.
-2. Replace `${templateOption:<key>}` placeholders with defaults from `devcontainer-template.json`.
-3. Copy `test/<template-id>/*` into `<destination-dir>/test-project`.
+1. Replace `${templateOption:<key>}` placeholders with defaults from `devcontainer-template.json`.
+1. Copy `test/<template-id>/*` into `<destination-dir>/test-project`.
 
 This script is used by the smoke-test action and for local testing.

@@ -13,20 +13,20 @@ This repository uses git tags to trigger releases. Templates and the npm package
    }
    ```
 
-2. **Commit the change** with a conventional commit message:
+1. **Commit the change** with a conventional commit message:
 
    ```bash
    git add src/ollama-claude-cli/devcontainer-template.json
    git commit -m "feat(ollama-claude-cli): bump version to 0.2.0"
    ```
 
-3. **Create a signed tag** with the template name and version:
+1. **Create a signed tag** with the template name and version:
 
    ```bash
    git tag -s ollama-claude-cli-v0.2.0 -m "release ollama-claude-cli v0.2.0"
    ```
 
-4. **Push the tag** to trigger `release.yaml`:
+1. **Push the tag** to trigger `release.yaml`:
 
    ```bash
    git push origin ollama-claude-cli-v0.2.0
@@ -46,14 +46,14 @@ The `@mrrobot0985/create-devcontainer` helper is released independently with `v*
 
 1. **Update the version** in `packages/create-devcontainer/package.json`.
 
-2. **Commit the change**:
+1. **Commit the change**:
 
    ```bash
    git add packages/create-devcontainer/package.json
    git commit -m "chore(create-devcontainer): bump version to 1.1.0"
    ```
 
-3. **Create and push a signed tag**:
+1. **Create and push a signed tag**:
 
    ```bash
    git tag -s v1.1.0 -m "release create-devcontainer v1.1.0"
@@ -66,14 +66,15 @@ The `create-devcontainer-ci.yaml` workflow runs on tag pushes and publishes the 
 
 A single git tag namespace is shared across all templates and the npm package. Without a prefix, `v1.0.0` is ambiguous — it could apply to any template or the package. Prefixed tags keep release histories independent and readable.
 
-| Artifact | Tag format | Example |
-| -------- | ---------- | ------- |
-| Template | `<template-name>-v<semver>` | `ollama-claude-cli-v0.2.0` |
-| npm package | `v<semver>` or `@<scope>/v<semver>` | `v1.1.0` |
+| Artifact    | Tag format                          | Example                    |
+| ----------- | ----------------------------------- | -------------------------- |
+| Template    | `<template-name>-v<semver>`         | `ollama-claude-cli-v0.2.0` |
+| npm package | `v<semver>` or `@<scope>/v<semver>` | `v1.1.0`                   |
 
 ## Verify a release
 
 - Check the Actions tab for the `Release Dev Container Templates` or `create-devcontainer CI` run.
+
 - Pull the template from GHCR:
 
   ```bash

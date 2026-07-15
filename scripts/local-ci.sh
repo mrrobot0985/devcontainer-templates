@@ -139,6 +139,25 @@ else
     fail "template registry is out of sync. Run: npx tsx scripts/sync-template-registry.ts --write"
 fi
 
+# --- Markdown formatting check ---
+echo ""
+echo "--- Checking markdown formatting ---"
+if command -v uv >/dev/null 2>&1; then
+    if uvx --with mdformat-gfm mdformat --check docs/ packages/create-devcontainer/README.md .github/CONTRIBUTING.md .github/CODE_OF_CONDUCT.md .github/SECURITY.md; then
+        pass "mdformat check"
+    else
+        fail "mdformat check"
+    fi
+elif command -v mdformat >/dev/null 2>&1; then
+    if mdformat --check docs/ packages/create-devcontainer/README.md .github/CONTRIBUTING.md .github/CODE_OF_CONDUCT.md .github/SECURITY.md; then
+        pass "mdformat check"
+    else
+        fail "mdformat check"
+    fi
+else
+    warn "uv or mdformat not installed; skipping markdown format check"
+fi
+
 # --- Python unit tests ---
 echo ""
 echo "--- Running Python unit tests ---"

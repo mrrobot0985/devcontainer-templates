@@ -2,9 +2,9 @@
 
 This collection provides two purpose-driven templates for Ollama-backed Claude environments. Choose the one that matches the scope of your project rather than adding or removing features after applying it.
 
-| Template | Version | Description |
-| -------- | ------- | ----------- |
-| `ollama-claude-cli` | `0.1.0` | Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI. |
+| Template                   | Version | Description                                                                                                                                                                                                                            |
+| -------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ollama-claude-cli`        | `0.1.0` | Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI.                                                                                  |
 | `ollama-claude-cli-studio` | `0.1.0` | Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. |
 
 Both templates require Ollama to be running on the host and accessible at `http://host.docker.internal:11434`.
@@ -27,8 +27,8 @@ A minimal environment for Claude CLI with a pre-configured Ollama backend. Priva
 
 ### Options
 
-| Option | Type | Default | Description |
-| ------ | ---- | ------- | ----------- |
+| Option         | Type   | Default | Description                         |
+| -------------- | ------ | ------- | ----------------------------------- |
 | `imageVariant` | string | `jammy` | Ubuntu version (`jammy` or `focal`) |
 
 ### Usage
@@ -68,8 +68,8 @@ The full studio environment with Ollama backend pre-configured. Combines backend
 
 ### Options
 
-| Option | Type | Default | Description |
-| ------ | ---- | ------- | ----------- |
+| Option         | Type   | Default | Description                         |
+| -------------- | ------ | ------- | ----------------------------------- |
 | `imageVariant` | string | `jammy` | Ubuntu version (`jammy` or `focal`) |
 
 ### Usage

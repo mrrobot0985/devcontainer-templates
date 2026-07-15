@@ -51,7 +51,7 @@ The reference implementation in `devcontainers/cli` handles Compose plus Feature
 
 1. **Build phase**: it reads the merged Compose config for the selected service. If the service has a `build` section, it uses that Dockerfile; otherwise it synthesizes a minimal `FROM <image>` Dockerfile. It then generates a `Dockerfile-with-features` by appending feature installation layers, writes a temporary build override file such as `docker-compose.devcontainer.build-<timestamp>.yml`, and runs `docker compose build` with the original files plus the override.
 
-2. **Runtime phase**: it generates a second override file that overrides the service's image name, entrypoint, command, environment variables, labels, mounts, and GPU settings based on the installed features and `devcontainer.json`. It then runs `docker compose up -d` with both override files.
+1. **Runtime phase**: it generates a second override file that overrides the service's image name, entrypoint, command, environment variables, labels, mounts, and GPU settings based on the installed features and `devcontainer.json`. It then runs `docker compose up -d` with both override files.
 
 Feature installation therefore happens during image build, before the container starts.
 
@@ -106,12 +106,12 @@ You can override the order with `overrideFeatureInstallOrder` in `devcontainer.j
 The general lifecycle is:
 
 1. `initializeCommand` on the host.
-2. Build or create the container image. Features are installed here.
-3. `onCreateCommand` inside the container.
-4. `updateContentCommand` when content changes.
-5. `postCreateCommand` after the container is assigned to the user.
-6. `postStartCommand` each time the container starts.
-7. `postAttachCommand` each time an editor attaches.
+1. Build or create the container image. Features are installed here.
+1. `onCreateCommand` inside the container.
+1. `updateContentCommand` when content changes.
+1. `postCreateCommand` after the container is assigned to the user.
+1. `postStartCommand` each time the container starts.
+1. `postAttachCommand` each time an editor attaches.
 
 Feature-declared lifecycle hooks run in feature installation order before user-defined commands. If any lifecycle script fails, subsequent scripts do not run.
 

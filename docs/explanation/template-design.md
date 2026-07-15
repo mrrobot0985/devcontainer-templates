@@ -17,7 +17,7 @@ The two templates represent the two meaningful entry points for this stack:
 
 1. **`ollama-claude-cli`** — the minimal environment. It gives you Claude CLI, a pre-configured Ollama backend, privacy defaults, and persistent settings. Choose this when you only need the CLI and nothing else.
 
-2. **`ollama-claude-cli-studio`** — the full workspace. It adds Docker-in-Docker, NVIDIA Container Toolkit, lifecycle hooks, behavior rules, skills, and plugins. Choose this when you need the surrounding tooling that supports a complete local Claude workflow.
+1. **`ollama-claude-cli-studio`** — the full workspace. It adds Docker-in-Docker, NVIDIA Container Toolkit, lifecycle hooks, behavior rules, skills, and plugins. Choose this when you need the surrounding tooling that supports a complete local Claude workflow.
 
 The line between them is the Docker daemon. Once you need Docker-in-Docker or GPU tooling inside inner containers, the environment changes enough to justify a separate template rather than a set of options.
 
