@@ -52,6 +52,15 @@ export const templates: readonly Template[] = [
     sourcePath: "src/ollama-claude-cli-compose",
     defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest" },
   },
+  {
+    id: "ollama-claude-cli-python",
+    name: "Ollama + Claude CLI + Python",
+    description: "Devcontainer for Claude CLI with Ollama backend, Python 3.12, uv package manager, and common LLM/AI libraries pre-installed in a project virtual environment. No GPU required. Works on Apple Silicon, Codespaces, and cloud CPU instances. Includes Node.js and GitHub CLI.",
+    ghcrUri:
+      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-python:latest",
+    sourcePath: "src/ollama-claude-cli-python",
+    defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest", pythonVersion: "3.12" },
+  },
 ];
 
 const byId = new Map<string, Template>();
