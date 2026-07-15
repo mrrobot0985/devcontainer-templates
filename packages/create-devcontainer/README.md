@@ -1,3 +1,5 @@
+Full documentation is available in the [template repository docs](../../docs/reference/create-devcontainer-cli.md).
+
 # @mrrobot0985/create-devcontainer
 
 ![npm version](https://img.shields.io/npm/v/@mrrobot0985/create-devcontainer)
