@@ -1,0 +1,20 @@
+name: "Lint workflows"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint-workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Install actionlint"
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash | bash
+          sudo install actionlint /usr/local/bin/
+      - name: "Lint workflow files"
+        run: actionlint .github/workflows/*.yml .github/workflows/*.yaml

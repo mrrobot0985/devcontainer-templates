@@ -14,7 +14,7 @@ for rcfile in "$HOME/.bashrc" "$HOME/.zshrc"; do
     if [ -f "$rcfile" ]; then
         # Idempotent: remove old export, then append current value
         sed -i '/^export OLLAMA_HOST=/d' "$rcfile" 2>/dev/null || true
-        echo "export OLLAMA_HOST="$OLLAMA_HOST"" >> "$rcfile"
+        echo "export OLLAMA_HOST=\"$OLLAMA_HOST\"" >> "$rcfile"
     fi
 done
 

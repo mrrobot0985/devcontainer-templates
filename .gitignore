@@ -9,11 +9,9 @@ package.json
 .devcontainer/
 !src/**/.devcontainer/
 !src/**/.devcontainer/**
-!examples/**/.devcontainer/
-!examples/**/.devcontainer/**
 
 # Test fixtures generated during test runs
-test/fixtures/
+test/fixtures/test-template*/
 
 # Claude Code artifacts
 .claude/
