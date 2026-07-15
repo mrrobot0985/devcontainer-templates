@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Bootstrap — hardware-aware environment detection and autonomous workflow generation.
 # Instead of shipping a static workflow, this script probes the available hardware tier,
-# then asks Claude to generate .act/workflows/bootstrap.yml tailored to the detected
+# then asks Claude to generate .github/workflows/bootstrap.yml tailored to the detected
 # resources. The generated workflow can spawn containerized Claude instances via
 # npx create-devcontainer when Docker-in-Docker is available.
 
@@ -99,7 +99,7 @@ fi
 echo "Bootstrap OK — Claude CLI available"
 
 # --- Generate bootstrap workflow via Claude ---
-WORKFLOW_DIR=".act/workflows"
+WORKFLOW_DIR=".github/workflows"
 WORKFLOW_FILE="$WORKFLOW_DIR/bootstrap.yml"
 
 mkdir -p "$WORKFLOW_DIR"
@@ -110,7 +110,7 @@ echo ""
 
 # Build the prompt for Claude
 PROMPT=$(cat <<'PROMPT_EOF'
-You are generating a GitHub Actions workflow file at .act/workflows/bootstrap.yml for a local nektos/act runner.
+You are generating a GitHub Actions workflow file at .github/workflows/bootstrap.yml for a local nektos/act runner.
 
 Context:
 - This workflow runs inside a devcontainer where Claude Code is pre-installed.

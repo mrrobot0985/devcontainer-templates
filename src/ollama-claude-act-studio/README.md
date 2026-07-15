@@ -8,7 +8,7 @@ When the container starts, the bootstrap script:
 
 1. Configures the Ollama backend connection
 2. **Probes the hardware tier** — GPU, CPU cores, memory, Docker-in-Docker, act
-3. **Asks Claude to generate** `.act/workflows/bootstrap.yml` tailored to the detected resources
+3. **Asks Claude to generate** `.github/workflows/bootstrap.yml` tailored to the detected resources
 4. **Executes the generated workflow** via `act`
 
 The workflow then runs `claude -p` commands to:
@@ -29,7 +29,7 @@ The bootstrap script detects:
 | Docker-in-Docker | `docker version` | Enables `npx create-devcontainer` sub-agent instantiation |
 | act | `act --version` | Determines if the generated workflow can be executed immediately |
 
-If act is not available, the workflow is still generated to `.act/workflows/bootstrap.yml` for manual execution later.
+If act is not available, the workflow is still generated to `.github/workflows/bootstrap.yml` for manual execution later.
 
 ## Includes
 
