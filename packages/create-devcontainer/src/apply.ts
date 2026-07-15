@@ -8,7 +8,7 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 import { detectHostCapabilities } from "./detect.js";
 import { postProcessDevcontainer } from "./postprocess.js";
 import type { Template } from "./templates.js";
@@ -18,6 +18,7 @@ export interface ApplyOptions {
   force: boolean;
   mode: "bundled" | "registry" | "dev";
   name?: string;
+  readme?: boolean;
 }
 
 /**
@@ -89,6 +90,10 @@ function applyFromRegistry(template: Template, options: ApplyOptions): void {
   if (result.stdout) {
     console.log(result.stdout);
   }
+
+  if (options.readme) {
+    generateReadme(options.targetDir, options.name ?? template.name);
+  }
 }
 
 function applyFromSource(template: Template, options: ApplyOptions): void {
@@ -128,6 +133,47 @@ function applyFromSource(template: Template, options: ApplyOptions): void {
     console.log("No NVIDIA GPU detected — removing GPU passthrough.");
   }
   postProcessDevcontainer(options.targetDir, caps);
+
+  if (options.readme) {
+    generateReadme(options.targetDir, options.name ?? template.name);
+  }
+}
+
+function generateReadme(targetDir: string, title: string): void {
+  const readmePath = join(targetDir, "README.md");
+  if (existsSync(readmePath)) {
+    console.log("Overwriting existing README.md with skeleton.");
+  }
+
+  const content = `# ${title}
+
+<!-- Describe the purpose of this project in one or two sentences. -->
+
+## Getting Started
+
+This project uses a devcontainer for a consistent development environment.
+
+\`\`\`bash
+devcontainer up --workspace-folder .
+\`\`\`
+
+## Project Structure
+
+<!-- List key directories and files. -->
+
+- \`.devcontainer/\` — devcontainer configuration
+
+## Development
+
+<!-- Add setup, build, test, and run instructions here. -->
+
+---
+
+_This README was generated as a skeleton. Replace the placeholders with actual project documentation._
+`;
+
+  writeFileSync(readmePath, content, "utf-8");
+  console.log(`Created ${readmePath}`);
 }
 
 /**
