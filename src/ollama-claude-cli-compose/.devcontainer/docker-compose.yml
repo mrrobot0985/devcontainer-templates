@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Uncomment the deploy block below to enable GPU support on NVIDIA hosts.
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    depends_on:
+      ollama:
+        condition: service_healthy
+    # Ensure the devcontainer service shares the same network as Ollama
+    network_mode: service:ollama
+
+volumes:
+  ollama-data:

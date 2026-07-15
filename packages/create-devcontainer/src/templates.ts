@@ -43,6 +43,15 @@ export const templates: readonly Template[] = [
     sourcePath: "src/ollama-claude-cli-cpu",
     defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest" },
   },
+  {
+    id: "ollama-claude-cli-compose",
+    name: "Ollama + Claude CLI (Compose)",
+    description: "Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama required. Includes Claude CLI, privacy defaults, container firewall, and persistent settings. CPU by default; GPU support available via compose file edit. Includes Node.js and GitHub CLI.",
+    ghcrUri:
+      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-compose:latest",
+    sourcePath: "src/ollama-claude-cli-compose",
+    defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest" },
+  },
 ];
 
 const byId = new Map<string, Template>();
