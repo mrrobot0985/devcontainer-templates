@@ -9,6 +9,7 @@ Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privac
 - GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
+- Claude Code Plugins (`claude-code-plugins`) — opt-in via configuration
 
 ## Persistence
 

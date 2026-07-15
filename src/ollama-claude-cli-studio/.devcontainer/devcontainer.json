@@ -36,6 +36,10 @@
 			"installMisc": false,
 			"installPersonal": false
 		},
+		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-plugins:0": {
+			"enableRalphLoop": true,
+			"skipOnFailure": true
+		},
 		"ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {
 			"moby": "false",
 			"dockerDashComposeVersion": "v2"
