@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: rhysd/actionlint@v1
-        with:
-          fail-level: error
+      - name: "Install actionlint"
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash | bash
+          sudo install actionlint /usr/local/bin/
+      - name: "Lint workflow files"
+        run: actionlint .github/workflows/*.yml .github/workflows/*.yaml

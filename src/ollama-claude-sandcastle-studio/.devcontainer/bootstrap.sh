@@ -275,6 +275,7 @@ run_sandcastle_container() {
     local iteration="${3:-1}"
     local branch="${4:-main}"
 
+    # shellcheck disable=SC2034
     local state_file="$RALPH_DIR/state/${ticket_id}.json"
     local log_file="$RALPH_DIR/logs/${ticket_id}-iter${iteration}.log"
     local container_name="sandcastle-${ticket_id}-iter${iteration}"
@@ -467,7 +468,8 @@ Output each ticket as raw markdown, separated by '---TICKET_SEPARATOR---'. No co
     fi
 
     if [ -n "$tickets_raw" ] && echo "$tickets_raw" | grep -q "TICKET_SEPARATOR"; then
-        echo "$tickets_raw" | awk '/TICKET_SEPARATOR/{n++;next} {print > "'$WAYFINDER_DIR'/tickets/0" n "-ticket.md"}'
+        # shellcheck disable=SC2086
+        echo "$tickets_raw" | awk '/TICKET_SEPARATOR/{n++;next} {print > "'"$WAYFINDER_DIR"'/tickets/0" n "-ticket.md"}'
         # Rename to expected names
         mv "$WAYFINDER_DIR/tickets/01-ticket.md" "$WAYFINDER_DIR/tickets/01-destination.md" 2>/dev/null || true
         mv "$WAYFINDER_DIR/tickets/02-ticket.md" "$WAYFINDER_DIR/tickets/02-map-frontier.md" 2>/dev/null || true
@@ -653,7 +655,8 @@ phase_afk() {
     done
     echo ""
 
-    local branch="ralph/afk-$(date +%s)"
+    local branch
+    branch="ralph/afk-$(date +%s)"
     git checkout -b "$branch" 2>/dev/null || true
 
     for ticket_id in "${afk_tickets[@]}"; do
@@ -771,6 +774,8 @@ phase_status() {
     echo "Hardware:"
     echo "  GPU:      ${GPU_NAME:-unknown}"
     echo "  VRAM:     ${VRAM_GB}GB"
+    echo "  CPU:      ${CPU_CORES:-unknown}"
+    echo "  Memory:   ${MEM_GB:-unknown}GB"
     echo "  Tier:     $HARDWARE_TIER"
     echo "  Docker:   $DOCKER_AVAILABLE"
     echo "  Ollama:   $OLLAMA_STATUS"
