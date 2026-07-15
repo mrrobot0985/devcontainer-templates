@@ -101,6 +101,9 @@ jobs:
       - name: Check template registry sync
         run: npx tsx scripts/sync-template-registry.ts
 
+      - name: Validate template structure
+        run: python scripts/validate-templates.py
+
       - name: Run Python unit tests
         run: pytest test/
 
