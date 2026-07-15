@@ -123,10 +123,6 @@ jobs:
               - 'src/ollama-claude-cli-studio/**'
               - 'test/ollama-claude-cli-studio/**'
               - '.github/actions/smoke-test/**'
-            ollama-claude-sandcastle-studio:
-              - 'src/ollama-claude-sandcastle-studio/**'
-              - 'test/ollama-claude-sandcastle-studio/**'
-              - '.github/actions/smoke-test/**'
 
   test:
     needs: [lint, detect-changes]

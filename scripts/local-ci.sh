@@ -156,7 +156,7 @@ fi
 echo ""
 echo "--- Optional smoke tests ---"
 if command -v docker > /dev/null 2>&1 && docker info > /dev/null 2>&1 && command -v devcontainer > /dev/null 2>&1; then
-    for template_id in ollama-claude-cli ollama-claude-cli-studio ollama-claude-sandcastle-studio; do
+    for template_id in ollama-claude-cli ollama-claude-cli-studio; do
         if [ -d "src/$template_id" ]; then
             echo "Running smoke test for $template_id..."
             if ./.github/actions/smoke-test/build.sh "$template_id" && ./.github/actions/smoke-test/test.sh "$template_id"; then
