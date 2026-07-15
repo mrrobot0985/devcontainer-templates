@@ -517,11 +517,15 @@ EOF
         echo "Generated fallback tickets"
     fi
 
-    # Copy sandcastle scripts to workspace
+    # Copy sandcastle scripts to workspace (skip when source == dest, e.g. rendered container)
     mkdir -p "$WORKSPACE_DIR/.devcontainer/sandcastle"
-    cp "$SCRIPT_DIR/sandcastle/runner.mjs" "$WORKSPACE_DIR/.devcontainer/sandcastle/runner.mjs"
-    cp "$SCRIPT_DIR/sandcastle/validate-branch.sh" "$WORKSPACE_DIR/.devcontainer/sandcastle/validate-branch.sh"
-    cp "$SCRIPT_DIR/sandcastle/ralph-loop.sh" "$WORKSPACE_DIR/.devcontainer/sandcastle/ralph-loop.sh"
+    for f in runner.mjs validate-branch.sh ralph-loop.sh; do
+        src="$SCRIPT_DIR/sandcastle/$f"
+        dst="$WORKSPACE_DIR/.devcontainer/sandcastle/$f"
+        if [ "$src" != "$dst" ] && [ -f "$src" ]; then
+            cp "$src" "$dst"
+        fi
+    done
     chmod +x "$WORKSPACE_DIR/.devcontainer/sandcastle/"*.sh
 
     # Set up ralph state directory
