@@ -12,6 +12,7 @@ Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, 
 - Privacy defaults (`claude-code-privacy`)
 - Behavior rules (`claude-code-rules`)
 - Skills library (`claude-code-skills`)
+- Claude Code Plugins (`claude-code-plugins`) with Ralph Loop pre-enabled
 - Docker-in-Docker (`docker-in-docker:4.0.0`)
 - NVIDIA Container Toolkit (`nvidia-container-toolkit:0`)
 

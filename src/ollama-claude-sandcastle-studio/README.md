@@ -123,6 +123,7 @@ bash .devcontainer/bootstrap.sh status  # Show current phase and tickets
 
 - Node.js 20
 - Claude CLI (via official Anthropic feature)
+- Claude Code Plugins (`claude-code-plugins`) with Ralph Loop and Workflows pre-enabled
 - GitHub CLI (`github-cli`)
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
