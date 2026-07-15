@@ -1,0 +1,106 @@
+name: Validate Branch
+on:
+  push:
+    branches-ignore:
+      - main
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect branch type
+        id: branch
+        run: |
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+          if echo "$BRANCH" | grep -qE '^feat/'; then
+            echo "type=feat" >> "$GITHUB_OUTPUT"
+          elif echo "$BRANCH" | grep -qE '^fix/'; then
+            echo "type=fix" >> "$GITHUB_OUTPUT"
+          elif echo "$BRANCH" | grep -qE '^chore/'; then
+            echo "type=chore" >> "$GITHUB_OUTPUT"
+          elif echo "$BRANCH" | grep -qE '^docs/'; then
+            echo "type=docs" >> "$GITHUB_OUTPUT"
+          elif echo "$BRANCH" | grep -qE '^ci/'; then
+            echo "type=ci" >> "$GITHUB_OUTPUT"
+          elif echo "$BRANCH" | grep -qE '^refactor/'; then
+            echo "type=refactor" >> "$GITHUB_OUTPUT"
+          elif echo "$BRANCH" | grep -qE '^test/'; then
+            echo "type=test" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=unknown" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate branch naming
+        run: |
+          TYPE="${{ steps.branch.outputs.type }}"
+          if [ "$TYPE" = "unknown" ]; then
+            echo "ERROR: Branch '${{ steps.branch.outputs.branch }}' does not follow conventional naming."
+            echo "Expected: feat/*, fix/*, chore/*, docs/*, ci/*, refactor/*, test/*"
+            exit 1
+          fi
+          echo "Branch type: $TYPE"
+
+      - name: Validate commit messages
+        run: |
+          TYPE="${{ steps.branch.outputs.type }}"
+          # Allow merge commits and version bumps
+          BAD_COMMITS=$(git log origin/main..HEAD --pretty=format:"%s" | grep -vE '^(feat|fix|docs|style|refactor|test|chore|ci|build|perf)(\(.+\))?!?: .+' | grep -v '^Merge' | grep -v '^v[0-9]+\.' | head -20 || true)
+          if [ -n "$BAD_COMMITS" ]; then
+            echo "ERROR: Non-conventional commits found:"
+            echo "$BAD_COMMITS"
+            exit 1
+          fi
+          echo "All commits follow conventional format."
+
+      - name: Validate feat/* requirements
+        if: steps.branch.outputs.type == 'feat'
+        run: |
+          # feat branches must have a spec or prototype referenced
+          if [ ! -f "SPEC.md" ] && [ ! -f "PROTOTYPE.md" ] && [ ! -d "docs/adr" ]; then
+            echo "WARNING: feat/* branches should include a SPEC.md, PROTOTYPE.md, or docs/adr/ decision record."
+          fi
+          echo "feat/* validation passed."
+
+      - name: Validate fix/* requirements
+        if: steps.branch.outputs.type == 'fix'
+        run: |
+          # fix branches should reference a regression test or root cause
+          if ! git diff origin/main..HEAD --name-only | grep -qE '(test|spec)'; then
+            echo "WARNING: fix/* branches should include a regression test or updated test coverage."
+          fi
+          echo "fix/* validation passed."
+
+      - name: Validate docs/* requirements
+        if: steps.branch.outputs.type == 'docs'
+        run: |
+          DOC_FILES=$(git diff origin/main..HEAD --name-only | grep -E '\.(md|rst|txt)$' | wc -l)
+          if [ "$DOC_FILES" -eq 0 ]; then
+            echo "WARNING: docs/* branches should modify documentation files."
+          fi
+          echo "docs/* validation passed."
+
+      - name: Run project-specific checks
+        run: |
+          TYPE="${{ steps.branch.outputs.type }}"
+          echo "Running $TYPE-specific quality gates..."
+
+          # Lint: if a linter config exists, run it
+          if [ -f "package.json" ] && command -v npm >/dev/null 2>&1; then
+            npm run lint --if-present || true
+          fi
+
+          # Format check: if a formatter config exists
+          if [ -f ".prettierrc" ] || [ -f "pyproject.toml" ] || [ -f "setup.cfg" ]; then
+            if command -v black >/dev/null 2>&1; then
+              black --check . || true
+            fi
+          fi
+
+          echo "Quality gate complete for $TYPE."
