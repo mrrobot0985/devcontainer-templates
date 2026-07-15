@@ -12,11 +12,12 @@ Published namespace:
 ghcr.io/mrrobot0985/devcontainer-templates/<id>:<version>
 ```
 
-This repository includes 2 templates:
+This repository includes 3 templates:
 
 | Template                   | Description                                                                                                                                                                                                               | README                                           |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | `ollama-claude-cli`        | Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings.                                                                                  | [README](src/ollama-claude-cli/README.md)        |
+| `ollama-claude-cli-cpu`  | CPU-only devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. No GPU required. Works on Apple Silicon, GitHub Codespaces, and cloud CPU instances. | [README](src/ollama-claude-cli-cpu/README.md)    |
 | `ollama-claude-cli-studio` | Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, container firewall, lifecycle hooks, behavior rules, skills library, and persistent settings. | [README](src/ollama-claude-cli-studio/README.md) |
 
 Install templates into any workspace with the [`create-devcontainer`](docs/reference/create-devcontainer-cli.md) npm helper:

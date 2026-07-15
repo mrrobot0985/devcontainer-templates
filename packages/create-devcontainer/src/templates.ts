@@ -34,6 +34,15 @@ export const templates: readonly Template[] = [
     sourcePath: "src/ollama-claude-cli-studio",
     defaults: { imageVariant: "jammy" },
   },
+  {
+    id: "ollama-claude-cli-cpu",
+    name: "Ollama + Claude CLI (CPU)",
+    description: "CPU-only devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. No GPU required. Works on Apple Silicon, GitHub Codespaces, and cloud CPU instances. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+    ghcrUri:
+      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-cpu:latest",
+    sourcePath: "src/ollama-claude-cli-cpu",
+    defaults: { imageVariant: "jammy" },
+  },
 ];
 
 const byId = new Map<string, Template>();
