@@ -4,19 +4,19 @@ Devcontainer for Claude CLI with Docker-based Sandcastle AFK task isolation. Har
 
 ## What it does
 
-When the container starts, the bootstrap script runs through a **lifecycle phase machine**:
+When the container starts, `bootstrap.sh` runs as a **long-lived daemon** through a lifecycle phase machine:
 
 1. **Hardware detection** — probes GPU VRAM, CPU cores, memory, Docker
 2. **Model selection** — maps detected VRAM to local Ollama models
-3. **Init** — seeds a wayfinder map from `README.md`, copies sandcastle scripts, prints HITL instructions
-4. **HITL** — human runs `/grilling` and `/wayfinder` to define the destination and chart tickets
-5. **AFK** — ralph-loop iterations in Docker-isolated sandboxes process research and task tickets autonomously
+3. **Init** — uses `claude -p` to generate a wayfinder map from `README.md` (which may be a skeleton), creates initial tickets, copies sandcastle scripts
+4. **HITL** — **BLOCKING**. The script loops, printing reminders every 30 seconds, until the human completes grilling and writes `$HOME/.claude/bootstrap-state/wayfinder/handoff.md`
+5. **AFK** — **CONTINUOUS**. A never-ending daemon loop processes AFK tickets in Docker sandboxes, sleeps 60 seconds, and repeats. The container only stops when self-improvement work is exhausted.
 6. **Verify** — branch-type bound sandcastle scripts validate commits, specs, and quality gates
 
 **Technological separation:**
 
-- **HITL** runs directly in the devcontainer (interactive claude sessions).
-- **AFK** runs in Docker-isolated sandboxes, one container per ticket, bind-mounting the workspace.
+- **HITL** runs directly in the devcontainer (interactive claude sessions). The bootstrap script blocks until the human is done.
+- **AFK** runs in Docker-isolated sandboxes, one container per ticket, bind-mounting the workspace. The bootstrap script runs this in a continuous loop.
 
 All sandcastle scripts are deterministic templates shipped with the template.
 
@@ -27,44 +27,60 @@ All sandcastle scripts are deterministic templates shipped with the template.
 Runs automatically on first container start. It:
 
 - Detects hardware and selects Ollama models
-- Creates `$HOME/.claude/bootstrap-state/wayfinder/map.md` seeded from `README.md`
+- Uses `claude -p` with the Ollama backend to read `README.md` and generate a structured wayfinder map — if the README is a skeleton, the map notes that the purpose needs human definition
+- Uses `claude -p` again to generate 3 initial tickets (destination, frontier, research)
+- Falls back to deterministic templates if `claude -p` is unavailable
+- Copies sandcastle scripts to `.devcontainer/sandcastle/`
+- Installs a shell hook that reminds the user of HITL requirements on every new shell
 - Creates initial tickets: destination definition, frontier mapping, research
 - Copies sandcastle scripts to `.devcontainer/sandcastle/`
 - Sets up `.ralph/` state directory for loop tracking
 
 ### HITL (Human-In-The-Loop)
 
-After init, the script pauses and instructs the human to:
+After init, the bootstrap script **blocks** and prints a prominent banner every 30 seconds:
 
-```bash
-claude
-# Inside Claude:
-/grilling    # Define the destination
-/wayfinder   # Chart the map and tickets
+```
+╔════════════════════════════════════════════════════════════════╗
+║  HITL REQUIRED — Human-In-The-Loop                           ║
+║                                                                ║
+║  The wayfinder map has been seeded from README.md.             ║
+║  The README is a skeleton — you must define the purpose.       ║
+║                                                                ║
+║  REQUIRED ACTIONS:                                             ║
+║    1. Run:  claude                                             ║
+║    2. Use:  /grilling                                          ║
+║       Grill on the destination until sharp.                    ║
+║    3. Use:  /wayfinder                                         ║
+║       Chart the map and create frontier tickets.               ║
+║                                                                ║
+║  When the grilling session ends, write a handoff:              ║
+║    echo '# Handoff' > $HOME/.claude/bootstrap-state/wayfinder/handoff.md
+╚════════════════════════════════════════════════════════════════╝
 ```
 
-When grilling ends, write a handoff:
+The script **does not proceed** until `handoff.md` is written. Every new shell in the container also shows this reminder via a `.bashrc` hook.
 
-```bash
-echo '# Handoff' > $HOME/.claude/bootstrap-state/wayfinder/handoff.md
-```
-
-Then trigger AFK:
-
-```bash
-bash .devcontainer/bootstrap.sh afk
-```
+When `handoff.md` appears, the script **auto-transitions** to AFK mode — no manual command needed.
 
 ### AFK (Away-From-Keyboard)
 
-Runs ralph-loop iterations for open AFK tickets (`wayfinder:research`, `wayfinder:task`):
+Runs as a **continuous daemon** after HITL completes. The script never exits — it loops forever, processing AFK tickets and sleeping:
 
+- Each AFK cycle finds open tickets (`wayfinder:research`, `wayfinder:task`)
 - Each ticket gets an isolated git branch (`ralph/<ticket>`)
 - A Docker container spins up with the workspace bind-mounted, runs the sandcastle runner, verifies, commits, and exits
 - The container uses `mcr.microsoft.com/devcontainers/base:bookworm` as the base image
+- After each batch, branch validation runs via sandcastle
+- If no tickets remain, the daemon sleeps 60 seconds and checks again
 - State lives in `.ralph/state/*.json`; logs in `.ralph/logs/`
 
-Stop conditions:
+The container only stops when:
+
+- You stop the container explicitly
+- No open tickets exist AND no self-improvement opportunities are detected
+
+Stop conditions per ticket:
 
 | Signal | Meaning |
 |--------|---------|
