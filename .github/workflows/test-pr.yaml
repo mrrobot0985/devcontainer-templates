@@ -129,6 +129,14 @@ jobs:
               - 'src/ollama-claude-cli-studio/**'
               - 'test/ollama-claude-cli-studio/**'
               - '.github/actions/smoke-test/**'
+            ollama-claude-cli-cpu:
+              - 'src/ollama-claude-cli-cpu/**'
+              - 'test/ollama-claude-cli-cpu/**'
+              - '.github/actions/smoke-test/**'
+            ollama-claude-cli-compose:
+              - 'src/ollama-claude-cli-compose/**'
+              - 'test/ollama-claude-cli-compose/**'
+              - '.github/actions/smoke-test/**'
 
   test:
     needs: [lint, detect-changes]
