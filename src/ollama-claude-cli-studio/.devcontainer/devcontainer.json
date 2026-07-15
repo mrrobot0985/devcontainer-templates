@@ -13,7 +13,6 @@
 			"version": "20"
 		},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-backend:0": {
-			"baseUrl": "http://host.docker.internal:11434",
 			"authToken": "ollama",
 			"models": "haiku:minimax-m2.5:cloud,opus:glm-5.2:cloud,sonnet:kimi-k2.6:cloud,subagent:kimi-k2.7-code:cloud",
 			"logLevel": "error"
@@ -42,7 +41,6 @@
 			"dockerDashComposeVersion": "v2"
 		},
 		"ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:0": {
-			"enable": false,
 			"defaultRuntime": false,
 			"restartDockerd": true
 		}
