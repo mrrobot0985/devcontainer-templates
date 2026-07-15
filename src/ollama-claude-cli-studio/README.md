@@ -15,6 +15,7 @@ Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, 
 - Claude Code Plugins (`claude-code-plugins`) with Ralph Loop pre-enabled
 - Docker-in-Docker (`docker-in-docker:4.0.0`)
 - NVIDIA Container Toolkit (`nvidia-container-toolkit:0`)
+- Container firewall (`container-firewall:0`) — whitelist outbound traffic with `claude-code` preset
 
 ## Persistence
 

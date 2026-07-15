@@ -10,6 +10,7 @@ Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privac
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
 - Claude Code Plugins (`claude-code-plugins`) — opt-in via configuration
+- Container firewall (`container-firewall`) — whitelist outbound traffic with `claude-code` preset
 
 ## Persistence
 
