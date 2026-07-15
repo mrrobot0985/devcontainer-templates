@@ -29,9 +29,7 @@
     "dev": "tsx src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
-    "lint": "echo 'lint: add ruff/eslint as needed'",
-    "format": "echo 'format: add prettier as needed'"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@devcontainers/cli": "^0.87.0",

@@ -27,6 +27,7 @@ Each template is a distinct environment for a specific scenario. Choose the one 
 | -------- | ------- | ----------- |
 | `ollama-claude-cli` | ![ollama-claude-cli version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-cli/devcontainer-template.json&label=&query=$.version&color=blue) | Minimal — Claude CLI with pre-configured Ollama backend. Privacy-hardened by default. GPU passthrough enabled. |
 | `ollama-claude-cli-studio` | ![ollama-claude-cli-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-cli-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Full workspace — backend, hooks, privacy, rules, and skills. GPU passthrough enabled. |
+| `ollama-claude-sandcastle-studio` | ![ollama-claude-sandcastle-studio version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/mrrobot0985/devcontainer-templates/main/src/ollama-claude-sandcastle-studio/devcontainer-template.json&label=&query=$.version&color=blue) | Isolated AFK task execution with Docker sandcastles, HITL grilling, and hardware-aware model selection. |
 
 Published to GitHub Container Registry:
 
@@ -102,6 +103,10 @@ Run the local smoke test before pushing:
 # Studio
 ./.github/actions/smoke-test/build.sh ollama-claude-cli-studio
 ./.github/actions/smoke-test/test.sh ollama-claude-cli-studio
+
+# Sandcastle (isolated AFK tasks)
+./.github/actions/smoke-test/build.sh ollama-claude-sandcastle-studio
+./.github/actions/smoke-test/test.sh ollama-claude-sandcastle-studio
 ```
 
 ## Development

@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 
-import { existsSync, mkdirSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { program } from "commander";
 import { applyTemplate } from "./apply.js";
 import { getTemplate, listTemplates } from "./templates.js";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const packageJsonPath = resolve(__dirname, "..", "package.json");
+const packageVersion = JSON.parse(readFileSync(packageJsonPath, "utf-8")).version;
+
 program
   .name("create-devcontainer")
   .description("Instantiate a devcontainer template into a workspace")
-  .version("1.0.0")
+  .version(packageVersion)
   .argument("[template]", "Template ID to apply")
   .argument("[target-folder]", "Target workspace folder (defaults to .)", ".")
   .option(

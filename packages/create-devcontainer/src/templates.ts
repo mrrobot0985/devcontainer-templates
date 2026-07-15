@@ -37,7 +37,7 @@ export const templates: readonly Template[] = [
   {
     id: "ollama-claude-sandcastle-studio",
     name: "Ollama + Claude CLI + Sandcastle Studio",
-    description: "Devcontainer for Claude CLI with Docker-based Sandcastle AFK task isolation. Hardware-aware model selection, HITL grilling sessions, and autonomous ralph loops in isolated containers. Requires Ollama to be running on the host.",
+    description: "Devcontainer for Claude CLI with Docker-based Sandcastle AFK task isolation. Hardware-aware model selection, HITL grilling sessions, and autonomous ralph loops in isolated containers. Requires Ollama on the host.",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-sandcastle-studio:latest",
     sourcePath: "src/ollama-claude-sandcastle-studio",

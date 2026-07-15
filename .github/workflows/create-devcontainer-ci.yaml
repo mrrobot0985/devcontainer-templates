@@ -25,7 +25,7 @@ defaults:
     working-directory: packages/create-devcontainer
 
 jobs:
-  lint-and-test:
+  typecheck-test-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,9 +37,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: npm install
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm ci
 
       - name: Type check
         run: npm run typecheck
@@ -54,7 +52,7 @@ jobs:
         run: npm run build
 
   publish:
-    needs: lint-and-test
+    needs: typecheck-test-build
     if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     permissions:
@@ -70,7 +68,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
