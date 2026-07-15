@@ -13,8 +13,13 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const CLAUDE_TIMEOUT_MS = 300000;
+const REVIEW_TIMEOUT_MS = 300000;
+const MAX_IMPROVEMENTS = 20;
 
 function parseArgs() {
   const args = process.argv.slice(2);
@@ -42,6 +47,263 @@ function exec(cmd, args, opts = {}) {
 
 function ensureDir(path) {
   if (!existsSync(path)) mkdirSync(path, { recursive: true });
+}
+
+function claudeAvailable() {
+  const result = spawnSync("claude", ["--help"], {
+    stdio: "ignore",
+    encoding: "utf-8",
+    timeout: 10000,
+  });
+  return result.error === undefined && result.status === 0;
+}
+
+function spawnHeadlessClaude(ws, prompt, opts = {}) {
+  if (!claudeAvailable()) {
+    return { ok: false, status: "blocked", reason: "claude CLI not available" };
+  }
+
+  const args = ["-p", "--output-format", "text", prompt];
+  const result = spawnSync("claude", args, {
+    cwd: ws,
+    stdio: ["ignore", "pipe", "pipe"],
+    encoding: "utf-8",
+    timeout: opts.timeout || CLAUDE_TIMEOUT_MS,
+    env: { ...process.env, CLAUDE_CODE_SIMPLE: "1", ...(opts.env || {}) },
+  });
+
+  if (result.error) {
+    return { ok: false, status: "blocked", reason: `failed to spawn claude: ${result.error.message}` };
+  }
+
+  return {
+    ok: result.status === 0,
+    status: result.status === 0 ? "ok" : "blocked",
+    exitCode: result.status,
+    stdout: result.stdout || "",
+    stderr: result.stderr || "",
+  };
+}
+
+function readTicketDependencies(ws, ticket) {
+  const deps = { dependsOn: [], dependents: [], blocking: [] };
+  const stateDir = join(ws, ".ralph", "state");
+  if (!existsSync(stateDir)) return deps;
+
+  const files = readdirSync(stateDir).filter((f) => f.endsWith(".json"));
+  let currentState = null;
+
+  for (const file of files) {
+    try {
+      const state = JSON.parse(readFileSync(join(stateDir, file), "utf-8"));
+      if (state.ticket === ticket) {
+        currentState = state;
+      } else if (
+        state.dependsOn === ticket ||
+        (Array.isArray(state.dependsOn) && state.dependsOn.includes(ticket))
+      ) {
+        deps.dependents.push({ ticket: state.ticket, status: state.status });
+      }
+    } catch {
+      // Ignore malformed state files.
+    }
+  }
+
+  if (currentState?.dependsOn) {
+    const required = Array.isArray(currentState.dependsOn)
+      ? currentState.dependsOn
+      : [currentState.dependsOn];
+    for (const depTicket of required) {
+      const depFile = join(stateDir, `${depTicket}.json`);
+      let depStatus = "missing";
+      if (existsSync(depFile)) {
+        try {
+          depStatus = JSON.parse(readFileSync(depFile, "utf-8")).status || "open";
+        } catch {
+          depStatus = "unreadable";
+        }
+      }
+      deps.dependsOn.push({ ticket: depTicket, status: depStatus });
+      if (!["complete", "pending-review"].includes(depStatus)) {
+        deps.blocking.push(depTicket);
+      }
+    }
+  }
+
+  return deps;
+}
+
+function buildReviewPrompt(perspective, ws, task) {
+  const prompts = {
+    architecture: `You are an architecture reviewer in workspace ${ws}. Task: ${task}
+Review the changes for over-engineering, speculative abstractions, middle-man functions, and proper file locations.
+Report concise findings as a short markdown list. If no issues, say "PASS".`,
+    correctness: `You are a correctness reviewer in workspace ${ws}. Task: ${task}
+Check syntax, run relevant tests or lint commands, and verify the change does what is asked.
+Report concise findings as a short markdown list. If no issues, say "PASS".`,
+    safety: `You are a safety reviewer in workspace ${ws}. Task: ${task}
+Scan for committed secrets, destructive operations without human-approval markers, and AI attribution markers.
+Report concise findings as a short markdown list. If no issues, say "PASS".`,
+  };
+  return prompts[perspective] || prompts.correctness;
+}
+
+function runReviewPerspectives(ws, ticket, task) {
+  const perspectives = ["architecture", "correctness", "safety"];
+  const reportDir = join(ws, ".ralph", "reports");
+  ensureDir(reportDir);
+  const outputs = [];
+  const deadline = Date.now() + REVIEW_TIMEOUT_MS;
+
+  for (const perspective of perspectives) {
+    const remaining = Math.max(1000, deadline - Date.now());
+    const scriptPath = join(ws, "scripts", `review-${perspective}.sh`);
+    let result;
+    if (existsSync(scriptPath)) {
+      result = spawnSync("bash", [scriptPath, `ralph/${ticket}`, "main"], {
+        cwd: ws,
+        stdio: ["ignore", "pipe", "pipe"],
+        encoding: "utf-8",
+        timeout: remaining,
+        env: {
+          ...process.env,
+          REPO_DIR: ws,
+          OUT_DIR: reportDir,
+          TARGET_REF: `ralph/${ticket}`,
+          BASE_REF: "main",
+        },
+      });
+    } else {
+      const prompt = buildReviewPrompt(perspective, ws, task);
+      result = spawnSync("claude", ["-p", "--output-format", "text", prompt], {
+        cwd: ws,
+        stdio: ["ignore", "pipe", "pipe"],
+        encoding: "utf-8",
+        timeout: remaining,
+        env: { ...process.env, CLAUDE_CODE_SIMPLE: "1" },
+      });
+    }
+    outputs.push({
+      type: "review",
+      perspective,
+      ok: result.status === 0 && !result.error,
+      exitCode: result.status,
+      error: result.error?.message,
+      stdout: result.stdout || "",
+      stderr: result.stderr || "",
+    });
+  }
+
+  return { status: outputs.every((o) => o.ok) ? "ok" : "blocked", outputs };
+}
+
+function collectFailureSuggestions(ws) {
+  const logDir = join(ws, ".ralph", "logs");
+  if (!existsSync(logDir)) return [];
+
+  const seen = new Set();
+  const suggestions = [];
+  const files = readdirSync(logDir).filter((f) => f.endsWith(".log"));
+
+  for (const file of files) {
+    try {
+      const content = readFileSync(join(logDir, file), "utf-8");
+      for (const line of content.split("\n")) {
+        if (!line.trim()) continue;
+        try {
+          const entry = JSON.parse(line);
+          if (entry.status === "blocked" || entry.verifyResult?.ok === false) {
+            const reason =
+              entry.taskResult?.reason ||
+              entry.verifyResult?.checks?.find((c) => !c.ok)?.detail ||
+              "verification or task failed";
+            const key = `${entry.ticket}:${reason}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              suggestions.push({ file, ticket: entry.ticket, reason });
+            }
+          }
+        } catch {
+          // Ignore non-JSON log lines.
+        }
+      }
+    } catch {
+      // Ignore unreadable log files.
+    }
+  }
+
+  return suggestions.slice(-MAX_IMPROVEMENTS);
+}
+
+function appendImprovementSuggestions(ws, suggestions) {
+  if (suggestions.length === 0) return;
+
+  const thisPath = fileURLToPath(import.meta.url);
+  if (!existsSync(thisPath)) return;
+
+  let content = readFileSync(thisPath, "utf-8");
+  const markerStart = "// == SELF-EVOLUTION IMPROVEMENTS ==";
+  const markerEnd = "// == END SELF-EVOLUTION IMPROVEMENTS ==";
+  const now = new Date().toISOString();
+  const newLines = suggestions.map((s) => `// - ${now} [${s.ticket}] ${s.reason}`).join("\n");
+
+  if (content.includes(markerStart) && content.includes(markerEnd)) {
+    content = content.replace(markerEnd, `${newLines}\n${markerEnd}`);
+  } else {
+    content += `\n\n${markerStart}\n// Failure-derived suggestions for runner.mjs:\n${newLines}\n${markerEnd}\n`;
+  }
+
+  // Cap total suggestions to avoid unbounded growth.
+  const startIdx = content.indexOf(markerStart);
+  const endIdx = content.indexOf(markerEnd);
+  if (startIdx !== -1 && endIdx !== -1) {
+    const section = content.slice(startIdx, endIdx + markerEnd.length);
+    const suggestionLines = section.split("\n").filter((l) => l.trim().startsWith("// -"));
+    if (suggestionLines.length > MAX_IMPROVEMENTS) {
+      const kept = suggestionLines.slice(-MAX_IMPROVEMENTS);
+      const headerEnd = content.indexOf("\n", content.indexOf("\n", startIdx) + 1) + 1;
+      const header = content.slice(startIdx, headerEnd);
+      const newSection = `${header}${kept.join("\n")}\n${markerEnd}`;
+      content = content.slice(0, startIdx) + newSection + content.slice(endIdx + markerEnd.length);
+    }
+  }
+
+  writeFileSync(thisPath, content);
+}
+
+function buildImplementationPrompt(ws, task, deps) {
+  const blocking = deps.blocking.length > 0 ? deps.blocking.join(", ") : "none";
+  const dependents = deps.dependents.map((d) => `${d.ticket} (${d.status})`).join(", ") || "none";
+
+  return `You are an autonomous implementation agent in a deterministic sandcastle.
+Workspace: ${ws}
+Task: ${task}
+Blocking dependencies: ${blocking}
+Dependents waiting: ${dependents}
+
+Instructions:
+1. Examine the workspace and understand the task.
+2. Implement the requested change using available tools.
+3. Add or update tests covering the change.
+4. Follow conventional commits and project coding standards.
+5. Avoid speculative abstractions, future-proofing, or unrelated changes.
+6. Report the outcome: files changed, tests run, and any blockers.
+
+If you cannot complete the task deterministically, explain why.`;
+}
+
+function buildGenericPrompt(ws, task) {
+  return `You are an autonomous task agent in a deterministic sandcastle.
+Workspace: ${ws}
+Task: ${task}
+
+Instructions:
+1. Examine the workspace.
+2. Attempt to complete the task deterministically.
+3. Prefer existing project scripts and tools.
+4. Report the outcome and any blockers.
+
+If the task requires human judgment or live systems, say BLOCKED and explain why.`;
 }
 
 function main() {
@@ -104,7 +366,7 @@ function main() {
     taskResult = runSpecTask(ws, task);
   } else if (taskLower.includes("implement") || taskLower.includes("build")) {
     console.log("Task type: IMPLEMENT (AFK)");
-    taskResult = runImplementTask(ws, task);
+    taskResult = runImplementTask(ws, ticket, task);
   } else if (taskLower.includes("lint") || taskLower.includes("format")) {
     console.log("Task type: QUALITY (AFK)");
     taskResult = runQualityTask(ws, task);
@@ -194,11 +456,35 @@ function runSpecTask(ws, task) {
   return { status: "ok", outputs };
 }
 
-function runImplementTask(ws, task) {
-  // Implement: placeholder — in a real sandcastle setup this would invoke the agent
+function runImplementTask(ws, ticket, task) {
+  // Implement: read dependencies, run headless Claude, then multi-perspective review.
   console.log(`Implementation task: ${task}`);
-  console.log("  NOTE: Implementation requires an agent provider. Marking as blocked for human review.");
-  return { status: "blocked", reason: "Requires agent provider for implementation." };
+
+  const deps = readTicketDependencies(ws, ticket);
+  if (deps.blocking.length > 0) {
+    return { status: "blocked", reason: `waiting for dependencies: ${deps.blocking.join(", ")}` };
+  }
+
+  const prompt = buildImplementationPrompt(ws, task, deps);
+  const result = spawnHeadlessClaude(ws, prompt);
+  if (!result.ok) {
+    return { status: "blocked", reason: result.reason || "claude execution failed", claudeOutput: result };
+  }
+
+  console.log("  Claude output:");
+  console.log(result.stdout?.split("\n").map((l) => `    ${l}`).join("\n") || "    (no output)");
+
+  const reviewResult = runReviewPerspectives(ws, ticket, task);
+  const reviewFailed = reviewResult.outputs.some((o) => !o.ok);
+
+  const suggestions = collectFailureSuggestions(ws);
+  appendImprovementSuggestions(ws, suggestions);
+
+  if (reviewFailed) {
+    return { status: "blocked", reason: "multi-perspective review failed", claudeOutput: result, review: reviewResult };
+  }
+
+  return { status: "ok", outputs: [{ type: "claude", ...result }, { type: "review", ...reviewResult }] };
 }
 
 function runQualityTask(ws, task) {
@@ -221,9 +507,25 @@ function runQualityTask(ws, task) {
 }
 
 function runGenericTask(ws, task) {
+  // Generic: try headless Claude execution before marking blocked.
   console.log(`Generic task: ${task}`);
-  console.log("  No specific runner matched. Human review required.");
-  return { status: "blocked", reason: "No deterministic runner for this task type." };
+
+  if (!claudeAvailable()) {
+    console.log("  claude CLI not available. Marking blocked for human review.");
+    return { status: "blocked", reason: "No deterministic runner for this task type and claude CLI is unavailable." };
+  }
+
+  const prompt = buildGenericPrompt(ws, task);
+  const result = spawnHeadlessClaude(ws, prompt);
+  if (!result.ok) {
+    console.log(`  Headless claude failed: ${result.reason}`);
+    return { status: "blocked", reason: result.reason || "claude execution failed", claudeOutput: result };
+  }
+
+  console.log("  Claude output:");
+  console.log(result.stdout?.split("\n").map((l) => `    ${l}`).join("\n") || "    (no output)");
+
+  return { status: "ok", outputs: [{ type: "claude", ...result }] };
 }
 
 function verifyWorkspace(ws) {
@@ -261,3 +563,7 @@ function verifyWorkspace(ws) {
 }
 
 main();
+
+// == SELF-EVOLUTION IMPROVEMENTS ==
+// Failure-derived suggestions for runner.mjs:
+// == END SELF-EVOLUTION IMPROVEMENTS ==

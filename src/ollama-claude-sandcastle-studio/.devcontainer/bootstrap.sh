@@ -13,6 +13,8 @@ set -euo pipefail
 #           sandboxes, sleeps, and repeats until no self-improvement work
 #           remains.
 #   verify→ Branch-type validation via sandcastle scripts.
+#   auto  → AUTONOMOUS. Bounded loop that drives spec → wayfinder → tickets
+#           → AFK → review → merge until no actionable work remains.
 #
 # Technological separation:
 #   HITL (Human-In-The-Loop) → runs directly in the devcontainer, interactive.
@@ -55,6 +57,11 @@ CONTEXT_SIZE=2048
 
 OLLAMA_MAX_LOADED_MODELS=1
 OLLAMA_NUM_PARALLEL=1
+
+# --- Auto mode safety limits ---
+MAX_AUTO_ITERATIONS=10
+MAX_TICKETS_PER_CYCLE=3
+AUTO_SLEEP_SECONDS=30
 
 # ============================================================================
 # Helpers
@@ -811,6 +818,534 @@ phase_status() {
 }
 
 # ============================================================================
+# Auto mode helpers
+# ============================================================================
+
+_count_open_afk_tickets() {
+    local count=0
+    if [ -d "$WAYFINDER_DIR/tickets" ]; then
+        for ticket in "$WAYFINDER_DIR/tickets"/*.md; do
+            [ -f "$ticket" ] || continue
+            if grep -qE 'Type:.*wayfinder:(research|task)' "$ticket" 2>/dev/null; then
+                local status
+                status="$(grep -E '^\*\*Status:\*\*' "$ticket" | sed 's/.*: *//' || echo "open")"
+                if [ "$status" = "open" ]; then
+                    count=$((count + 1))
+                fi
+            fi
+        done
+    fi
+    echo "$count"
+}
+
+_count_pending_review_tickets() {
+    local count=0
+    if [ -d "$WAYFINDER_DIR/tickets" ]; then
+        for ticket in "$WAYFINDER_DIR/tickets"/*.md; do
+            [ -f "$ticket" ] || continue
+            local status
+            status="$(grep -E '^\*\*Status:\*\*' "$ticket" | sed 's/.*: *//' || echo "open")"
+            if [ "$status" = "pending-review" ]; then
+                count=$((count + 1))
+            fi
+        done
+    fi
+    echo "$count"
+}
+
+_count_approved_tickets() {
+    local count=0
+    if [ -d "$WAYFINDER_DIR/tickets" ]; then
+        for ticket in "$WAYFINDER_DIR/tickets"/*.md; do
+            [ -f "$ticket" ] || continue
+            local status
+            status="$(grep -E '^\*\*Status:\*\*' "$ticket" | sed 's/.*: *//' || echo "open")"
+            if [ "$status" = "approved" ]; then
+                count=$((count + 1))
+            fi
+        done
+    fi
+    echo "$count"
+}
+
+_count_blocked_tickets() {
+    local count=0
+    if [ -d "$WAYFINDER_DIR/tickets" ]; then
+        for ticket in "$WAYFINDER_DIR/tickets"/*.md; do
+            [ -f "$ticket" ] || continue
+            local status
+            status="$(grep -E '^\*\*Status:\*\*' "$ticket" | sed 's/.*: *//' || echo "open")"
+            if [ "$status" = "blocked" ]; then
+                count=$((count + 1))
+            fi
+        done
+    fi
+    echo "$count"
+}
+
+_run_limited_afk() {
+    local open_tickets=()
+    if [ -d "$WAYFINDER_DIR/tickets" ]; then
+        for ticket in "$WAYFINDER_DIR/tickets"/*.md; do
+            [ -f "$ticket" ] || continue
+            if grep -qE 'Type:.*wayfinder:(research|task)' "$ticket" 2>/dev/null; then
+                local status
+                status="$(grep -E '^\*\*Status:\*\*' "$ticket" | sed 's/.*: *//' || echo "open")"
+                if [ "$status" = "open" ]; then
+                    open_tickets+=("$ticket")
+                fi
+            fi
+        done
+    fi
+
+    if [ ${#open_tickets[@]} -eq 0 ]; then
+        return 0
+    fi
+
+    local hold_dir="$WAYFINDER_DIR/.afk-hold"
+    mkdir -p "$hold_dir"
+    local moved=0
+    local kept=0
+
+    # shellcheck disable=SC2046
+    for ticket in $(printf '%s\n' "${open_tickets[@]}" | sort); do
+        if [ "$kept" -ge "$MAX_TICKETS_PER_CYCLE" ]; then
+            mv "$ticket" "$hold_dir/"
+            moved=$((moved + 1))
+        else
+            kept=$((kept + 1))
+        fi
+    done
+
+    echo "Processing $kept AFK ticket(s) this cycle ($moved held for next cycle)."
+
+    local rc=0
+    phase_afk || rc=$?
+
+    if [ -d "$hold_dir" ]; then
+        for ticket in "$hold_dir"/*.md; do
+            [ -f "$ticket" ] || continue
+            mv "$ticket" "$WAYFINDER_DIR/tickets/"
+        done
+        rmdir "$hold_dir" 2>/dev/null || true
+    fi
+
+    return $rc
+}
+
+_merge_approved_branch() {
+    local current_branch
+    current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")"
+    if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ] || [ "$current_branch" = "unknown" ]; then
+        echo "No feature branch to merge (current: $current_branch)."
+        return 0
+    fi
+
+    echo "Merging approved work from $current_branch into main..."
+
+    git stash push -m "auto-merge-stash-$(date +%s)" 2>/dev/null || true
+
+    if ! git checkout main 2>/dev/null; then
+        echo "ERROR: failed to checkout main"
+        git checkout "$current_branch" 2>/dev/null || true
+        git stash pop 2>/dev/null || true
+        return 1
+    fi
+
+    if ! git merge --no-ff "$current_branch" -m "chore(auto): merge approved work from $current_branch"; then
+        echo "ERROR: merge failed. Resolve conflicts manually."
+        git checkout "$current_branch" 2>/dev/null || true
+        git stash pop 2>/dev/null || true
+        return 1
+    fi
+
+    if [ -d "$WAYFINDER_DIR/tickets" ]; then
+        for ticket in "$WAYFINDER_DIR/tickets"/*.md; do
+            [ -f "$ticket" ] || continue
+            if grep -qE '^\*\*Status:\*\* approved' "$ticket" 2>/dev/null; then
+                sed -i 's/^\*\*Status:\*\* approved/**Status:** complete/' "$ticket"
+                echo "Marked $(basename "$ticket") as complete."
+            fi
+        done
+    fi
+
+    if [ -d "$RALPH_DIR/state" ]; then
+        for state in "$RALPH_DIR/state"/*.json; do
+            [ -f "$state" ] || continue
+            local status
+            status="$(jq -r '.status' "$state" 2>/dev/null || echo "?")"
+            if [ "$status" = "pending-review" ] || [ "$status" = "approved" ]; then
+                jq '.status = "complete"' "$state" > "${state}.tmp" && mv "${state}.tmp" "$state"
+            fi
+        done
+    fi
+
+    git stash pop 2>/dev/null || true
+    return 0
+}
+
+_print_auto_cycle_summary() {
+    local cycle="$1"
+    echo ""
+    echo "=== Auto Cycle $cycle Summary ==="
+    echo "  SPEC.md: $([ -f "$WORKSPACE_DIR/SPEC.md" ] && echo present || echo missing)"
+    echo "  Wayfinder map: $([ -f "$WORKSPACE_DIR/WAYFINDER.md" ] || [ -f "$WAYFINDER_DIR/map.md" ] || [ -f "$WAYFINDER_DIR/map.yaml" ] && echo present || echo missing)"
+    echo "  Open AFK tickets: $(_count_open_afk_tickets)"
+    echo "  Pending-review tickets: $(_count_pending_review_tickets)"
+    echo "  Approved tickets: $(_count_approved_tickets)"
+    echo "  Blocked tickets: $(_count_blocked_tickets)"
+    echo ""
+}
+
+# ============================================================================
+# Phase: to-spec — ensure SPEC.md exists
+# ============================================================================
+
+phase_to_spec() {
+    echo "============================================"
+    echo "  Phase: TO-SPEC — Creating SPEC.md"
+    echo "============================================"
+    echo ""
+
+    local spec_path="$WORKSPACE_DIR/SPEC.md"
+    if [ -f "$spec_path" ]; then
+        echo "SPEC.md already exists. Skipping."
+        return 0
+    fi
+
+    if [ -x "$SCRIPT_DIR/skills/to-spec/run.sh" ]; then
+        echo "Running to-spec skill script..."
+        "$SCRIPT_DIR/skills/to-spec/run.sh" "$WORKSPACE_DIR"
+        return $?
+    fi
+
+    echo "No to-spec skill script found. Creating stub SPEC.md..."
+    cat > "$spec_path" <<EOF
+# Specification
+
+## Purpose
+Define the precise destination and scope of this project.
+
+## Scope
+- Create project specification
+- Chart wayfinder map
+- Generate actionable tickets
+- Implement tickets via AFK loops
+- Review and merge completed work
+
+## Out of scope
+(none yet)
+
+## Requirements
+1. Destination is sharp enough to produce tickets.
+2. Map charts decisions, open questions, and known constraints.
+3. Tickets are actionable and dependency-ordered.
+
+## Notes
+This specification was auto-generated as a stub. Refine it via /grilling and /wayfinder.
+EOF
+    echo "Created SPEC.md stub at $spec_path"
+}
+
+# ============================================================================
+# Phase: wayfinder — ensure wayfinder map exists
+# ============================================================================
+
+phase_wayfinder() {
+    echo "============================================"
+    echo "  Phase: WAYFINDER — Ensuring map exists"
+    echo "============================================"
+    echo ""
+
+    if [ -f "$WORKSPACE_DIR/WAYFINDER.md" ] || [ -f "$WAYFINDER_DIR/map.md" ] || [ -f "$WAYFINDER_DIR/map.yaml" ]; then
+        echo "Wayfinder map already exists. Skipping."
+        return 0
+    fi
+
+    if [ -x "$SCRIPT_DIR/skills/wayfinder/run.sh" ]; then
+        echo "Running wayfinder skill script..."
+        "$SCRIPT_DIR/skills/wayfinder/run.sh" "$WORKSPACE_DIR"
+        return $?
+    fi
+
+    echo "No wayfinder skill script found. Reusing phase_init to seed map..."
+    phase_init
+}
+
+# ============================================================================
+# Phase: to-tickets — ensure tickets exist
+# ============================================================================
+
+phase_to_tickets() {
+    echo "============================================"
+    echo "  Phase: TO-TICKETS — Ensuring tickets exist"
+    echo "============================================"
+    echo ""
+
+    if [ -d "$WAYFINDER_DIR/tickets" ] && [ -n "$(find "$WAYFINDER_DIR/tickets" -maxdepth 1 -type f -name '*.md' -print 2>/dev/null | head -1)" ]; then
+        echo "Tickets already exist. Skipping."
+        return 0
+    fi
+
+    if [ -x "$SCRIPT_DIR/skills/to-tickets/run.sh" ]; then
+        echo "Running to-tickets skill script..."
+        "$SCRIPT_DIR/skills/to-tickets/run.sh" "$WORKSPACE_DIR"
+        return $?
+    fi
+
+    echo "No to-tickets skill script found. Creating fallback tickets..."
+    mkdir -p "$WAYFINDER_DIR/tickets"
+
+    cat > "$WAYFINDER_DIR/tickets/01-destination.md" <<EOF
+# Ticket 01: Define destination via grilling
+
+**Type:** wayfinder:grilling (HITL)
+**Blocked by:** None
+**Status:** open
+
+## Question
+
+What is the precise destination for this effort? Read the README and grill the human until the destination is sharp enough to create tickets. What problem does this solve? Who is it for? What does "done" look like?
+
+## Answer
+
+<!-- Filled in after grilling session -->
+EOF
+
+    cat > "$WAYFINDER_DIR/tickets/02-map-frontier.md" <<EOF
+# Ticket 02: Map the frontier
+
+**Type:** wayfinder:grilling (HITL)
+**Blocked by:** 01-destination.md
+**Status:** open
+
+## Question
+
+Breadth-first across the decision space: what are the open questions and first steps? Create tickets for anything sharp enough to specify now. Leave the rest in "Not yet specified".
+EOF
+
+    cat > "$WAYFINDER_DIR/tickets/03-research-context.md" <<EOF
+# Ticket 03: Research project context
+
+**Type:** wayfinder:research (AFK)
+**Blocked by:** 02-map-frontier.md
+**Status:** open
+
+## Question
+
+Read the codebase, docs, and any existing ADRs. Summarize the current state and surface constraints that affect the destination.
+EOF
+
+    echo "Created fallback tickets"
+}
+
+# ============================================================================
+# Phase: review — run code-review.sh on pending-review tickets
+# ============================================================================
+
+phase_review() {
+    echo "============================================"
+    echo "  Phase: REVIEW — Reviewing pending tickets"
+    echo "============================================"
+    echo ""
+
+    local pending_tickets=()
+    if [ -d "$WAYFINDER_DIR/tickets" ]; then
+        for ticket in "$WAYFINDER_DIR/tickets"/*.md; do
+            [ -f "$ticket" ] || continue
+            local status
+            status="$(grep -E '^\*\*Status:\*\*' "$ticket" | sed 's/.*: *//' || echo "open")"
+            if [ "$status" = "pending-review" ]; then
+                pending_tickets+=("$ticket")
+            fi
+        done
+    fi
+
+    if [ ${#pending_tickets[@]} -eq 0 ]; then
+        echo "No pending-review tickets found."
+        return 0
+    fi
+
+    echo "Found ${#pending_tickets[@]} pending-review ticket(s):"
+    for t in "${pending_tickets[@]}"; do
+        echo "  - $(basename "$t")"
+    done
+    echo ""
+
+    local review_script=""
+    local current_branch
+    current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")"
+
+    if [ -x "$WORKSPACE_DIR/.devcontainer/sandcastle/code-review.sh" ]; then
+        review_script="$WORKSPACE_DIR/.devcontainer/sandcastle/code-review.sh"
+    elif [ -x "$SCRIPT_DIR/sandcastle/code-review.sh" ]; then
+        review_script="$SCRIPT_DIR/sandcastle/code-review.sh"
+    fi
+
+    local review_ok=true
+    if [ -n "$review_script" ]; then
+        echo "Running code-review.sh on branch $current_branch..."
+        if "$review_script" "$current_branch" "main"; then
+            echo "Review passed."
+        else
+            echo "WARNING: code-review.sh reported issues."
+            review_ok=false
+        fi
+    else
+        echo "No code-review.sh script found. Running branch validation as fallback..."
+        if [ "$DOCKER_AVAILABLE" = "true" ] && [ -f "$WORKSPACE_DIR/.devcontainer/sandcastle/validate-branch.sh" ]; then
+            if ! bash "$WORKSPACE_DIR/.devcontainer/sandcastle/validate-branch.sh" "$current_branch" "$WORKSPACE_DIR"; then
+                echo "WARNING: Branch validation failed."
+                review_ok=false
+            fi
+        else
+            echo "Docker or validate-branch.sh unavailable. Skipping detailed review."
+        fi
+    fi
+
+    for ticket in "${pending_tickets[@]}"; do
+        local ticket_id
+        ticket_id="$(basename "$ticket" .md)"
+        local new_status="approved"
+        if [ "$review_ok" = false ]; then
+            new_status="blocked"
+        fi
+
+        sed -i "s/^\\*\\*Status:\\*\\* pending-review/**Status:** ${new_status}/" "$ticket"
+        echo "Marked $(basename "$ticket") as ${new_status}."
+
+        if [ -f "$RALPH_DIR/state/${ticket_id}.json" ]; then
+            jq --arg status "$new_status" '.status = $status' "$RALPH_DIR/state/${ticket_id}.json" > "${RALPH_DIR}/state/${ticket_id}.json.tmp" && mv "${RALPH_DIR}/state/${ticket_id}.json.tmp" "$RALPH_DIR/state/${ticket_id}.json"
+        fi
+    done
+
+    return 0
+}
+
+# ============================================================================
+# Phase: auto — autonomous bounded lifecycle loop
+# ============================================================================
+
+phase_auto() {
+    echo "============================================"
+    echo "  Phase: AUTO — Autonomous lifecycle loop"
+    echo "============================================"
+    echo ""
+    echo "Safety limits:"
+    echo "  MAX_AUTO_ITERATIONS=$MAX_AUTO_ITERATIONS"
+    echo "  MAX_TICKETS_PER_CYCLE=$MAX_TICKETS_PER_CYCLE"
+    echo "  AUTO_SLEEP_SECONDS=$AUTO_SLEEP_SECONDS"
+    echo "  AUTO_MERGE=${AUTO_MERGE:-false}"
+    echo ""
+    echo "Set AUTO_MERGE=true to automatically merge approved branches to main."
+    echo ""
+
+    local iteration=0
+    local actions_done=0
+    local halted_reason=""
+
+    while [ "$iteration" -lt "$MAX_AUTO_ITERATIONS" ]; do
+        iteration=$((iteration + 1))
+        echo "=== Auto Cycle $iteration/$MAX_AUTO_ITERATIONS ==="
+
+        local cycle_actions=0
+
+        if [ ! -f "$WORKSPACE_DIR/SPEC.md" ]; then
+            echo "[auto] SPEC.md missing. Running to-spec..."
+            if phase_to_spec; then
+                cycle_actions=$((cycle_actions + 1))
+            else
+                halted_reason="to-spec failed"
+                break
+            fi
+        fi
+
+        if [ ! -f "$WORKSPACE_DIR/WAYFINDER.md" ] && [ ! -f "$WAYFINDER_DIR/map.md" ] && [ ! -f "$WAYFINDER_DIR/map.yaml" ]; then
+            echo "[auto] Wayfinder map missing. Running wayfinder..."
+            if phase_wayfinder; then
+                cycle_actions=$((cycle_actions + 1))
+            else
+                halted_reason="wayfinder failed"
+                break
+            fi
+        fi
+
+        if [ ! -d "$WAYFINDER_DIR/tickets" ] || [ -z "$(find "$WAYFINDER_DIR/tickets" -maxdepth 1 -type f -name '*.md' -print 2>/dev/null | head -1)" ]; then
+            echo "[auto] No tickets found. Running to-tickets..."
+            if phase_to_tickets; then
+                cycle_actions=$((cycle_actions + 1))
+            else
+                halted_reason="to-tickets failed"
+                break
+            fi
+        fi
+
+        local open_afk_count
+        open_afk_count="$(_count_open_afk_tickets)"
+        if [ "$open_afk_count" -gt 0 ]; then
+            echo "[auto] Found $open_afk_count open AFK ticket(s). Running AFK phase..."
+            if _run_limited_afk; then
+                cycle_actions=$((cycle_actions + 1))
+            else
+                halted_reason="AFK phase failed"
+                break
+            fi
+        fi
+
+        local pending_review_count
+        pending_review_count="$(_count_pending_review_tickets)"
+        if [ "$pending_review_count" -gt 0 ]; then
+            echo "[auto] Found $pending_review_count pending-review ticket(s). Running review..."
+            if phase_review; then
+                cycle_actions=$((cycle_actions + 1))
+            else
+                halted_reason="review phase failed"
+                break
+            fi
+        fi
+
+        local approved_count
+        approved_count="$(_count_approved_tickets)"
+        if [ "$approved_count" -gt 0 ] && [ "${AUTO_MERGE:-false}" = "true" ]; then
+            echo "[auto] Found $approved_count approved ticket(s) and AUTO_MERGE=true. Merging to main..."
+            if _merge_approved_branch; then
+                cycle_actions=$((cycle_actions + 1))
+            else
+                halted_reason="merge failed"
+                break
+            fi
+        fi
+
+        if [ "$cycle_actions" -eq 0 ]; then
+            halted_reason="No actionable work remaining"
+            break
+        fi
+
+        actions_done=$((actions_done + cycle_actions))
+        _print_auto_cycle_summary "$iteration"
+
+        echo ""
+        echo "Auto sleeping for ${AUTO_SLEEP_SECONDS}s..."
+        echo ""
+        sleep "$AUTO_SLEEP_SECONDS"
+    done
+
+    if [ -z "$halted_reason" ]; then
+        halted_reason="reached MAX_AUTO_ITERATIONS limit"
+    fi
+
+    echo ""
+    echo "============================================"
+    echo "  Auto mode halted"
+    echo "============================================"
+    echo "  Iterations completed: $iteration"
+    echo "  Total actions: $actions_done"
+    echo "  Reason: $halted_reason"
+    echo ""
+    phase_status
+}
+
+# ============================================================================
 # Main entrypoint — long-running daemon
 # ============================================================================
 
@@ -829,6 +1364,9 @@ case "${1:-}" in
         ;;
     status)
         phase_status
+        ;;
+    auto)
+        phase_auto
         ;;
     *)
         # Auto-detect phase and run the appropriate blocking/continuous phase
