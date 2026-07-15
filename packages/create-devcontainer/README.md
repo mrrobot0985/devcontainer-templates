@@ -26,6 +26,12 @@ Apply the studio template to a specific project:
 npx @mrrobot0985/create-devcontainer ollama-claude-cli-studio ./my-project
 ```
 
+Apply the Sandcastle template for isolated AFK task execution:
+
+```bash
+npx @mrrobot0985/create-devcontainer ollama-claude-sandcastle-studio ./my-project
+```
+
 Apply the minimal template with a custom devcontainer name:
 
 ```bash
@@ -50,6 +56,7 @@ npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --name "My P
 | -- | ---- |
 | `ollama-claude-cli` | Ollama + Claude CLI |
 | `ollama-claude-cli-studio` | Ollama + Claude CLI Studio |
+| `ollama-claude-sandcastle-studio` | Ollama + Claude CLI + Sandcastle Studio |
 
 Run `create-devcontainer` with no arguments to see the full list.
 

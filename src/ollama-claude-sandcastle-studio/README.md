@@ -1,19 +1,24 @@
-# Ollama + Claude CLI + Act Studio (ollama-claude-act-studio)
+# Ollama + Claude CLI + Sandcastle Studio (ollama-claude-sandcastle-studio)
 
-Prototype devcontainer that combines Claude CLI with [nektos/act](https://github.com/nektos/act) to run local GitHub Actions workflows for autonomous project exploration, planning, and validation.
+Devcontainer for Claude CLI with Docker-based Sandcastle AFK task isolation. Hardware-aware model selection, HITL grilling sessions, and autonomous ralph loops in isolated containers.
 
 ## What it does
 
 When the container starts, the bootstrap script runs through a **lifecycle phase machine**:
 
-1. **Hardware detection** — probes GPU VRAM, CPU cores, memory, Docker, act
+1. **Hardware detection** — probes GPU VRAM, CPU cores, memory, Docker
 2. **Model selection** — maps detected VRAM to local Ollama models
-3. **Init** — seeds a wayfinder map from `README.md`, generates deterministic act workflows, prints HITL instructions
+3. **Init** — seeds a wayfinder map from `README.md`, copies sandcastle scripts, prints HITL instructions
 4. **HITL** — human runs `/grilling` and `/wayfinder` to define the destination and chart tickets
-5. **AFK** — ralph-loop iterations via act process research and task tickets autonomously
-6. **Verify** — branch-type bound act workflows validate commits, specs, and quality gates
+5. **AFK** — ralph-loop iterations in Docker-isolated sandboxes process research and task tickets autonomously
+6. **Verify** — branch-type bound sandcastle scripts validate commits, specs, and quality gates
 
-The generated workflows are **deterministic templates**, not LLM-improvised YAML. They follow industry patterns (sandcastle-like sandboxing, branch-per-ticket isolation) and enforce conventional commits and branch naming.
+**Technological separation:**
+
+- **HITL** runs directly in the devcontainer (interactive claude sessions).
+- **AFK** runs in Docker-isolated sandboxes, one container per ticket, bind-mounting the workspace.
+
+All sandcastle scripts are deterministic templates shipped with the template.
 
 ## Lifecycle Phases
 
@@ -24,7 +29,7 @@ Runs automatically on first container start. It:
 - Detects hardware and selects Ollama models
 - Creates `$HOME/.claude/bootstrap-state/wayfinder/map.md` seeded from `README.md`
 - Creates initial tickets: destination definition, frontier mapping, research
-- Generates `.github/workflows/validate-branch.yml` and `.github/workflows/ralph-loop.yml`
+- Copies sandcastle scripts to `.devcontainer/sandcastle/`
 - Sets up `.ralph/` state directory for loop tracking
 
 ### HITL (Human-In-The-Loop)
@@ -55,8 +60,8 @@ bash .devcontainer/bootstrap.sh afk
 Runs ralph-loop iterations for open AFK tickets (`wayfinder:research`, `wayfinder:task`):
 
 - Each ticket gets an isolated git branch (`ralph/<ticket>`)
-- Act runs the `ralph-loop.yml` workflow, which delegates to `.devcontainer/sandcastle/runner.mjs`
-- The runner reads state from disk, executes the task type (research, spec, implement, quality), verifies, commits, and exits
+- A Docker container spins up with the workspace bind-mounted, runs the sandcastle runner, verifies, commits, and exits
+- The container uses `mcr.microsoft.com/devcontainers/base:bookworm` as the base image
 - State lives in `.ralph/state/*.json`; logs in `.ralph/logs/`
 
 Stop conditions:
@@ -69,7 +74,7 @@ Stop conditions:
 
 ### Verify
 
-Branch-type bound validation runs via act on every non-main branch:
+Branch-type bound validation runs via sandcastle scripts on every non-main branch:
 
 | Branch type | Required validation |
 |-------------|---------------------|
@@ -90,8 +95,7 @@ The bootstrap script detects:
 | NVIDIA GPU VRAM | `nvidia-smi` → `/proc/driver/nvidia/version` → `sysfs`/`lspci` → CPU fallback | Maps host to local model tier and context size |
 | CPU cores | `nproc` | Task parallelism recommendations |
 | Memory | `free` | Sub-agent spawn feasibility |
-| Docker-in-Docker | `docker version` | Enables act and sub-agent instantiation |
-| act | `act --version` | Ralph loop and validation execution |
+| Docker-in-Docker | `docker version` | Enables sandcastle container isolation |
 
 ### Model Selection
 
@@ -120,10 +124,9 @@ bash .devcontainer/bootstrap.sh status  # Show current phase and tickets
 - Node.js 20
 - Claude CLI (via official Anthropic feature)
 - GitHub CLI (`github-cli`)
-- nektos/act (`ghcr.io/dhoeric/features/act`)
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
-- Docker-in-Docker (for act to spawn workflow containers)
+- Docker-in-Docker (for sandcastle container isolation)
 
 ## Persistence
 
@@ -144,20 +147,19 @@ Authentication tokens, user settings, and session history under `~/.claude` are 
 ## Usage
 
 ```bash
-devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-act-studio:latest
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-sandcastle-studio:latest
 ```
 
 Or create a new project with the `create-devcontainer` helper:
 
 ```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-act-studio ./my-project
+npx @mrrobot0985/create-devcontainer ollama-claude-sandcastle-studio ./my-project
 ```
 
-## Prototype Notes
+## Notes
 
 - This template is experimental. The lifecycle is **phase-driven**, not static.
-- Workflows are deterministic templates shipped with the template, not generated by LLM.
+- Sandcastle scripts are deterministic templates shipped with the template, not generated by LLM.
 - Ralph loops use fresh agent context per iteration; state lives on disk in `.ralph/`.
-- Sandcastle-like sandboxing is simulated via isolated git branches and act containers.
+- AFK tasks run in Docker containers with the workspace bind-mounted, providing isolation without act complexity.
 - Sub-agent spawning via `npx create-devcontainer` requires Docker-in-Docker and sufficient CPU/memory.
-- Without `--bind`, the workflow runner image does not include Claude and will skip the AI steps gracefully.

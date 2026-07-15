@@ -1,0 +1,22 @@
+{
+  "id": "ollama-claude-sandcastle-studio",
+  "version": "0.1.0",
+  "name": "Ollama + Claude CLI + Sandcastle Studio",
+  "description": "Devcontainer for Claude CLI with Docker-based Sandcastle AFK task isolation. Hardware-aware model selection, HITL grilling sessions, and autonomous ralph loops in isolated containers. Requires Ollama on the host.",
+  "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/ollama-claude-sandcastle-studio",
+  "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
+  "options": {
+    "imageVariant": {
+      "type": "string",
+      "description": "Ubuntu version (use ubuntu-22.04 or ubuntu-18.04 on local arm64/Apple Silicon):",
+      "proposals": [
+        "jammy",
+        "focal"
+      ],
+      "default": "jammy"
+    }
+  },
+  "platforms": [
+    "Any"
+  ]
+}

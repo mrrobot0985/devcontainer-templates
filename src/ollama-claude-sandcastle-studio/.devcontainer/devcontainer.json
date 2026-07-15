@@ -1,5 +1,5 @@
 {
-	"name": "Ollama + Claude CLI + Act Studio",
+	"name": "Ollama + Claude CLI + Sandcastle Studio",
 	"image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
 	"remoteUser": "vscode",
 	"containerEnv": {
@@ -11,9 +11,6 @@
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/devcontainers/features/node:2.1.0": {
 			"version": "20"
-		},
-		"ghcr.io/dhoeric/features/act:1": {
-			"version": "latest"
 		},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-backend:0": {
 			"authToken": "ollama",
