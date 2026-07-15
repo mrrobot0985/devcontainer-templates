@@ -1,6 +1,6 @@
 {
   "name": "@mrrobot0985/create-devcontainer",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Instantiate devcontainer templates from the mrrobot0985 collection into any workspace",
   "license": "MIT",
   "author": "mrrobot0985",
