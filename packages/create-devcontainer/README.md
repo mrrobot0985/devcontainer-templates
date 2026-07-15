@@ -1,3 +1,5 @@
+Full documentation is available in the [template repository docs](../../docs/reference/create-devcontainer-cli.md).
+
 # @mrrobot0985/create-devcontainer
 
 ![npm version](https://img.shields.io/npm/v/@mrrobot0985/create-devcontainer)
@@ -46,23 +48,23 @@ npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --name "My P
 
 ## Templates
 
-| ID | Name |
-| -- | ---- |
-| `ollama-claude-cli` | Ollama + Claude CLI |
+| ID                         | Name                       |
+| -------------------------- | -------------------------- |
+| `ollama-claude-cli`        | Ollama + Claude CLI        |
 | `ollama-claude-cli-studio` | Ollama + Claude CLI Studio |
 
 Run `create-devcontainer` with no arguments to see the full list.
 
 ## Options
 
-| Flag | Description |
-| ---- | ----------- |
+| Flag         | Description                                              |
+| ------------ | -------------------------------------------------------- |
 | `--registry` | Force GHCR registry mode (default is bundled local copy) |
-| `--force` | Overwrite an existing `.devcontainer` directory |
-| `--name` | Override the devcontainer configuration name |
-| `--readme` | Create a `README.md` skeleton in the target directory |
-| `--help` | Show help |
-| `--version` | Show version |
+| `--force`    | Overwrite an existing `.devcontainer` directory          |
+| `--name`     | Override the devcontainer configuration name             |
+| `--readme`   | Create a `README.md` skeleton in the target directory    |
+| `--help`     | Show help                                                |
+| `--version`  | Show version                                             |
 
 ## Development
 

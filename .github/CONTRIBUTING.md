@@ -10,23 +10,23 @@ Thanks for helping improve this template collection.
 
 ## Repository layout
 
-| Directory | Purpose |
-| --------- | ------- |
-| `src/` | One directory per publishable dev container template. |
+| Directory                       | Purpose                                                                                 |
+| ------------------------------- | --------------------------------------------------------------------------------------- |
+| `src/`                          | One directory per publishable dev container template.                                   |
 | `packages/create-devcontainer/` | The `npx @mrrobot0985/create-devcontainer` helper and its hard-coded template registry. |
-| `scripts/` | Local development and validation scripts. |
-| `test/` | Unit tests for scripts and per-template smoke tests. |
-| `.github/workflows/` | CI/CD pipelines. |
-| `.github/actions/smoke-test/` | Composite action used by CI to build and test a template. |
+| `scripts/`                      | Local development and validation scripts.                                               |
+| `test/`                         | Unit tests for scripts and per-template smoke tests.                                    |
+| `.github/workflows/`            | CI/CD pipelines.                                                                        |
+| `.github/actions/smoke-test/`   | Composite action used by CI to build and test a template.                               |
 
 ## Development scripts
 
-| Script | Purpose |
-| ------ | ------- |
-| `scripts/local-ci.sh` | Runs every static check required by CI. Run this before pushing. |
-| `scripts/generate-template-readmes.py` | Generates missing `src/<template>/README.md` files. Use `--check` to verify without writing. |
-| `scripts/sync-template-registry.ts` | Validates that `packages/create-devcontainer/src/templates.ts` matches `src/`. Use `--write` to regenerate. |
-| `scripts/render-template.sh` | Renders a template with default options so it can be built or inspected locally. |
+| Script                                 | Purpose                                                                                                     |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `scripts/local-ci.sh`                  | Runs every static check required by CI. Run this before pushing.                                            |
+| `scripts/generate-template-readmes.py` | Generates missing `src/<template>/README.md` files. Use `--check` to verify without writing.                |
+| `scripts/sync-template-registry.ts`    | Validates that `packages/create-devcontainer/src/templates.ts` matches `src/`. Use `--write` to regenerate. |
+| `scripts/render-template.sh`           | Renders a template with default options so it can be built or inspected locally.                            |
 
 ## Required checks
 
@@ -85,11 +85,11 @@ A single git tag namespace is shared across all templates and the npm package. W
 ### Template release steps
 
 1. Update the `version` field in `src/<template>/devcontainer-template.json`.
-2. Commit the change with a conventional commit message:
+1. Commit the change with a conventional commit message:
    `feat(<template>): bump version to X.Y.Z`
-3. Create and push a signed tag:
+1. Create and push a signed tag:
    `git tag -s <template-name>-vX.Y.Z -m "release <template> vX.Y.Z"`
-4. Push the tag to trigger the release workflow:
+1. Push the tag to trigger the release workflow:
    `git push origin <template-name>-vX.Y.Z`
 
 The release workflow triggers on any `*-v*` tag and publishes the template whose JSON version changed.
@@ -97,10 +97,10 @@ The release workflow triggers on any `*-v*` tag and publishes the template whose
 ### Package release steps
 
 1. Update the version in `packages/create-devcontainer/package.json`.
-2. Commit the change with a conventional commit message:
+1. Commit the change with a conventional commit message:
    `chore(create-devcontainer): bump version to X.Y.Z`
-3. Create and push a signed tag such as `vX.Y.Z`.
-4. Push the tag to trigger the create-devcontainer CI workflow, which publishes to npm.
+1. Create and push a signed tag such as `vX.Y.Z`.
+1. Push the tag to trigger the create-devcontainer CI workflow, which publishes to npm.
 
 ## Code of conduct
 
