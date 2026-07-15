@@ -2,7 +2,7 @@
   "id": "ollama-claude-cli-studio",
   "version": "0.1.0",
   "name": "Ollama + Claude CLI Studio",
-  "description": "Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+  "description": "Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, container firewall, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/ollama-claude-cli-studio",
   "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
   "options": {

@@ -2,7 +2,7 @@
   "id": "ollama-claude-cli",
   "version": "0.1.0",
   "name": "Ollama + Claude CLI",
-  "description": "Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+  "description": "Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/ollama-claude-cli",
   "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
   "options": {
