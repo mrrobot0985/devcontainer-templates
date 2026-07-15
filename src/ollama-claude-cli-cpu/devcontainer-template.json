@@ -14,6 +14,11 @@
         "focal"
       ],
       "default": "jammy"
+    },
+    "modelMap": {
+      "type": "string",
+      "description": "Comma-separated model overrides in role:model format. Common Ollama defaults are preconfigured; override if your host has different models.",
+      "default": "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest"
     }
   },
   "platforms": [

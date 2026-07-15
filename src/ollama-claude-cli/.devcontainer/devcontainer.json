@@ -14,7 +14,7 @@
 		},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-backend:0": {
 			"authToken": "ollama",
-			"models": "haiku:minimax-m2.5:cloud,opus:glm-5.2:cloud,sonnet:kimi-k2.6:cloud,subagent:kimi-k2.7-code:cloud",
+			"models": "${templateOption:modelMap}",
 			"logLevel": "error"
 		},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-privacy:0": {

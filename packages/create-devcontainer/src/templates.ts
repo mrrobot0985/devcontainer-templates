@@ -23,7 +23,7 @@ export const templates: readonly Template[] = [
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli:latest",
     sourcePath: "src/ollama-claude-cli",
-    defaults: { imageVariant: "jammy" },
+    defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest" },
   },
   {
     id: "ollama-claude-cli-studio",
@@ -32,7 +32,7 @@ export const templates: readonly Template[] = [
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:latest",
     sourcePath: "src/ollama-claude-cli-studio",
-    defaults: { imageVariant: "jammy" },
+    defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest" },
   },
   {
     id: "ollama-claude-cli-cpu",
@@ -41,7 +41,7 @@ export const templates: readonly Template[] = [
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-cpu:latest",
     sourcePath: "src/ollama-claude-cli-cpu",
-    defaults: { imageVariant: "jammy" },
+    defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest" },
   },
 ];
 
