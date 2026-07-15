@@ -56,13 +56,13 @@ else
     echo "Bootstrap WARN — Claude CLI config directory missing at $CLAUDE_DIR"
 fi
 
-# --- Run the act-as-claude workflow ---
-# This uses nektos/act to execute .github/workflows/act-as-claude.yaml locally.
+# --- Run the bootstrap workflow ---
+# This uses nektos/act to execute .act/workflows/bootstrap.yml locally.
 # The workflow runs claude -p commands to explore README.md and plan the next iteration.
-WORKFLOW_FILE=".github/workflows/act-as-claude.yaml"
+WORKFLOW_FILE=".act/workflows/bootstrap.yml"
 if [ -f "$WORKFLOW_FILE" ]; then
     echo ""
-    echo "=== Running act-as-claude workflow ==="
+    echo "=== Running bootstrap workflow ==="
     echo "This executes the local GitHub Actions workflow that drives Claude planning."
     echo ""
 
@@ -77,7 +77,7 @@ if [ -f "$WORKFLOW_FILE" ]; then
     fi
 
     echo ""
-    echo "=== act-as-claude workflow complete ==="
+    echo "=== Bootstrap workflow complete ==="
 else
     echo "Bootstrap INFO — Workflow file not found: $WORKFLOW_FILE"
     echo "  Skipping act execution. Create the workflow to enable autonomous planning."
