@@ -8,12 +8,12 @@ When the container starts, the bootstrap script:
 
 1. Configures the Ollama backend connection
 2. Verifies tooling (gh, docker, act, claude)
-3. Executes `.github/workflows/act-as-claude.yaml` via `act`
+3. Executes `.act/workflows/bootstrap.yml` via `act`
 
 The workflow then runs `claude -p` commands to:
 
 - Read and summarize `README.md`
-- Plan the next iteration of the project
+- Plan the next iteration of the `/prototype`
 
 ## Includes
 

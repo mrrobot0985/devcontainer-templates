@@ -1,4 +1,4 @@
-name: Act as Claude
+name: Bootstrap Prototype
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          echo "=== Act as Claude — Prototype Workflow ==="
+          echo "=== Bootstrap Prototype Workflow ==="
           echo ""
 
           # Verify claude CLI is available
@@ -38,9 +38,9 @@ jobs:
           fi
 
           echo ""
-          echo "Step 2 — Planning the next iteration"
+          echo "Step 2 — Planning the next iteration for /prototype"
           echo ""
-          claude -p "Based on the project structure and README summary, identify the most logical next step for this prototype. Suggest 2-3 concrete tasks that would move the project forward, ordered by priority."
+          claude -p "We are building the /prototype. Based on the project structure and README summary, identify the most logical next step. Suggest 2-3 concrete tasks that would move the prototype forward, ordered by priority."
 
           echo ""
           echo "=== Workflow complete ==="
