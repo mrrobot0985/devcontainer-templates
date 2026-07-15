@@ -75,11 +75,6 @@ persist_env_var() {
 persist_env_var "OLLAMA_HOST" "$OLLAMA_HOST"
 
 probe_hardware() {
-    local in_container="false"
-    if [ -f /.dockerenv ] || grep -q "docker" /proc/1/cgroup 2>/dev/null; then
-        in_container="true"
-    fi
-
     CPU_CORES="$(nproc 2>/dev/null || echo "unknown")"
 
     if command -v free >/dev/null 2>&1; then
