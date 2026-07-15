@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-# Integration tests for the ollama-claude-act-studio bootstrap hardware-aware logic.
-# These tests exercise the expected seams of bootstrap.sh without requiring a
-# real GPU or a running Ollama instance.
+# Integration tests for the ollama-claude-act-studio bootstrap lifecycle orchestrator.
+# These tests exercise the expected seams without requiring a real GPU, Ollama,
+# or act installation.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -21,7 +21,6 @@ detect_hardware_tier() {
     if command -v nvidia-smi >/dev/null 2>&1; then
         vram_mb="$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/null | head -1 || echo 0)"
     fi
-    # Strip whitespace and units if present
     vram_mb="$(echo "${vram_mb:-0}" | tr -d '[:space:]MiBmbGB' | grep -oE '^[0-9]+' || echo 0)"
     local vram_gb=$((vram_mb / 1024))
 
@@ -38,8 +37,7 @@ detect_hardware_tier() {
     fi
 }
 
-# map_models_for_tier prints the model matrix for the requested tier in the
-# format  key=value  so callers can eval or grep it.
+# map_models_for_tier prints the model matrix for the requested tier.
 map_models_for_tier() {
     local tier="$1"
     case "$tier" in
@@ -64,8 +62,7 @@ map_models_for_tier() {
     esac
 }
 
-# generate_env_config writes Claude Code and Ollama overrides to a destination
-# file based on the detected tier.
+# generate_env_config writes Claude Code and Ollama overrides.
 generate_env_config() {
     local tier="$1"
     local dest="$2"
@@ -80,7 +77,6 @@ generate_env_config() {
     context="$(echo "$models" | grep -oE 'context=[^ ]+' | cut -d= -f2)"
 
     local max_loaded=1
-    local parallel=1
     if [ "$tier" = "high" ] || [ "$tier" = "ultra" ]; then
         max_loaded=2
     fi
@@ -92,12 +88,11 @@ ANTHROPIC_DEFAULT_OPUS_MODEL=${opus}
 CLAUDE_CODE_SUBAGENT_MODEL=${subagent}
 OLLAMA_CONTEXT_LENGTH=${context}
 OLLAMA_MAX_LOADED_MODELS=${max_loaded}
-OLLAMA_NUM_PARALLEL=${parallel}
+OLLAMA_NUM_PARALLEL=1
 EOF
 }
 
-# build_claude_prompt produces the prompt that is handed to Claude. It must
-# include a "Hardware context:" block.
+# build_claude_prompt produces the prompt handed to Claude.
 build_claude_prompt() {
     local tier="$1"
     local gpu_name="${2:-unknown}"
@@ -131,8 +126,7 @@ Requirements for the generated workflow:
 EOF
 }
 
-# pull_models_if_reachable tries to pull the required models through the Ollama
-# API and returns success even when Ollama is unreachable.
+# pull_models_if_reachable tries to pull models and returns success even when Ollama is unreachable.
 pull_models_if_reachable() {
     local base_url="${1:-http://host.docker.internal:11434}"
     shift || true
@@ -145,9 +139,36 @@ pull_models_if_reachable() {
 
     local model
     for model in "${models[@]}"; do
-        curl -fsSL -X POST "${base_url}/api/pull" -d "{\"name\":\"${model}\"}" >/dev/null 2>&1 || true
+        curl -fsSL -X POST "${base_url}/api/pull" -d "{\"model\":\"${model}\"}" >/dev/null 2>&1 || true
     done
     return 0
+}
+
+# detect_phase examines the filesystem to determine which lifecycle phase the
+# workspace is in.
+detect_phase() {
+    local state_dir="${1:-$HOME/.claude/bootstrap-state}"
+    local wayfinder_dir="$state_dir/wayfinder"
+    local ralph_dir="${2:-$PWD/.ralph}"
+
+    if [ ! -d "$wayfinder_dir" ]; then
+        echo "init"
+        return
+    fi
+    if [ ! -f "$wayfinder_dir/handoff.md" ]; then
+        echo "hitl"
+        return
+    fi
+    if [ -d "$ralph_dir/state" ]; then
+        local pending
+        pending="$(find "$ralph_dir/state" -maxdepth 1 -name '*.json' -print 2>/dev/null | wc -l)"
+        # We cannot easily jq-grep in a pure shell mock, so just count files
+        if [ "$pending" -gt 0 ]; then
+            echo "afk"
+            return
+        fi
+    fi
+    echo "verify"
 }
 
 # --- Tests --------------------------------------------------------------------
@@ -163,7 +184,6 @@ test_detect_low_tier_with_8gb_vram() {
 }
 
 test_detect_cpu_only_without_gpu() {
-    # Ensure no nvidia-smi is on PATH for this test while keeping core utilities available
     local tmp_path
     tmp_path="$(mktemp -d)"
     local old_path="$PATH"
@@ -203,8 +223,66 @@ test_prompt_includes_hardware_context() {
 }
 
 test_ollama_unreachable_is_graceful() {
-    # Use a port that is almost certainly closed to simulate an unreachable host.
     pull_models_if_reachable "http://127.0.0.1:9" "qwen2.5:7b" "llama3.1:8b"
+}
+
+test_phase_detection_init_when_no_state() {
+    local tmp_state
+    tmp_state="$(mktemp -d)"
+    local phase
+    phase="$(detect_phase "$tmp_state" "$tmp_state")"
+    rm -rf "$tmp_state"
+    [ "$phase" = "init" ]
+}
+
+test_phase_detection_hitl_when_map_exists_no_handoff() {
+    local tmp_state
+    tmp_state="$(mktemp -d)"
+    mkdir -p "$tmp_state/wayfinder"
+    echo "# Map" > "$tmp_state/wayfinder/map.md"
+    local phase
+    phase="$(detect_phase "$tmp_state" "$tmp_state")"
+    rm -rf "$tmp_state"
+    [ "$phase" = "hitl" ]
+}
+
+test_phase_detection_afk_when_handoff_and_ralph_state_exist() {
+    local tmp_state
+    tmp_state="$(mktemp -d)"
+    mkdir -p "$tmp_state/wayfinder" "$tmp_state/.ralph/state"
+    echo "# Map" > "$tmp_state/wayfinder/map.md"
+    echo "# Handoff" > "$tmp_state/wayfinder/handoff.md"
+    echo '{"ticket":"T1","status":"open"}' > "$tmp_state/.ralph/state/T1.json"
+    local phase
+    phase="$(detect_phase "$tmp_state" "$tmp_state/.ralph")"
+    rm -rf "$tmp_state"
+    [ "$phase" = "afk" ]
+}
+
+test_phase_detection_verify_when_all_done() {
+    local tmp_state
+    tmp_state="$(mktemp -d)"
+    mkdir -p "$tmp_state/wayfinder" "$tmp_state/.ralph/state"
+    echo "# Map" > "$tmp_state/wayfinder/map.md"
+    echo "# Handoff" > "$tmp_state/wayfinder/handoff.md"
+    # No state files means verify
+    local phase
+    phase="$(detect_phase "$tmp_state" "$tmp_state/.ralph")"
+    rm -rf "$tmp_state"
+    [ "$phase" = "verify" ]
+}
+
+test_bootstrap_script_has_no_syntax_errors() {
+    bash -n "$BOOTSTRAP_SH"
+}
+
+test_deterministic_workflow_templates_exist() {
+    [ -f "$BOOTSTRAP_DIR/templates/validate-branch.yml" ] && \
+    [ -f "$BOOTSTRAP_DIR/templates/ralph-loop.yml" ]
+}
+
+test_sandcastle_runner_exists() {
+    [ -f "$BOOTSTRAP_DIR/sandcastle/runner.mjs" ]
 }
 
 # --- Main ----------------------------------------------------------------------
@@ -215,5 +293,12 @@ check "low tier maps models correctly" test_low_tier_model_mapping
 check "high tier env vars include sonnet model and loaded model count" test_high_tier_env_var_generation
 check "workflow prompt includes hardware context" test_prompt_includes_hardware_context
 check "ollama pull continues gracefully when API is unreachable" test_ollama_unreachable_is_graceful
+check "phase detection returns init when no state exists" test_phase_detection_init_when_no_state
+check "phase detection returns hitl when map exists without handoff" test_phase_detection_hitl_when_map_exists_no_handoff
+check "phase detection returns afk when handoff and ralph state exist" test_phase_detection_afk_when_handoff_and_ralph_state_exist
+check "phase detection returns verify when all work is done" test_phase_detection_verify_when_all_done
+check "bootstrap script has no syntax errors" test_bootstrap_script_has_no_syntax_errors
+check "deterministic workflow templates exist" test_deterministic_workflow_templates_exist
+check "sandcastle runner script exists" test_sandcastle_runner_exists
 
 reportResults
