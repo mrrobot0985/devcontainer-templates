@@ -1,13 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 
-# Integration tests for the ollama-claude-act-studio bootstrap lifecycle orchestrator.
+# Integration tests for the ollama-claude-sandcastle-studio bootstrap lifecycle orchestrator.
 # These tests exercise the expected seams without requiring a real GPU, Ollama,
 # or act installation.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-BOOTSTRAP_DIR="$REPO_ROOT/src/ollama-claude-act-studio/.devcontainer"
+BOOTSTRAP_DIR="$REPO_ROOT/src/ollama-claude-sandcastle-studio/.devcontainer"
 BOOTSTRAP_SH="$BOOTSTRAP_DIR/bootstrap.sh"
 
 source "$REPO_ROOT/test/test-utils/test-utils.sh"
@@ -276,13 +276,10 @@ test_bootstrap_script_has_no_syntax_errors() {
     bash -n "$BOOTSTRAP_SH"
 }
 
-test_deterministic_workflow_templates_exist() {
-    [ -f "$BOOTSTRAP_DIR/templates/validate-branch.yml" ] && \
-    [ -f "$BOOTSTRAP_DIR/templates/ralph-loop.yml" ]
-}
-
-test_sandcastle_runner_exists() {
-    [ -f "$BOOTSTRAP_DIR/sandcastle/runner.mjs" ]
+test_sandcastle_scripts_exist() {
+    [ -f "$BOOTSTRAP_DIR/sandcastle/runner.mjs" ] && \
+    [ -f "$BOOTSTRAP_DIR/sandcastle/validate-branch.sh" ] && \
+    [ -f "$BOOTSTRAP_DIR/sandcastle/ralph-loop.sh" ]
 }
 
 # --- Main ----------------------------------------------------------------------
@@ -298,7 +295,6 @@ check "phase detection returns hitl when map exists without handoff" test_phase_
 check "phase detection returns afk when handoff and ralph state exist" test_phase_detection_afk_when_handoff_and_ralph_state_exist
 check "phase detection returns verify when all work is done" test_phase_detection_verify_when_all_done
 check "bootstrap script has no syntax errors" test_bootstrap_script_has_no_syntax_errors
-check "deterministic workflow templates exist" test_deterministic_workflow_templates_exist
-check "sandcastle runner script exists" test_sandcastle_runner_exists
+check "sandcastle scripts exist" test_sandcastle_scripts_exist
 
 reportResults

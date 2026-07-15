@@ -4,13 +4,16 @@ set -euo pipefail
 # Bootstrap — Lifecycle orchestrator for Matt Pocock's skills.
 #
 # Phase machine:
-#   init  → Create wayfinder map from README.md, generate act workflows, print HITL instructions.
-#   afk   → Read wayfinder map + handoff, run ralph-loop iterations via act for AFK tickets.
-#   verify→ Run branch-type validation workflows via act.
+#   init  → Create wayfinder map from README.md, copy sandcastle scripts, print HITL instructions.
+#   afk   → Read wayfinder map + handoff, run ralph-loop iterations in Docker sandboxes for AFK tickets.
+#   verify→ Run branch-type validation scripts via sandcastle.
 #   status→ Show current phase and pending work.
 #
-# This script does NOT use LLM improvisation for workflow generation.
-# All act workflows are deterministic templates shipped with the template.
+# Technological separation:
+#   HITL (Human-In-The-Loop) → runs directly in the devcontainer, interactive claude sessions.
+#   AFK  (Away-From-Keyboard) → runs in Docker-isolated sandboxes, one container per ticket.
+#
+# This script does NOT use LLM improvisation. All sandcastle scripts are deterministic templates.
 
 OLLAMA_BASE_URL="http://host.docker.internal:11434"
 OLLAMA_HOST="${OLLAMA_BASE_URL#http://}"
@@ -23,13 +26,12 @@ STATE_DIR="$HOME/.claude/bootstrap-state"
 WAYFINDER_DIR="$STATE_DIR/wayfinder"
 RALPH_DIR="$WORKSPACE_DIR/.ralph"
 
-# --- Global hardware / model state (from prior hardware-aware rewrite) ---
+# --- Global hardware / model state ---
 GPU_NAME=""
 VRAM_GB=0
 CPU_CORES=""
 MEM_GB=""
 DOCKER_AVAILABLE="false"
-ACT_AVAILABLE="false"
 OLLAMA_STATUS="unreachable"
 HARDWARE_TIER="cpu-only"
 
@@ -156,10 +158,6 @@ probe_hardware() {
         DOCKER_AVAILABLE="true"
     fi
 
-    if command -v act >/dev/null 2>&1; then
-        ACT_AVAILABLE="true"
-    fi
-
     if curl -fsSL "$OLLAMA_BASE_URL/api/tags" >/dev/null 2>&1; then
         OLLAMA_STATUS="reachable"
     fi
@@ -264,6 +262,51 @@ pull_ollama_models() {
 }
 
 # ============================================================================
+# Sandcastle Docker runner
+# ============================================================================
+
+run_sandcastle_container() {
+    local ticket_id="$1"
+    local task_desc="$2"
+    local iteration="${3:-1}"
+    local branch="${4:-main}"
+
+    local state_file="$RALPH_DIR/state/${ticket_id}.json"
+    local log_file="$RALPH_DIR/logs/${ticket_id}-iter${iteration}.log"
+    local container_name="sandcastle-${ticket_id}-iter${iteration}"
+
+    echo "Spinning up sandcastle container: $container_name"
+
+    # Run sandcastle runner inside an isolated Docker container
+    # Bind-mount the workspace so the runner can read/write state and git
+    docker run --rm \
+        --name "$container_name" \
+        -v "$WORKSPACE_DIR:/workspace" \
+        -w /workspace \
+        -e TICKET_ID="$ticket_id" \
+        -e TASK="$task_desc" \
+        -e ITERATION="$iteration" \
+        -e BRANCH="$branch" \
+        -e OLLAMA_HOST="$OLLAMA_HOST" \
+        -e CLAUDE_CONFIG_DIR="/home/vscode/.claude" \
+        --add-host=host.docker.internal:host-gateway \
+        mcr.microsoft.com/devcontainers/base:bookworm \
+        bash -c "
+            apt-get update -qq && apt-get install -y -qq nodejs git curl jq >/dev/null 2>&1
+            cd /workspace
+            node .devcontainer/sandcastle/runner.mjs \
+                --ticket '$ticket_id' \
+                --task '$task_desc' \
+                --iteration '$iteration' \
+                --workspace /workspace
+        " > "$log_file" 2>&1
+
+    local rc=$?
+    echo "Sandcastle container exited with code $rc"
+    return $rc
+}
+
+# ============================================================================
 # Phase detection
 # ============================================================================
 
@@ -276,10 +319,9 @@ detect_phase() {
         echo "hitl"
         return
     fi
-    # If handoff exists but not all AFK tickets are resolved
     if [ -d "$RALPH_DIR/state" ]; then
         local pending
-        pending="$(find "$RALPH_DIR/state" -maxdepth 1 -name '*.json' -exec sh -c 'jq -r ".status" < "$1" | grep -qE "open|blocked|pending-review"' _ {} \; -print 2>/dev/null | wc -l)"
+        pending="$(find "$RALPH_DIR/state" -maxdepth 1 -name '*.json' -print 2>/dev/null | wc -l)"
         if [ "$pending" -gt 0 ]; then
             echo "afk"
             return
@@ -298,7 +340,6 @@ phase_init() {
     echo "============================================"
     echo ""
 
-    # Hardware + models
     probe_hardware
     select_models "$VRAM_GB"
     set_ollama_env
@@ -322,7 +363,6 @@ phase_init() {
         echo "# Destination" > "$readme_dest"
     fi
 
-    # Derive destination from first paragraph of README
     local destination=""
     destination="$(grep -v '^#' "$readme_dest" | head -5 | tr '\n' ' ' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//' || true)"
     if [ -z "$destination" ]; then
@@ -358,7 +398,7 @@ EOF
     echo "Created wayfinder map at $WAYFINDER_DIR/map.md"
     echo ""
 
-    # Create initial tickets (local markdown tracker)
+    # Create initial tickets
     mkdir -p "$WAYFINDER_DIR/tickets"
 
     cat > "$WAYFINDER_DIR/tickets/01-destination.md" <<EOF
@@ -404,13 +444,13 @@ EOF
     echo "Created initial tickets in $WAYFINDER_DIR/tickets/"
     echo ""
 
-    # Generate deterministic act workflows
-    mkdir -p "$WORKSPACE_DIR/.github/workflows"
-    cp "$SCRIPT_DIR/templates/validate-branch.yml" "$WORKSPACE_DIR/.github/workflows/validate-branch.yml"
-    cp "$SCRIPT_DIR/templates/ralph-loop.yml" "$WORKSPACE_DIR/.github/workflows/ralph-loop.yml"
-    echo "Generated deterministic act workflows:"
-    echo "  - .github/workflows/validate-branch.yml"
-    echo "  - .github/workflows/ralph-loop.yml"
+    # Copy sandcastle scripts to workspace
+    mkdir -p "$WORKSPACE_DIR/.devcontainer/sandcastle"
+    cp "$SCRIPT_DIR/sandcastle/runner.mjs" "$WORKSPACE_DIR/.devcontainer/sandcastle/runner.mjs"
+    cp "$SCRIPT_DIR/sandcastle/validate-branch.sh" "$WORKSPACE_DIR/.devcontainer/sandcastle/validate-branch.sh"
+    cp "$SCRIPT_DIR/sandcastle/ralph-loop.sh" "$WORKSPACE_DIR/.devcontainer/sandcastle/ralph-loop.sh"
+    chmod +x "$WORKSPACE_DIR/.devcontainer/sandcastle/"*.sh
+    echo "Copied sandcastle scripts to .devcontainer/sandcastle/"
     echo ""
 
     # Set up ralph state directory
@@ -443,25 +483,23 @@ EOF
 }
 
 # ============================================================================
-# Phase: afk (ralph loops via act)
+# Phase: afk (ralph loops in Docker sandboxes)
 # ============================================================================
 
 phase_afk() {
     echo "============================================"
-    echo "  Phase: AFK — Ralph loops via act"
+    echo "  Phase: AFK — Ralph loops in Docker sandboxes"
     echo "============================================"
     echo ""
 
-    if [ "$ACT_AVAILABLE" != "true" ]; then
-        echo "ERROR: act (nektos) is required for AFK ralph loops."
-        echo "Install act or run tickets manually."
+    if [ "$DOCKER_AVAILABLE" != "true" ]; then
+        echo "ERROR: Docker is required for AFK sandcastle isolation."
+        echo "Install Docker or run tickets manually in the devcontainer."
         exit 1
     fi
 
-    # Ensure Ollama env is set
     set_ollama_env
 
-    # Find open AFK tickets
     local afk_tickets=()
     if [ -d "$WAYFINDER_DIR/tickets" ]; then
         for ticket in "$WAYFINDER_DIR/tickets"/*.md; do
@@ -491,7 +529,6 @@ phase_afk() {
     done
     echo ""
 
-    # Run each AFK ticket as a ralph-loop iteration via act
     local branch="ralph/afk-$(date +%s)"
     git checkout -b "$branch" 2>/dev/null || true
 
@@ -505,7 +542,6 @@ phase_afk() {
         echo "Task:   $task_desc"
         echo ""
 
-        # Initialize ralph state for this ticket
         mkdir -p "$RALPH_DIR/state"
         cat > "$RALPH_DIR/state/${ticket_id%.md}.json" <<EOF
 {
@@ -517,18 +553,11 @@ phase_afk() {
 }
 EOF
 
-        # Run ralph-loop workflow via act
-        if act -W "$WORKSPACE_DIR/.github/workflows/ralph-loop.yml" \
-            --env TICKET_ID="${ticket_id%.md}" \
-            --env BRANCH="$branch" \
-            --env ITERATION=1 \
-            --env OLLAMA_HOST="$OLLAMA_HOST" \
-            --env CLAUDE_CONFIG_DIR="${_REMOTE_USER_HOME:-$HOME}/.claude"; then
-            echo "Ralph loop completed for $ticket_id"
-            # Mark ticket as pending-review
+        if run_sandcastle_container "${ticket_id%.md}" "$task_desc" 1 "$branch"; then
+            echo "Sandcastle completed for $ticket_id"
             sed -i 's/^\*\*Status:\*\* open/**Status:** pending-review/' "$ticket_path"
         else
-            echo "WARNING: Ralph loop failed for $ticket_id. Review logs in $RALPH_DIR/logs/"
+            echo "WARNING: Sandcastle failed for $ticket_id. Review logs in $RALPH_DIR/logs/"
             sed -i 's/^\*\*Status:\*\* open/**Status:** blocked/' "$ticket_path"
         fi
         echo ""
@@ -544,17 +573,17 @@ EOF
 }
 
 # ============================================================================
-# Phase: verify (branch-type bound act workflows)
+# Phase: verify (branch-type bound sandcastle scripts)
 # ============================================================================
 
 phase_verify() {
     echo "============================================"
-    echo "  Phase: VERIFY — Branch validation via act"
+    echo "  Phase: VERIFY — Branch validation via sandcastle"
     echo "============================================"
     echo ""
 
-    if [ "$ACT_AVAILABLE" != "true" ]; then
-        echo "WARNING: act (nektos) not available. Skipping branch validation."
+    if [ "$DOCKER_AVAILABLE" != "true" ]; then
+        echo "WARNING: Docker not available. Skipping branch validation."
         return
     fi
 
@@ -566,12 +595,10 @@ phase_verify() {
     fi
 
     echo "Current branch: $current_branch"
-    echo "Running validate-branch workflow via act..."
+    echo "Running validate-branch via sandcastle..."
     echo ""
 
-    if act -W "$WORKSPACE_DIR/.github/workflows/validate-branch.yml" \
-        --env BRANCH="$current_branch" \
-        --env OLLAMA_HOST="$OLLAMA_HOST"; then
+    if bash "$WORKSPACE_DIR/.devcontainer/sandcastle/validate-branch.sh" "$current_branch" "$WORKSPACE_DIR"; then
         echo ""
         echo "Branch validation passed."
     else
@@ -595,7 +622,6 @@ phase_status() {
     echo "  VRAM:     ${VRAM_GB}GB"
     echo "  Tier:     $HARDWARE_TIER"
     echo "  Docker:   $DOCKER_AVAILABLE"
-    echo "  Act:      $ACT_AVAILABLE"
     echo "  Ollama:   $OLLAMA_STATUS"
     echo ""
     echo "Phase: $(detect_phase)"
@@ -646,7 +672,6 @@ case "${1:-}" in
         phase_status
         ;;
     *)
-        # Auto-detect phase and run
         PHASE="$(detect_phase)"
         case "$PHASE" in
             init)
