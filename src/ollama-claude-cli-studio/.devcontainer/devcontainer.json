@@ -49,7 +49,9 @@
 			"defaultRuntime": false,
 			"restartDockerd": true
 		},
-		"ghcr.io/mrrobot0985/devcontainer-features/container-firewall:0": {}
+		"ghcr.io/mrrobot0985/devcontainer-features/container-firewall:0": {
+			"services": "claude-code,docker"
+		}
 	},
 	"runArgs": [
 		"--add-host=host.docker.internal:host-gateway",
