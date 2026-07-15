@@ -7,7 +7,7 @@
 # Steps:
 #   1. Copy src/<template-id> to <destination-dir>
 #   2. Replace ${templateOption:<key>} placeholders with defaults from devcontainer-template.json
-#   3. Copy test/<template-id>/* and test/test-utils/* into <destination-dir>/test-project
+#   3. Copy test/<template-id>/* into <destination-dir>/test-project
 
 set -euo pipefail
 
@@ -68,9 +68,6 @@ if [ -d "${TEST_DIR}" ]; then
     DEST_TEST_DIR="${DEST_DIR}/test-project"
     mkdir -p "${DEST_TEST_DIR}"
     cp -Rp "${TEST_DIR}"/* "${DEST_TEST_DIR}"
-    if [ -d "test/test-utils" ]; then
-        cp -Rp test/test-utils/* "${DEST_TEST_DIR}"
-    fi
 fi
 
 echo "(*) Template rendered to '${DEST_DIR}'"
