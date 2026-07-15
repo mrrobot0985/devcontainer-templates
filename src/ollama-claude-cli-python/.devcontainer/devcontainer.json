@@ -42,5 +42,20 @@
 		"source=python-venv-${devcontainerId},target=/workspaces/.venv,type=volume"
 	],
 	"postCreateCommand": "bash .devcontainer/bootstrap.sh",
-	"onCreateCommand": "bash .devcontainer/setup-python.sh"
+	"onCreateCommand": "bash .devcontainer/setup-python.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.copilot",
+				"github.copilot-chat",
+				"ms-python.python",
+				"ms-toolsai.jupyter"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"editor.formatOnSave": true,
+				"python.defaultInterpreterPath": "/workspaces/.venv/bin/python"
+			}
+		}
+	}
 }

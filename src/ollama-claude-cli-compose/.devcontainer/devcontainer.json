@@ -34,5 +34,17 @@
 	"mounts": [
 		"source=claude-cli-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
 	],
-	"postCreateCommand": "bash .devcontainer/bootstrap.sh"
+	"postCreateCommand": "bash .devcontainer/bootstrap.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.copilot",
+				"github.copilot-chat"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"editor.formatOnSave": true
+			}
+		}
+	}
 }
