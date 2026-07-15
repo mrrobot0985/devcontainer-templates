@@ -21,6 +21,7 @@ Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama in
 - Privacy defaults (`claude-code-privacy`)
 - Claude Code Plugins (`claude-code-plugins`) — opt-in via configuration
 - Container firewall (`container-firewall`) — whitelist outbound traffic with `claude-code` preset
+- MCP servers (`claude-code-mcp-servers:0`) — GitHub and filesystem MCP servers pre-configured for external tool access
 
 ## Differences from `ollama-claude-cli`
 

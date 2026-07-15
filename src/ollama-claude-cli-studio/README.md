@@ -18,6 +18,7 @@ Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, 
 - Docker-in-Docker (`docker-in-docker:4.0.0`)
 - NVIDIA Container Toolkit (`nvidia-container-toolkit:0`)
 - Container firewall (`container-firewall:0`) — whitelist outbound traffic with `claude-code` + `docker` presets so Docker-in-Docker image pulls work
+- MCP servers (`claude-code-mcp-servers:0`) — GitHub and filesystem MCP servers pre-configured for external tool access
 
 ## Persistence
 

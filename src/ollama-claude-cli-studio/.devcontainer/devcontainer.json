@@ -49,6 +49,10 @@
 			"defaultRuntime": false,
 			"restartDockerd": true
 		},
+		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-mcp-servers:0": {
+			"enableGithub": true,
+			"enableFilesystem": true
+		},
 		"ghcr.io/mrrobot0985/devcontainer-features/container-firewall:0": {
 			"services": "claude-code,docker"
 		}

@@ -24,6 +24,7 @@ Devcontainer for Claude CLI with Ollama backend, Python 3.12, the `uv` package m
 - Privacy defaults (`claude-code-privacy`)
 - Claude Code Plugins (`claude-code-plugins`)
 - Container firewall (`container-firewall`)
+- MCP servers (`claude-code-mcp-servers:0`) — GitHub and filesystem MCP servers pre-configured for external tool access
 
 ## Persistence
 
