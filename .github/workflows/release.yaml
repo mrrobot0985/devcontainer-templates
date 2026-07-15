@@ -1,3 +1,14 @@
+# Release workflow for devcontainer templates.
+#
+# Triggers:
+#   - any git tag matching *-v* (e.g., ollama-claude-cli-v1.2.3)
+#
+# Jobs:
+#   deploy - publishes every template under src/ to GHCR using the
+#            devcontainers/action@v1 GitHub Action.
+#
+# Package visibility: templates are private by default. Set each package to
+# public in its GHCR package settings page after the first publish.
 name: "Release Dev Container Templates"
 on:
   push:

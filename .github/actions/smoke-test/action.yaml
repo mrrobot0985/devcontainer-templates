@@ -1,3 +1,13 @@
+# Composite GitHub Action: build a dev container template and run its smoke test.
+#
+# Inputs:
+#   template - the template ID under src/ to build and test.
+#
+# Steps:
+#   1. Check out the repository.
+#   2. Log in to GHCR so private feature packages can be pulled.
+#   3. Run build.sh to render and build the template.
+#   4. Run test.sh to execute the per-template smoke test inside the container.
 name: 'Smoke test'
 description: 'Build a dev container template and run its smoke test inside the built container'
 inputs:

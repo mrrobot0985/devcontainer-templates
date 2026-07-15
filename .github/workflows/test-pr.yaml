@@ -1,3 +1,16 @@
+# CI workflow for devcontainer templates.
+#
+# Triggers:
+#   - push to main
+#   - any pull request
+#
+# Jobs:
+#   lint    - static validation: JSON, templateOption placeholders, shellcheck,
+#             ruff, generated READMEs, registry sync, and pytest.
+#   detect-changes - figure out which templates changed so CI only tests those.
+#   test    - build and run smoke tests for every changed template.
+#
+# This workflow must pass before a PR can be merged.
 name: "CI - Test Templates"
 on:
   push:
@@ -130,3 +143,20 @@ jobs:
         uses: ./.github/actions/smoke-test
         with:
           template: "${{ matrix.templates }}"
+
+  smoke-tests:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    if: always() && needs.lint.result == 'success'
+    steps:
+      - name: Evaluate smoke-test results
+        run: |
+          if [[ "${{ needs.test.result }}" == "skipped" ]]; then
+            echo "No template changes detected — smoke tests skipped."
+            exit 0
+          fi
+          if [[ "${{ needs.test.result }}" == "failure" ]]; then
+            echo "FAIL: one or more smoke tests failed."
+            exit 1
+          fi
+          echo "Smoke tests passed."

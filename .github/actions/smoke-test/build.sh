@@ -1,4 +1,15 @@
 #!/bin/bash
+# Build a dev container template for smoke testing.
+#
+# Usage:
+#   build.sh <template-id>
+#
+# Steps:
+#   1. Render the template with default options into /tmp/<template-id>.
+#   2. Ensure the devcontainer CLI is installed.
+#   3. On CI runners, strip --gpus=all from runArgs because GPUs are unavailable.
+#   4. Build the container with the test ID label so the test.sh step can find it.
+
 TEMPLATE_ID="$1"
 
 set -e

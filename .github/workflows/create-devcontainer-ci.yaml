@@ -1,3 +1,17 @@
+# CI workflow for the @mrrobot0985/create-devcontainer npm package.
+#
+# Triggers:
+#   - push to main or feature/fix branches (feat/**, fix/**)
+#   - tags matching v* or @*
+#   - pull requests targeting main
+#   only when the changed paths include the package, the templates, the sync
+#   script, or this workflow itself.
+#
+# Jobs:
+#   typecheck-test-build - installs dependencies, type-checks, validates the
+#                          template registry sync, runs package tests, and builds.
+#   publish              - publishes the built package to npm when triggered
+#                          by a tag.
 name: create-devcontainer CI
 
 on:

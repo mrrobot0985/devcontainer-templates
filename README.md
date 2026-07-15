@@ -1,10 +1,54 @@
 # Dev Container Templates
 
-![CI](https://github.com/mrrobot0985/devcontainer-templates/actions/workflows/test-pr.yaml/badge.svg)
+![CI - Test Templates](https://github.com/mrrobot0985/devcontainer-templates/actions/workflows/test-pr.yaml/badge.svg)
 ![Release](https://github.com/mrrobot0985/devcontainer-templates/actions/workflows/release.yaml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-A focused collection of custom [Dev Container Templates](https://containers.dev/implementors/templates/).
+A focused collection of custom [Dev Container Templates](https://containers.dev/implementors/templates/) for Ollama-backed Claude environments.
+
+## Repository structure
+
+This is a monorepo. Each directory has a single responsibility:
+
+| Directory | Purpose |
+| --------- | ------- |
+| `src/` | Dev container template definitions. Each subdirectory is one publishable template. |
+| `packages/create-devcontainer/` | The `npx @mrrobot0985/create-devcontainer` helper that copies templates into any workspace. |
+| `scripts/` | Local automation: README generation, template rendering, registry sync, and the local CI gate. |
+| `test/` | Unit tests for scripts and per-template smoke tests. |
+| `.github/workflows/` | CI/CD pipelines that run on every push/PR and release. |
+| `.github/actions/smoke-test/` | Composite action used by CI to build a template and run its smoke test. |
+| `.githooks/` | Pre-commit hook that keeps generated template READMEs and the create-devcontainer registry in sync. |
+
+## What runs when you push or open a PR
+
+1. **CI - Test Templates** (`test-pr.yaml`) runs on every push to `main` and every pull request.
+   - Validates every `src/<template>/devcontainer-template.json` file.
+   - Checks that all `${templateOption:<key>}` placeholders have matching options.
+   - Lints shell scripts with `shellcheck`.
+   - Lints Python with `ruff`.
+   - Verifies generated template READMEs are up to date.
+   - Verifies the create-devcontainer template registry is in sync with `src/`.
+   - Runs Python unit tests with `pytest`.
+   - Detects which templates changed and runs a smoke test (build + `test/<template>/test.sh`) for each.
+
+2. **create-devcontainer CI** (`create-devcontainer-ci.yaml`) runs when `packages/create-devcontainer/`, `src/`, `scripts/sync-template-registry.ts`, or its own workflow file changes.
+   - Type-checks the package.
+   - Verifies registry sync.
+   - Runs package unit tests.
+   - Builds the package.
+   - Publishes to npm when the workflow was triggered by a version tag (`v*` or `@*`).
+
+3. **Release** (`release.yaml`) runs on every `*-v*` git tag and publishes the matching template to GHCR.
+
+## Local scripts
+
+| Script | Purpose |
+| ------ | ------- |
+| `scripts/local-ci.sh` | Run the same static checks as CI locally. Optionally runs smoke tests if Docker and the devcontainer CLI are available. This is the fastest way to verify a change before pushing. |
+| `scripts/generate-template-readmes.py` | Create missing `src/<template>/README.md` files from `devcontainer-template.json` metadata. The pre-commit hook runs this automatically. |
+| `scripts/sync-template-registry.ts` | Compare `src/` templates with `packages/create-devcontainer/src/templates.ts`. Use `--write` to regenerate the registry. |
+| `scripts/render-template.sh` | Copy a template to a destination directory and substitute `${templateOption:<key>}` placeholders with their defaults. Used by the smoke-test action and for local testing. |
 
 ## Quick Start with `create-devcontainer`
 
@@ -73,27 +117,31 @@ devcontainer templates apply \
   --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:1
 ```
 
-## Adding NVIDIA Container Toolkit
+## Development
 
-If you need GPU passthrough for containers launched inside the inner Docker daemon (e.g., running CUDA workloads inside containers built from within the devcontainer), add the NVIDIA Container Toolkit feature to your `.devcontainer/devcontainer.json`:
+### Git hooks
 
-```json
-"features": {
-  "ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:0": {
-    "enable": true
-  }
-}
+Install the pre-commit hook after cloning:
+
+```bash
+git config core.hooksPath .githooks
 ```
 
-## CI
+The hook:
 
-Template changes are validated by [`.github/workflows/test-pr.yaml`](.github/workflows/test-pr.yaml):
+- Generates missing `src/<template>/README.md` files from their JSON metadata.
+- Verifies the create-devcontainer template registry is in sync.
+- Warns when a staged `devcontainer-template.json` is not accompanied by its `README.md` update.
 
-- Detects changed templates via `dorny/paths-filter@v4`
-- Builds the template via the smoke-test composite action
-- Runs `test/<template>/test.sh` inside the built container
+### Run the local CI gate
 
-Run the local smoke test before pushing:
+```bash
+./scripts/local-ci.sh
+```
+
+This runs every static check required by CI. Smoke tests run automatically when Docker and the devcontainer CLI are available.
+
+### Smoke-test a single template locally
 
 ```bash
 # Minimal
@@ -109,30 +157,24 @@ Run the local smoke test before pushing:
 ./.github/actions/smoke-test/test.sh ollama-claude-sandcastle-studio
 ```
 
-## Development
+## Adding NVIDIA Container Toolkit
 
-### Git Hooks
+If you need GPU passthrough for containers launched inside the inner Docker daemon (e.g., running CUDA workloads inside containers built from within the devcontainer), add the NVIDIA Container Toolkit feature to your `.devcontainer/devcontainer.json`:
 
-This repository uses a pre-commit hook to keep template READMEs in sync with `devcontainer-template.json` metadata. Install it once after cloning:
-
-```bash
-git config core.hooksPath .githooks
-```
-
-The hook:
-
-- Auto-generates any missing `src/<template>/README.md` files from their JSON metadata.
-- Warns when a staged `devcontainer-template.json` is not accompanied by its `README.md` update.
-
-You can also run the generator manually:
-
-```bash
-uv run python scripts/generate-template-readmes.py
+```json
+"features": {
+  "ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:0": {
+    "enable": true
+  }
+}
 ```
 
 ## Publishing
 
-On release, `.github/workflows/release.yaml` publishes each template to GHCR using the `devcontainers/action@v1` GitHub Action. Templates are private by default; set each package to public in its GHCR package settings page.
+- Template releases: push a signed tag `<template-name>-v<semver>` to trigger `release.yaml`, which publishes to GHCR.
+- Package releases: push a tag matching `v*` or `@*` to trigger `create-devcontainer-ci.yaml`, which publishes `@mrrobot0985/create-devcontainer` to npm.
+
+See [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md) for the exact tagging and release steps.
 
 ## Using the Dev Container CLI
 
@@ -178,7 +220,7 @@ rm -rf /tmp/devcontainercli-*/container-features/*
 rm -f .devcontainer/devcontainer-lock.json
 ```
 
-### Important: Lockfiles Pin Feature Versions
+### Important: Lockfiles pin feature versions
 
 If `.devcontainer/devcontainer-lock.json` exists, it overrides `:latest` and pins each feature to a specific digest. Delete the lockfile to force resolution of the newest published version.
 

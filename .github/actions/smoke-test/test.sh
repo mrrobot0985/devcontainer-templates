@@ -1,4 +1,18 @@
 #!/bin/bash
+# Run the smoke test for a built dev container template.
+#
+# Usage:
+#   test.sh <template-id>
+#
+# Expectations:
+#   - The template must have already been built by build.sh, which leaves the
+#     rendered source in /tmp/<template-id> and labels the running container
+#     with "test-container=<template-id>".
+#   - If test/<template-id>/test.sh exists inside the container, it is executed.
+#     Otherwise the script lists the container contents so the failure is visible.
+#   - On exit, the running test container and the rendered source directory are
+#     removed to prevent orphaned resources.
+
 TEMPLATE_ID="$1"
 set -e
 
