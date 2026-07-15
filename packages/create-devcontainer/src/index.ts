@@ -18,6 +18,7 @@ program
   )
   .option("--force", "Overwrite an existing .devcontainer directory")
   .option("--name <name>", "Override the devcontainer configuration name")
+  .option("--readme", "Create a README.md skeleton in the target directory")
   .action((templateId: string | undefined, targetFolder: string, options) => {
     const available = listTemplates();
 
@@ -55,6 +56,7 @@ program
         force: options.force ?? false,
         mode,
         name: options.name,
+        readme: options.readme ?? false,
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);

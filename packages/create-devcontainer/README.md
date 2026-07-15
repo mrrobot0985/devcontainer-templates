@@ -32,6 +32,18 @@ Apply the minimal template with a custom devcontainer name:
 npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --name "My Project"
 ```
 
+Apply a template and generate a `README.md` skeleton:
+
+```bash
+npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --readme
+```
+
+Combine `--name` and `--readme` to create a named devcontainer and a matching README title:
+
+```bash
+npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --name "My Project" --readme
+```
+
 ## Templates
 
 | ID | Name |
@@ -48,6 +60,7 @@ Run `create-devcontainer` with no arguments to see the full list.
 | `--registry` | Force GHCR registry mode (default is bundled local copy) |
 | `--force` | Overwrite an existing `.devcontainer` directory |
 | `--name` | Override the devcontainer configuration name |
+| `--readme` | Create a `README.md` skeleton in the target directory |
 | `--help` | Show help |
 | `--version` | Show version |
 

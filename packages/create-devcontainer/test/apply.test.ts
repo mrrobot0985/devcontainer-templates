@@ -89,4 +89,57 @@ describe("applyTemplate", () => {
     expect(result.name).toBe("Custom Name");
     expect(result.image).toBe("base:jammy");
   });
+
+  it("creates a README.md skeleton when --readme is provided", () => {
+    const repoRoot = new URL("../../../", import.meta.url).pathname;
+    const fixtureDir = join(repoRoot, "test", "fixtures", "test-template-readme");
+    mkdirSync(join(fixtureDir, ".devcontainer"), { recursive: true });
+    writeFileSync(
+      join(fixtureDir, ".devcontainer", "devcontainer.json"),
+      '{"image": "base:${templateOption:imageVariant}"}'
+    );
+
+    const tmp = mkdtempSync(join(tmpdir(), "create-devcontainer-"));
+    const template: Template = {
+      ...fakeTemplate,
+      sourcePath: "test/fixtures/test-template-readme",
+    };
+
+    applyTemplate(template, {
+      targetDir: tmp,
+      force: false,
+      mode: "dev",
+      readme: true,
+    });
+
+    const readme = readFileSync(join(tmp, "README.md"), "utf-8");
+    expect(readme.startsWith("# Test Template")).toBe(true);
+  });
+
+  it("uses --name as README title when both --readme and --name are provided", () => {
+    const repoRoot = new URL("../../../", import.meta.url).pathname;
+    const fixtureDir = join(repoRoot, "test", "fixtures", "test-template-readme-name");
+    mkdirSync(join(fixtureDir, ".devcontainer"), { recursive: true });
+    writeFileSync(
+      join(fixtureDir, ".devcontainer", "devcontainer.json"),
+      '{"image": "base:${templateOption:imageVariant}"}'
+    );
+
+    const tmp = mkdtempSync(join(tmpdir(), "create-devcontainer-"));
+    const template: Template = {
+      ...fakeTemplate,
+      sourcePath: "test/fixtures/test-template-readme-name",
+    };
+
+    applyTemplate(template, {
+      targetDir: tmp,
+      force: false,
+      mode: "dev",
+      name: "My Project",
+      readme: true,
+    });
+
+    const readme = readFileSync(join(tmp, "README.md"), "utf-8");
+    expect(readme.startsWith("# My Project")).toBe(true);
+  });
 });
