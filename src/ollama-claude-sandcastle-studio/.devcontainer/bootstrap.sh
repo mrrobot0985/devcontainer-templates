@@ -4,16 +4,23 @@ set -euo pipefail
 # Bootstrap — Lifecycle orchestrator for Matt Pocock's skills.
 #
 # Phase machine:
-#   init  → Create wayfinder map from README.md, copy sandcastle scripts, print HITL instructions.
-#   afk   → Read wayfinder map + handoff, run ralph-loop iterations in Docker sandboxes for AFK tickets.
-#   verify→ Run branch-type validation scripts via sandcastle.
-#   status→ Show current phase and pending work.
+#   init  → Hardware detection, model selection, use claude -p to seed wayfinder
+#           map + tickets from README.md skeleton, copy sandcastle scripts.
+#   hitl  → BLOCKING. Forces the human to complete grilling before the
+#           container can proceed. Loops, printing reminders, until
+#           handoff.md is written.
+#   afk   → CONTINUOUS. Daemon loop that processes AFK tickets in Docker
+#           sandboxes, sleeps, and repeats until no self-improvement work
+#           remains.
+#   verify→ Branch-type validation via sandcastle scripts.
 #
 # Technological separation:
-#   HITL (Human-In-The-Loop) → runs directly in the devcontainer, interactive claude sessions.
-#   AFK  (Away-From-Keyboard) → runs in Docker-isolated sandboxes, one container per ticket.
+#   HITL (Human-In-The-Loop) → runs directly in the devcontainer, interactive.
+#   AFK  (Away-From-Keyboard) → runs in Docker-isolated sandboxes.
 #
-# This script does NOT use LLM improvisation. All sandcastle scripts are deterministic templates.
+# This script is designed as a long-running postCreateCommand. It never exits
+# during normal operation — HITL blocks until the human is done, then AFK runs
+# forever, processing tickets and sleeping.
 
 OLLAMA_BASE_URL="http://host.docker.internal:11434"
 OLLAMA_HOST="${OLLAMA_BASE_URL#http://}"
@@ -25,6 +32,11 @@ WORKSPACE_DIR="$(pwd)"
 STATE_DIR="$HOME/.claude/bootstrap-state"
 WAYFINDER_DIR="$STATE_DIR/wayfinder"
 RALPH_DIR="$WORKSPACE_DIR/.ralph"
+
+# Claude backend env (for claude -p invocations)
+export ANTHROPIC_API_KEY=""
+export ANTHROPIC_AUTH_TOKEN="ollama"
+export ANTHROPIC_BASE_URL="$OLLAMA_BASE_URL"
 
 # --- Global hardware / model state ---
 GPU_NAME=""
@@ -85,7 +97,6 @@ probe_hardware() {
     GPU_NAME=""
     VRAM_GB=0
 
-    # Primary: nvidia-smi
     if command -v nvidia-smi >/dev/null 2>&1; then
         local nvidia_out=""
         nvidia_out="$(nvidia-smi --query-gpu=name,memory.total --format=csv,noheader,nounits 2>/dev/null | head -1 || true)"
@@ -99,7 +110,6 @@ probe_hardware() {
         fi
     fi
 
-    # Fallback 1: driver present but nvidia-smi unavailable
     if [ "$VRAM_GB" -eq 0 ] && [ -f /proc/driver/nvidia/version ]; then
         GPU_NAME="${GPU_NAME:-NVIDIA GPU (driver present, nvidia-smi unavailable)}"
         local info_file=""
@@ -123,7 +133,6 @@ probe_hardware() {
         fi
     fi
 
-    # Fallback 2: lspci + sysfs
     if [ "$VRAM_GB" -eq 0 ] && command -v lspci >/dev/null 2>&1; then
         local lspci_line=""
         lspci_line="$(lspci 2>/dev/null | grep -i 'nvidia' | head -1 || true)"
@@ -277,8 +286,6 @@ run_sandcastle_container() {
 
     echo "Spinning up sandcastle container: $container_name"
 
-    # Run sandcastle runner inside an isolated Docker container
-    # Bind-mount the workspace so the runner can read/write state and git
     docker run --rm \
         --name "$container_name" \
         -v "$WORKSPACE_DIR:/workspace" \
@@ -331,12 +338,12 @@ detect_phase() {
 }
 
 # ============================================================================
-# Phase: init
+# Phase: init — seed wayfinder via claude -p
 # ============================================================================
 
 phase_init() {
     echo "============================================"
-    echo "  Phase: INIT — Setting up workspace"
+    echo "  Phase: INIT — Seeding workspace"
     echo "============================================"
     echo ""
 
@@ -352,56 +359,128 @@ phase_init() {
     pull_ollama_models
     echo ""
 
-    # Create wayfinder map from README.md
-    mkdir -p "$WAYFINDER_DIR"
+    mkdir -p "$WAYFINDER_DIR" "$WAYFINDER_DIR/tickets"
+
+    # Copy README.md as seed
     local readme_dest="$WAYFINDER_DIR/README.seed.md"
     if [ -f "$WORKSPACE_DIR/README.md" ]; then
         cp "$WORKSPACE_DIR/README.md" "$readme_dest"
-        echo "Seeded wayfinder destination from README.md"
     else
-        echo "No README.md found. Using placeholder destination."
-        echo "# Destination" > "$readme_dest"
+        echo "# Project" > "$readme_dest"
+        echo "Purpose to be defined." >> "$readme_dest"
     fi
 
-    local destination=""
-    destination="$(grep -v '^#' "$readme_dest" | head -5 | tr '\n' ' ' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//' || true)"
-    if [ -z "$destination" ]; then
-        destination="Define the destination for this effort."
-    fi
+    # Use claude -p to generate the wayfinder map from the README skeleton
+    echo "Using claude -p to generate wayfinder map from README.md ..."
+    if command -v claude >/dev/null 2>&1; then
+        local prompt_map
+        prompt_map="Read the file at $readme_dest. It is a README skeleton — the project's purpose is not yet defined. Generate a wayfinder map markdown document with exactly these sections:
 
-    cat > "$WAYFINDER_DIR/map.md" <<EOF
+## Destination
+A short paragraph noting that the project's purpose needs to be defined through human collaboration. Reference the README skeleton.
+
+## Notes
+- Hardware tier: $HARDWARE_TIER
+- Models: haiku=$MODEL_HAIKU, sonnet=$MODEL_SONNET, opus=$MODEL_OPUS, subagent=$MODEL_SUBAGENT
+- Skills to use: /wayfinder, /grilling, /domain-modeling
+
+## Decisions so far
+(none yet)
+
+## Not yet specified
+The project's core purpose and scope are fog — they will be clarified during the HITL grilling session.
+
+## Out of scope
+(none yet)
+
+Output ONLY the raw markdown. No code fences, no extra commentary."
+
+        if claude -p "$prompt_map" > "$WAYFINDER_DIR/map.md" 2>/dev/null; then
+            echo "Generated wayfinder map at $WAYFINDER_DIR/map.md"
+        else
+            echo "WARNING: claude -p failed for map generation. Using fallback."
+            cat > "$WAYFINDER_DIR/map.md" <<EOF
 # Wayfinder Map
 
 ## Destination
 
-$destination
+Define the precise purpose of this project by collaborating with the human. The README.md is currently a skeleton.
 
 ## Notes
 
+- Hardware tier: $HARDWARE_TIER
+- Models: haiku=$MODEL_HAIKU, sonnet=$MODEL_SONNET, opus=$MODEL_OPUS, subagent=$MODEL_SUBAGENT
 - Skills: /wayfinder, /grilling, /domain-modeling
+
+## Decisions so far
+
+(none yet)
+
+## Not yet specified
+
+The project's core purpose and scope are fog.
+
+## Out of scope
+
+(none yet)
+EOF
+        fi
+    else
+        echo "WARNING: claude CLI not found. Using fallback map."
+        cat > "$WAYFINDER_DIR/map.md" <<EOF
+# Wayfinder Map
+
+## Destination
+
+Define the precise purpose of this project by collaborating with the human. The README.md is currently a skeleton.
+
+## Notes
+
 - Hardware tier: $HARDWARE_TIER
 - Models: haiku=$MODEL_HAIKU, sonnet=$MODEL_SONNET, opus=$MODEL_OPUS, subagent=$MODEL_SUBAGENT
 
 ## Decisions so far
 
-<!-- Closed tickets get appended here -->
+(none yet)
 
 ## Not yet specified
 
-<!-- Fog of war — suspected questions that aren't sharp enough to ticket yet -->
+The project's core purpose and scope are fog.
 
 ## Out of scope
 
-<!-- Consciously ruled out of this effort -->
+(none yet)
 EOF
+    fi
 
-    echo "Created wayfinder map at $WAYFINDER_DIR/map.md"
-    echo ""
+    # Use claude -p to generate initial tickets
+    echo "Using claude -p to generate initial tickets ..."
+    local ticket_prompt
+    ticket_prompt="Based on the README skeleton at $readme_dest and the wayfinder map, generate exactly 3 markdown ticket files.
 
-    # Create initial tickets
-    mkdir -p "$WAYFINDER_DIR/tickets"
+Ticket 01 (HITL grilling): Ask the human to define the precise destination. What is this project for? Who is it for? What does success look like?
 
-    cat > "$WAYFINDER_DIR/tickets/01-destination.md" <<EOF
+Ticket 02 (HITL grilling): Breadth-first frontier mapping. What are the open questions and first steps? What decisions must be made before implementation can begin?
+
+Ticket 03 (AFK research): Read the codebase (if any files exist beyond README), identify the tech stack, and summarize current state and constraints.
+
+Output each ticket as raw markdown, separated by '---TICKET_SEPARATOR---'. No code fences."
+
+    local tickets_raw=""
+    if command -v claude >/dev/null 2>&1; then
+        tickets_raw="$(claude -p "$ticket_prompt" 2>/dev/null || true)"
+    fi
+
+    if [ -n "$tickets_raw" ] && echo "$tickets_raw" | grep -q "TICKET_SEPARATOR"; then
+        echo "$tickets_raw" | awk '/TICKET_SEPARATOR/{n++;next} {print > "'$WAYFINDER_DIR'/tickets/0" n "-ticket.md"}'
+        # Rename to expected names
+        mv "$WAYFINDER_DIR/tickets/01-ticket.md" "$WAYFINDER_DIR/tickets/01-destination.md" 2>/dev/null || true
+        mv "$WAYFINDER_DIR/tickets/02-ticket.md" "$WAYFINDER_DIR/tickets/02-map-frontier.md" 2>/dev/null || true
+        mv "$WAYFINDER_DIR/tickets/03-ticket.md" "$WAYFINDER_DIR/tickets/03-research-context.md" 2>/dev/null || true
+        echo "Generated tickets via claude -p"
+    else
+        # Fallback: write deterministic tickets
+        cat > "$WAYFINDER_DIR/tickets/01-destination.md" <<EOF
 # Ticket 01: Define destination via grilling
 
 **Type:** wayfinder:grilling (HITL)
@@ -410,14 +489,13 @@ EOF
 
 ## Question
 
-What is the precise destination for this effort? Read the README seed and grill the human until the destination is sharp enough to create tickets.
+What is the precise destination for this effort? Read the README seed and grill the human until the destination is sharp enough to create tickets. What problem does this solve? Who is it for? What does "done" look like?
 
 ## Answer
 
 <!-- Filled in after grilling session -->
 EOF
-
-    cat > "$WAYFINDER_DIR/tickets/02-map-frontier.md" <<EOF
+        cat > "$WAYFINDER_DIR/tickets/02-map-frontier.md" <<EOF
 # Ticket 02: Map the frontier
 
 **Type:** wayfinder:grilling (HITL)
@@ -428,8 +506,7 @@ EOF
 
 Breadth-first across the decision space: what are the open questions and first steps? Create tickets for anything sharp enough to specify now. Leave the rest in "Not yet specified".
 EOF
-
-    cat > "$WAYFINDER_DIR/tickets/03-research-context.md" <<EOF
+        cat > "$WAYFINDER_DIR/tickets/03-research-context.md" <<EOF
 # Ticket 03: Research project context
 
 **Type:** wayfinder:research (AFK)
@@ -440,9 +517,8 @@ EOF
 
 Read the codebase, docs, and any existing ADRs. Summarize the current state and surface constraints that affect the destination.
 EOF
-
-    echo "Created initial tickets in $WAYFINDER_DIR/tickets/"
-    echo ""
+        echo "Generated fallback tickets"
+    fi
 
     # Copy sandcastle scripts to workspace
     mkdir -p "$WORKSPACE_DIR/.devcontainer/sandcastle"
@@ -450,52 +526,107 @@ EOF
     cp "$SCRIPT_DIR/sandcastle/validate-branch.sh" "$WORKSPACE_DIR/.devcontainer/sandcastle/validate-branch.sh"
     cp "$SCRIPT_DIR/sandcastle/ralph-loop.sh" "$WORKSPACE_DIR/.devcontainer/sandcastle/ralph-loop.sh"
     chmod +x "$WORKSPACE_DIR/.devcontainer/sandcastle/"*.sh
-    echo "Copied sandcastle scripts to .devcontainer/sandcastle/"
-    echo ""
 
     # Set up ralph state directory
     mkdir -p "$RALPH_DIR/state" "$RALPH_DIR/logs" "$RALPH_DIR/notes"
-    echo "Set up ralph state directory: $RALPH_DIR"
+
+    # Install shell hook that forces HITL on every new shell
+    local hitl_hook="$WORKSPACE_DIR/.devcontainer/hitl-hook.sh"
+    cat > "$hitl_hook" <<'HOOK_EOF'
+#!/bin/bash
+# HITL reminder hook — sourced by .bashrc and .zshrc
+HITL_FILE="$HOME/.claude/bootstrap-state/wayfinder/handoff.md"
+if [ ! -f "$HITL_FILE" ]; then
+    echo ""
+    echo "╔════════════════════════════════════════════════════════════════╗"
+    echo "║  HITL REQUIRED — Human-In-The-Loop                           ║"
+    echo "║                                                                ║"
+    echo "║  The wayfinder map needs a destination. Run:                 ║"
+    echo "║                                                                ║"
+    echo "║      claude                                                    ║"
+    echo "║      /grilling                                                 ║"
+    echo "║                                                                ║"
+    echo "║  Grill until the project's purpose is sharp.                   ║"
+    echo "║  Then run: echo '# Handoff' > $HITL_FILE                    ║"
+    echo "╚════════════════════════════════════════════════════════════════╝"
+    echo ""
+fi
+HOOK_EOF
+    chmod +x "$hitl_hook"
+
+    for rcfile in "$HOME/.bashrc" "$HOME/.zshrc"; do
+        if [ -f "$rcfile" ]; then
+            if ! grep -q "hitl-hook.sh" "$rcfile" 2>/dev/null; then
+                echo "source $hitl_hook" >> "$rcfile"
+            fi
+        fi
+    done
+
+    echo ""
+    echo "============================================"
+    echo "  INIT complete."
+    echo "============================================"
+}
+
+# ============================================================================
+# Phase: hitl — BLOCKING until handoff.md is written
+# ============================================================================
+
+phase_hitl() {
+    echo ""
+    echo "╔════════════════════════════════════════════════════════════════╗"
+    echo "║  Phase: HITL — Human-In-The-Loop                             ║"
+    echo "║                                                                ║"
+    echo "║  The wayfinder map has been seeded from README.md.             ║"
+    echo "║  The README is a skeleton — you must define the purpose.       ║"
+    echo "║                                                                ║"
+    echo "║  REQUIRED ACTIONS:                                             ║"
+    echo "║    1. Run:  claude                                             ║"
+    echo "║    2. Use:  /grilling                                          ║"
+    echo "║       Grill on the destination until sharp.                    ║"
+    echo "║    3. Use:  /wayfinder                                         ║"
+    echo "║       Chart the map and create frontier tickets.               ║"
+    echo "║                                                                ║"
+    echo "║  When the grilling session ends, write a handoff:              ║"
+    echo "║    echo '# Handoff' > $WAYFINDER_DIR/handoff.md              ║"
+    echo "║                                                                ║"
+    echo "║  The container will then auto-transition to AFK mode.           ║"
+    echo "╚════════════════════════════════════════════════════════════════╝"
     echo ""
 
-    # Verify claude CLI
-    if ! command -v claude >/dev/null 2>&1; then
-        echo "WARNING: claude CLI not found. HITL phases require Claude Code."
-    fi
+    local waited=0
+    while [ ! -f "$WAYFINDER_DIR/handoff.md" ]; do
+        sleep 5
+        waited=$((waited + 5))
+        if [ "$((waited % 30))" -eq 0 ]; then
+            echo ""
+            echo "⏳  Still waiting for HITL handoff... ($waited seconds)"
+            echo "    Run: claude"
+            echo "    Then: /grilling"
+            echo "    Write handoff when done: echo '# Handoff' > $WAYFINDER_DIR/handoff.md"
+            echo ""
+        fi
+    done
 
-    echo "============================================"
-    echo "  INIT complete. Next: HITL phase"
-    echo "============================================"
     echo ""
-    echo "The wayfinder map has been seeded from README.md."
-    echo ""
-    echo "NEXT STEPS (Human-In-The-Loop):"
-    echo "  1. Run: claude"
-    echo "  2. Use: /grilling"
-    echo "     Grill on the destination until sharp."
-    echo "  3. Use: /wayfinder"
-    echo "     Chart the map, create frontier tickets."
-    echo "  4. When grilling ends, a handoff will be written to:"
-    echo "     $WAYFINDER_DIR/handoff.md"
-    echo ""
-    echo "After HITL, run: bash .devcontainer/bootstrap.sh afk"
+    echo "Handoff detected. Transitioning to AFK mode..."
     echo ""
 }
 
 # ============================================================================
-# Phase: afk (ralph loops in Docker sandboxes)
+# Phase: afk — CONTINUOUS daemon loop
 # ============================================================================
 
 phase_afk() {
     echo "============================================"
-    echo "  Phase: AFK — Ralph loops in Docker sandboxes"
+    echo "  Phase: AFK — Processing AFK tickets"
     echo "============================================"
     echo ""
 
     if [ "$DOCKER_AVAILABLE" != "true" ]; then
         echo "ERROR: Docker is required for AFK sandcastle isolation."
-        echo "Install Docker or run tickets manually in the devcontainer."
-        exit 1
+        echo "Install Docker or run tickets manually."
+        return 1
     fi
 
     set_ollama_env
@@ -518,9 +649,7 @@ phase_afk() {
 
     if [ ${#afk_tickets[@]} -eq 0 ]; then
         echo "No open AFK tickets found."
-        echo "If HITL tickets remain, complete them first."
-        echo "Otherwise, run: bash .devcontainer/bootstrap.sh verify"
-        return
+        return 0
     fi
 
     echo "Found ${#afk_tickets[@]} AFK ticket(s):"
@@ -563,13 +692,49 @@ EOF
         echo ""
     done
 
+    # After AFK batch, run verify
+    phase_verify
+
+    return 0
+}
+
+# ============================================================================
+# Phase: afk daemon — never exits
+# ============================================================================
+
+phase_afk_daemon() {
     echo "============================================"
-    echo "  AFK phase complete"
+    echo "  AFK Daemon started"
+    echo "  This loop never exits."
+    echo "  Stop the container to halt."
     echo "============================================"
     echo ""
-    echo "Review completed tickets in $WAYFINDER_DIR/tickets/"
-    echo "Run 'bash .devcontainer/bootstrap.sh verify' to validate branch integrity."
-    echo ""
+
+    local cycle=0
+    while true; do
+        cycle=$((cycle + 1))
+        echo "=== AFK Cycle $cycle ==="
+
+        if phase_afk; then
+            local remaining=0
+            if [ -d "$WAYFINDER_DIR/tickets" ]; then
+                remaining="$(grep -lE '^\*\*Status:\*\* open' "$WAYFINDER_DIR/tickets"/*.md 2>/dev/null | wc -l)"
+            fi
+
+            if [ "$remaining" -eq 0 ]; then
+                echo ""
+                echo "No open tickets remaining. Checking for self-improvement opportunities..."
+                # TODO: add self-improvement ticket creation here
+                # (lint, docs, tests, dependencies, etc.)
+                echo "None found. Sleeping before next cycle."
+            fi
+        fi
+
+        echo ""
+        echo "AFK daemon sleeping for 60 seconds..."
+        echo ""
+        sleep 60
+    done
 }
 
 # ============================================================================
@@ -577,11 +742,6 @@ EOF
 # ============================================================================
 
 phase_verify() {
-    echo "============================================"
-    echo "  Phase: VERIFY — Branch validation via sandcastle"
-    echo "============================================"
-    echo ""
-
     if [ "$DOCKER_AVAILABLE" != "true" ]; then
         echo "WARNING: Docker not available. Skipping branch validation."
         return
@@ -596,16 +756,12 @@ phase_verify() {
 
     echo "Current branch: $current_branch"
     echo "Running validate-branch via sandcastle..."
-    echo ""
 
     if bash "$WORKSPACE_DIR/.devcontainer/sandcastle/validate-branch.sh" "$current_branch" "$WORKSPACE_DIR"; then
-        echo ""
         echo "Branch validation passed."
     else
-        echo ""
         echo "WARNING: Branch validation found issues. Fix before merging."
     fi
-    echo ""
 }
 
 # ============================================================================
@@ -655,15 +811,18 @@ phase_status() {
 }
 
 # ============================================================================
-# Main entrypoint
+# Main entrypoint — long-running daemon
 # ============================================================================
 
 case "${1:-}" in
     init)
         phase_init
         ;;
+    hitl)
+        phase_hitl
+        ;;
     afk)
-        phase_afk
+        phase_afk_daemon
         ;;
     verify)
         phase_verify
@@ -672,37 +831,24 @@ case "${1:-}" in
         phase_status
         ;;
     *)
-        PHASE="$(detect_phase)"
-        case "$PHASE" in
-            init)
-                phase_init
-                ;;
-            hitl)
-                echo "============================================"
-                echo "  Phase: HITL — Human-In-The-Loop"
-                echo "============================================"
-                echo ""
-                echo "The wayfinder map exists but no handoff has been written yet."
-                echo ""
-                echo "NEXT STEPS:"
-                echo "  1. Run: claude"
-                echo "  2. Use: /grilling"
-                echo "     Grill on the destination until sharp."
-                echo "  3. Use: /wayfinder"
-                echo "     Chart the map, create frontier tickets."
-                echo ""
-                echo "When the grilling session ends, write a handoff:"
-                echo "  echo '# Handoff' > $WAYFINDER_DIR/handoff.md"
-                echo ""
-                echo "Then run: bash .devcontainer/bootstrap.sh afk"
-                echo ""
-                ;;
-            afk)
-                phase_afk
-                ;;
-            verify)
-                phase_verify
-                ;;
-        esac
+        # Auto-detect phase and run the appropriate blocking/continuous phase
+        while true; do
+            PHASE="$(detect_phase)"
+            case "$PHASE" in
+                init)
+                    phase_init
+                    # After init, immediately check next phase (should be hitl)
+                    ;;
+                hitl)
+                    phase_hitl
+                    # After HITL completes, loop back to detect (should transition to afk)
+                    ;;
+                afk|verify)
+                    # Once HITL is done, enter the never-ending AFK daemon
+                    phase_afk_daemon
+                    # This never returns under normal operation
+                    ;;
+            esac
+        done
         ;;
 esac

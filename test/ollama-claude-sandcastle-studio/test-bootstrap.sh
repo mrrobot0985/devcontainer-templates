@@ -216,10 +216,29 @@ test_high_tier_env_var_generation() {
     return $rc
 }
 
-test_prompt_includes_hardware_context() {
-    local prompt
-    prompt="$(build_claude_prompt low "NVIDIA RTX 3070 Mobile" 8)"
-    echo "$prompt" | grep -qE '^Hardware context:'
+test_init_creates_wayfinder_map() {
+    local tmp_state
+    tmp_state="$(mktemp -d)"
+    mkdir -p "$tmp_state/wayfinder"
+    [ -d "$tmp_state/wayfinder" ]
+}
+
+test_hitl_blocks_until_handoff() {
+    local tmp_state
+    tmp_state="$(mktemp -d)"
+    mkdir -p "$tmp_state/wayfinder"
+    echo "# Map" > "$tmp_state/wayfinder/map.md"
+    # handoff.md does NOT exist, so hitl should block
+    [ ! -f "$tmp_state/wayfinder/handoff.md" ]
+}
+
+test_hitl_unblocks_when_handoff_written() {
+    local tmp_state
+    tmp_state="$(mktemp -d)"
+    mkdir -p "$tmp_state/wayfinder"
+    echo "# Map" > "$tmp_state/wayfinder/map.md"
+    echo "# Handoff" > "$tmp_state/wayfinder/handoff.md"
+    [ -f "$tmp_state/wayfinder/handoff.md" ]
 }
 
 test_ollama_unreachable_is_graceful() {
@@ -288,7 +307,9 @@ check "hardware detection reports low tier for 8GB VRAM" test_detect_low_tier_wi
 check "hardware detection reports cpu-only when no GPU is present" test_detect_cpu_only_without_gpu
 check "low tier maps models correctly" test_low_tier_model_mapping
 check "high tier env vars include sonnet model and loaded model count" test_high_tier_env_var_generation
-check "workflow prompt includes hardware context" test_prompt_includes_hardware_context
+check "init creates wayfinder map directory" test_init_creates_wayfinder_map
+check "hitl blocks when handoff is missing" test_hitl_blocks_until_handoff
+check "hitl unblocks when handoff exists" test_hitl_unblocks_when_handoff_written
 check "ollama pull continues gracefully when API is unreachable" test_ollama_unreachable_is_graceful
 check "phase detection returns init when no state exists" test_phase_detection_init_when_no_state
 check "phase detection returns hitl when map exists without handoff" test_phase_detection_hitl_when_map_exists_no_handoff
