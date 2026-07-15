@@ -220,7 +220,7 @@ function copyRecursive(
       mkdirSync(destPath, { recursive: true });
       copyRecursive(srcPath, destPath, defaults);
     } else {
-      if (entry.name === "devcontainer-template.json") {
+      if (entry.name === "devcontainer-template.json" || entry.name === "README.md") {
         continue;
       }
       mkdirSync(dirname(destPath), { recursive: true });

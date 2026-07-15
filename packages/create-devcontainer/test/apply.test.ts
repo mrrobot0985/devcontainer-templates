@@ -142,4 +142,32 @@ describe("applyTemplate", () => {
     const readme = readFileSync(join(tmp, "README.md"), "utf-8");
     expect(readme.startsWith("# My Project")).toBe(true);
   });
+
+  it("does not copy template README.md when --readme is not provided", () => {
+    const repoRoot = new URL("../../../", import.meta.url).pathname;
+    const fixtureDir = join(repoRoot, "test", "fixtures", "test-template-no-readme");
+    mkdirSync(join(fixtureDir, ".devcontainer"), { recursive: true });
+    writeFileSync(
+      join(fixtureDir, ".devcontainer", "devcontainer.json"),
+      '{"image": "base:${templateOption:imageVariant}"}'
+    );
+    writeFileSync(
+      join(fixtureDir, "README.md"),
+      "# Template README\nThis should not be copied."
+    );
+
+    const tmp = mkdtempSync(join(tmpdir(), "create-devcontainer-"));
+    const template: Template = {
+      ...fakeTemplate,
+      sourcePath: "test/fixtures/test-template-no-readme",
+    };
+
+    applyTemplate(template, {
+      targetDir: tmp,
+      force: false,
+      mode: "dev",
+    });
+
+    expect(existsSync(join(tmp, "README.md"))).toBe(false);
+  });
 });
