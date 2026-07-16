@@ -1,0 +1,22 @@
+{
+  "id": "data-engineering-spark",
+  "name": "Data Engineering with Spark",
+  "version": "0.1.0",
+  "description": "Devcontainer template for data engineering with Apache Spark 3.5, Jupyter, Polars, and MinIO for lakehouse-style local development",
+  "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/data-engineering-spark",
+  "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
+  "options": {
+    "imageVariant": {
+      "type": "string",
+      "description": "Ubuntu version",
+      "proposals": [
+        "jammy",
+        "noble"
+      ],
+      "default": "jammy"
+    }
+  },
+  "platforms": [
+    "Any"
+  ]
+}
