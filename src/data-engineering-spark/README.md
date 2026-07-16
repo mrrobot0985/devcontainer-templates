@@ -1,5 +1,7 @@
 # Data Engineering with Spark
 
+![Version](https://img.shields.io/badge/version-0.1.0-blue?style=flat-square)
+
 Devcontainer template for data engineering with Apache Spark 3.5, Jupyter,
 Polars, and MinIO for lakehouse-style local development.
 

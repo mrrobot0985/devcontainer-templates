@@ -1,5 +1,7 @@
 # Multi-AI CLI Workspace
 
+![Version](https://img.shields.io/badge/version-0.1.0-blue?style=flat-square)
+
 Devcontainer template bundling multiple AI coding assistants for evaluation and
 comparison: Claude Code, OpenAI Codex CLI, and shared MCP server configuration.
 
