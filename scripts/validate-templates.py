@@ -43,7 +43,7 @@ def validate_template(template_dir: Path) -> None:
     devcontainer_json = template_dir / ".devcontainer" / "devcontainer.json"
     if devcontainer_json.exists():
         try:
-            dc_data = json.loads(devcontainer_json.read_text())
+            json.loads(devcontainer_json.read_text())
         except json.JSONDecodeError as e:
             errors.append(f"{template_dir.name}: invalid JSON in devcontainer.json: {e}")
             return
