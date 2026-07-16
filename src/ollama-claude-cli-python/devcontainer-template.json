@@ -1,0 +1,37 @@
+{
+  "id": "ollama-claude-cli-python",
+  "version": "0.1.0",
+  "name": "Ollama + Claude CLI + Python",
+  "description": "Devcontainer for Claude CLI with Ollama backend, Python 3.12, uv package manager, and common LLM/AI libraries pre-installed in a project virtual environment. No GPU required. Works on Apple Silicon, Codespaces, and cloud CPU instances. Includes Node.js and GitHub CLI.",
+  "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/ollama-claude-cli-python",
+  "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
+  "options": {
+    "imageVariant": {
+      "type": "string",
+      "description": "Ubuntu version:",
+      "proposals": [
+        "jammy",
+        "focal"
+      ],
+      "default": "jammy"
+    },
+    "modelMap": {
+      "type": "string",
+      "description": "Comma-separated model overrides in role:model format. Override if your host Ollama has different models.",
+      "default": "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest"
+    },
+    "pythonVersion": {
+      "type": "string",
+      "description": "Python version to install:",
+      "proposals": [
+        "3.12",
+        "3.11",
+        "3.10"
+      ],
+      "default": "3.12"
+    }
+  },
+  "platforms": [
+    "Any"
+  ]
+}

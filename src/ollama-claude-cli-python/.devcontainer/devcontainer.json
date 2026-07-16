@@ -1,16 +1,21 @@
 {
-	"name": "Ollama + Claude CLI",
+	"name": "Ollama + Claude CLI + Python",
 	"image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
 	"remoteUser": "vscode",
 	"containerEnv": {
 		"OLLAMA_HOST": "http://host.docker.internal:11434",
-		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
+		"UV_LINK_MODE": "copy"
 	},
 	"features": {
 		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/devcontainers/features/node:2.1.0": {
 			"version": "20"
+		},
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "${templateOption:pythonVersion}",
+			"installTools": true
 		},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-backend:0": {
 			"authToken": "ollama",
@@ -24,28 +29,36 @@
 			"disableUpdates": true
 		},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-plugins:0": {},
+		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-mcp-servers:0": {
+			"enableGithub": true,
+			"enableFilesystem": true
+		},
 		"ghcr.io/mrrobot0985/devcontainer-features/container-firewall:0": {}
 	},
 	"runArgs": [
-		"--add-host=host.docker.internal:host-gateway",
-		"--gpus=all"
+		"--add-host=host.docker.internal:host-gateway"
 	],
 	"forwardPorts": [
 		11434
 	],
 	"mounts": [
-		"source=claude-cli-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+		"source=claude-cli-config-${devcontainerId},target=/home/vscode/.claude,type=volume",
+		"source=python-venv-${devcontainerId},target=/workspaces/.venv,type=volume"
 	],
 	"postCreateCommand": "bash .devcontainer/bootstrap.sh",
+	"onCreateCommand": "bash .devcontainer/setup-python.sh",
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"github.copilot",
-				"github.copilot-chat"
+				"github.copilot-chat",
+				"ms-python.python",
+				"ms-toolsai.jupyter"
 			],
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "bash",
-				"editor.formatOnSave": true
+				"editor.formatOnSave": true,
+				"python.defaultInterpreterPath": "/workspaces/.venv/bin/python"
 			}
 		}
 	}

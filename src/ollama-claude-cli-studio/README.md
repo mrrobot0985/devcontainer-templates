@@ -17,7 +17,8 @@ Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, 
 - Claude Code Plugins (`claude-code-plugins`) with Ralph Loop pre-enabled
 - Docker-in-Docker (`docker-in-docker:4.0.0`)
 - NVIDIA Container Toolkit (`nvidia-container-toolkit:0`)
-- Container firewall (`container-firewall:0`) — whitelist outbound traffic with `claude-code` preset
+- Container firewall (`container-firewall:0`) — whitelist outbound traffic with `claude-code` + `docker` presets so Docker-in-Docker image pulls work
+- MCP servers (`claude-code-mcp-servers:0`) — GitHub and filesystem MCP servers pre-configured for external tool access
 
 ## Persistence
 
@@ -36,6 +37,7 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 | Options Id | Description | Type | Default Value |
 | ----- | ----- | ----- | ----- |
 | `imageVariant` | Ubuntu version (use ubuntu-22.04 or ubuntu-18.04 on local arm64/Apple Silicon): | string | jammy |
+| `modelMap` | Comma-separated model overrides in role:model format. Override if your host Ollama has different models. | string | haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest |
 
 ## Usage
 

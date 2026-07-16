@@ -101,6 +101,9 @@ jobs:
       - name: Check template registry sync
         run: npx tsx scripts/sync-template-registry.ts
 
+      - name: Validate template structure
+        run: python scripts/validate-templates.py
+
       - name: Run Python unit tests
         run: pytest test/
 
@@ -128,6 +131,18 @@ jobs:
             ollama-claude-cli-studio:
               - 'src/ollama-claude-cli-studio/**'
               - 'test/ollama-claude-cli-studio/**'
+              - '.github/actions/smoke-test/**'
+            ollama-claude-cli-cpu:
+              - 'src/ollama-claude-cli-cpu/**'
+              - 'test/ollama-claude-cli-cpu/**'
+              - '.github/actions/smoke-test/**'
+            ollama-claude-cli-compose:
+              - 'src/ollama-claude-cli-compose/**'
+              - 'test/ollama-claude-cli-compose/**'
+              - '.github/actions/smoke-test/**'
+            ollama-claude-cli-python:
+              - 'src/ollama-claude-cli-python/**'
+              - 'test/ollama-claude-cli-python/**'
               - '.github/actions/smoke-test/**'
 
   test:
