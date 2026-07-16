@@ -53,9 +53,22 @@ if grep -q 'ghcr.io/mrrobot0985/devcontainer-features/' "$DEVCONTAINER_JSON"; th
     FEATURES_REPO="${REPO_ROOT}/../devcontainer-features"
     if [ ! -d "$FEATURES_REPO" ]; then
         echo "(*) Cloning features repo into sibling directory"
-        git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git "$FEATURES_REPO" 2>/dev/null || \
-            git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git /tmp/devcontainer-features
-        FEATURES_REPO="/tmp/devcontainer-features"
+        if git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git "$FEATURES_REPO" 2>/dev/null; then
+            echo "(*) Cloned features repo to $FEATURES_REPO"
+        elif git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git /tmp/devcontainer-features; then
+            echo "(*) Cloned features repo to /tmp/devcontainer-features"
+            FEATURES_REPO="/tmp/devcontainer-features"
+        else
+            echo "ERROR: Failed to clone features repo"
+            exit 1
+        fi
+    fi
+
+    # Verify the features repo was cloned correctly
+    if [ ! -d "$FEATURES_REPO/src" ]; then
+        echo "ERROR: Features repo missing src/ directory at $FEATURES_REPO"
+        ls -la "$FEATURES_REPO" 2>/dev/null || true
+        exit 1
     fi
 
     # Rewrite GHCR references to local paths
