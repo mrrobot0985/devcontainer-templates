@@ -2,9 +2,10 @@
 set -euo pipefail
 
 # Bootstrap for compose-based devcontainer.
-# Ollama is expected to be reachable at the compose service name.
+# Ollama shares the network namespace via network_mode: service:ollama,
+# so it is reachable at localhost:11434.
 
-OLLAMA_BASE_URL="http://ollama:11434"
+OLLAMA_BASE_URL="http://localhost:11434"
 OLLAMA_HOST="${OLLAMA_BASE_URL#http://}"
 OLLAMA_HOST="${OLLAMA_HOST#https://}"
 export OLLAMA_HOST
