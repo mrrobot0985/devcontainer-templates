@@ -23,16 +23,7 @@ export const templates: readonly Template[] = [
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli:latest",
     sourcePath: "src/ollama-claude-cli",
-    defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest" },
-  },
-  {
-    id: "ollama-claude-cli-studio",
-    name: "Ollama + Claude CLI Studio",
-    description: "Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, container firewall, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
-    ghcrUri:
-      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:latest",
-    sourcePath: "src/ollama-claude-cli-studio",
-    defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest" },
+    defaults: { imageVariant: "jammy" },
   },
   {
     id: "ollama-claude-cli-cpu",
@@ -41,7 +32,16 @@ export const templates: readonly Template[] = [
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-cpu:latest",
     sourcePath: "src/ollama-claude-cli-cpu",
-    defaults: { imageVariant: "jammy", modelMap: "haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest" },
+    defaults: { imageVariant: "jammy" },
+  },
+  {
+    id: "ollama-claude-cli-studio",
+    name: "Ollama + Claude CLI Studio",
+    description: "Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, container firewall, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+    ghcrUri:
+      "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:latest",
+    sourcePath: "src/ollama-claude-cli-studio",
+    defaults: { imageVariant: "jammy" },
   },
 ];
 
