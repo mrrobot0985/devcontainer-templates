@@ -9,7 +9,7 @@
 #   2. Ensure the devcontainer CLI is installed.
 #   3. On CI runners, strip --gpus=all from runArgs because GPUs are unavailable.
 #   4. If the template references ghcr.io/mrrobot0985/devcontainer-features/*,
-#      clone the features repo and rewrite references to local paths.
+#      clone the features repo into the workspace and rewrite references to relative paths.
 #   5. Build the container with the test ID label so the test.sh step can find it.
 
 TEMPLATE_ID="$1"
@@ -46,38 +46,26 @@ with open('${SRC_DIR}/.devcontainer/devcontainer.json', 'w') as f:
 fi
 
 # If the template references our own unpublished features, clone the features repo
-# and rewrite GHCR references to local paths so the smoke test can resolve them.
+# into the workspace and rewrite GHCR references to relative local paths.
 DEVCONTAINER_JSON="${SRC_DIR}/.devcontainer/devcontainer.json"
 if grep -q 'ghcr.io/mrrobot0985/devcontainer-features/' "$DEVCONTAINER_JSON"; then
-    echo "(*) Template references mrrobot0985 features — resolving from sibling repo"
-    FEATURES_REPO="${REPO_ROOT}/../devcontainer-features"
-    if [ ! -d "$FEATURES_REPO/src" ]; then
-        echo "(*) Cloning features repo into sibling directory"
-        if ! git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git "$FEATURES_REPO"; then
-            echo "WARNING: Sibling clone failed, trying /tmp"
-            rm -rf "$FEATURES_REPO"
-            FEATURES_REPO="/tmp/devcontainer-features"
-            rm -rf "$FEATURES_REPO"
-            git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git "$FEATURES_REPO"
-        fi
+    echo "(*) Template references mrrobot0985 features — resolving locally"
+    FEATURES_DIR="${SRC_DIR}/.devcontainer/features"
+    if [ ! -d "$FEATURES_DIR" ]; then
+        echo "(*) Cloning features repo into workspace"
+        git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git "$FEATURES_DIR"
     fi
 
-    # Verify the features repo was cloned correctly
-    if [ ! -d "$FEATURES_REPO/src" ]; then
-        echo "ERROR: Features repo missing src/ directory at $FEATURES_REPO"
-        ls -la "$FEATURES_REPO" 2>/dev/null || true
+    if [ ! -d "$FEATURES_DIR/src" ]; then
+        echo "ERROR: Features repo missing src/ at $FEATURES_DIR"
         exit 1
     fi
 
-    echo "(*) Features repo resolved at $FEATURES_REPO"
-    find "$FEATURES_REPO/src" -maxdepth 1 -type d | head -10
-
-    # Rewrite GHCR references to local paths (must be absolute for devcontainer CLI)
-    ABS_FEATURES_REPO="$(cd "$FEATURES_REPO" && pwd)"
+    # Rewrite GHCR references to relative paths from workspace root
     python3 -c "
 import json, re, os
 
-features_repo = '${ABS_FEATURES_REPO}'
+features_dir = '.devcontainer/features/src'
 with open('${DEVCONTAINER_JSON}') as f:
     data = json.load(f)
 
@@ -87,12 +75,13 @@ for ref, opts in features.items():
     m = re.match(r'^ghcr\.io/mrrobot0985/devcontainer-features/([^:]+):.*$', ref)
     if m:
         feat_id = m.group(1)
-        local_path = os.path.join(features_repo, 'src', feat_id)
-        if os.path.isdir(local_path):
+        local_path = os.path.join(features_dir, feat_id)
+        full_path = os.path.join('${SRC_DIR}', '.devcontainer', 'features', 'src', feat_id)
+        if os.path.isdir(full_path):
             print(f'(*) Rewriting {ref} -> {local_path}')
             new_features[local_path] = opts
         else:
-            print(f'WARNING: Feature {feat_id} not found in {local_path}; keeping GHCR reference')
+            print(f'WARNING: Feature {feat_id} not found; keeping GHCR reference')
             new_features[ref] = opts
     else:
         new_features[ref] = opts
