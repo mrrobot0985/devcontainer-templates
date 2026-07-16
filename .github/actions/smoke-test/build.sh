@@ -8,7 +8,8 @@
 #   1. Render the template with default options into /tmp/<template-id>.
 #   2. Ensure the devcontainer CLI is installed.
 #   3. On CI runners, strip --gpus=all from runArgs because GPUs are unavailable.
-#   4. Build the container with the test ID label so the test.sh step can find it.
+#   4. Strip postCreateCommand / onCreateCommand to avoid heavy bootstrap in CI.
+#   5. Build the container with the test ID label so the test.sh step can find it.
 #
 # Note: Templates referencing unpublished mrrobot0985 features are skipped
 #       until those features are published to GHCR.
@@ -33,14 +34,25 @@ else
 fi
 
 # CI runners lack GPUs; strip --gpus=all from runArgs so the container can start
+# Also strip lifecycle commands to avoid heavy bootstraps (k3d cluster creation,
+# Spark downloads, etc.) that are unnecessary for smoke tests.
 if [ "${CI:-}" = "true" ]; then
-    echo "(*) CI detected — stripping --gpus=all from runArgs for smoke test"
+    echo "(*) CI detected — stripping --gpus=all and lifecycle commands for smoke test"
     python3 -c "
 import json, sys
 with open('${SRC_DIR}/.devcontainer/devcontainer.json') as f:
     data = json.load(f)
+
+# Strip GPU flags
 run_args = data.get('runArgs', [])
 data['runArgs'] = [a for a in run_args if a != '--gpus=all']
+
+# Strip lifecycle commands that do heavy bootstrapping
+for key in ('postCreateCommand', 'onCreateCommand', 'postStartCommand', 'initializeCommand'):
+    if key in data:
+        print(f'(*) Stripping {key} for CI smoke test')
+        del data[key]
+
 with open('${SRC_DIR}/.devcontainer/devcontainer.json', 'w') as f:
     json.dump(data, f, indent='\t')
 "
