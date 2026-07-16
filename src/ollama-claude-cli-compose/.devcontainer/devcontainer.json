@@ -5,7 +5,7 @@
 	"workspaceFolder": "/workspaces",
 	"remoteUser": "vscode",
 	"containerEnv": {
-		"OLLAMA_HOST": "http://ollama:11434",
+		"OLLAMA_HOST": "http://localhost:11434",
 		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
 	},
 	"features": {
@@ -15,6 +15,7 @@
 			"version": "20"
 		},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-backend:0": {
+			"baseUrl": "http://localhost:11434",
 			"authToken": "ollama",
 			"models": "${templateOption:modelMap}",
 			"logLevel": "error"
