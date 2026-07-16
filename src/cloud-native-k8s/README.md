@@ -1,5 +1,7 @@
 # Cloud Native Kubernetes
 
+![Version](https://img.shields.io/badge/version-0.1.0-blue?style=flat-square)
+
 Devcontainer template for cloud-native development with Kubernetes. Includes
 kubectl, Helm, k3d, Tilt, and Docker-in-Docker for building and deploying to
 local clusters.
