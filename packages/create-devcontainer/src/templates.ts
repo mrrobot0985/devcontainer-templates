@@ -17,6 +17,15 @@ export interface Template {
 
 export const templates: readonly Template[] = [
   {
+    id: "data-engineering-spark",
+    name: "Data Engineering with Spark",
+    description: "Devcontainer template for data engineering with Apache Spark 3.5, Jupyter, Polars, and MinIO for lakehouse-style local development",
+    ghcrUri:
+      "ghcr.io/mrrobot0985/devcontainer-templates/data-engineering-spark:latest",
+    sourcePath: "src/data-engineering-spark",
+    defaults: { imageVariant: "jammy" },
+  },
+  {
     id: "ollama-claude-cli",
     name: "Ollama + Claude CLI",
     description: "Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",

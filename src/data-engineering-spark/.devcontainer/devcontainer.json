@@ -1,0 +1,50 @@
+{
+  "name": "Data Engineering with Spark",
+  "image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installGradle": false,
+      "installMaven": false
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11",
+      "installTools": true
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/bootstrap.sh",
+  "remoteUser": "vscode",
+  "forwardPorts": [
+    8888,
+    8080,
+    4040
+  ],
+  "portsAttributes": {
+    "8888": {
+      "label": "Jupyter Notebook"
+    },
+    "8080": {
+      "label": "Spark UI"
+    },
+    "4040": {
+      "label": "Spark Application UI"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "vscjava.vscode-java-pack"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  }
+}
