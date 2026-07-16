@@ -4,13 +4,13 @@ This guide helps you pick the best template for your hardware, workflow, and use
 
 ## Quick Reference
 
-| Template | GPU | Host Ollama | Python | Best For |
-|----------|-----|-------------|--------|----------|
-| `ollama-claude-cli` | Required | Required | No | Local GPU workstation |
-| `ollama-claude-cli-cpu` | No | Required | No | MacBooks, Codespaces, cloud CPUs |
-| `ollama-claude-cli-compose` | Optional | Bundled | No | Quick start without host setup |
-| `ollama-claude-cli-python` | No | Required | Yes | AI/ML development with Python |
-| `ollama-claude-cli-studio` | Required | Required | No | Full agentic workflow with Docker-in-Docker |
+| Template                    | GPU      | Host Ollama | Python | Best For                                    |
+| --------------------------- | -------- | ----------- | ------ | ------------------------------------------- |
+| `ollama-claude-cli`         | Required | Required    | No     | Local GPU workstation                       |
+| `ollama-claude-cli-cpu`     | No       | Required    | No     | MacBooks, Codespaces, cloud CPUs            |
+| `ollama-claude-cli-compose` | Optional | Bundled     | No     | Quick start without host setup              |
+| `ollama-claude-cli-python`  | No       | Required    | Yes    | AI/ML development with Python               |
+| `ollama-claude-cli-studio`  | Required | Required    | No     | Full agentic workflow with Docker-in-Docker |
 
 ## Decision Tree
 
