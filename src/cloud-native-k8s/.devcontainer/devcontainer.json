@@ -1,0 +1,49 @@
+{
+  "name": "Cloud Native Kubernetes",
+  "image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "version": "latest",
+      "helm": "latest",
+      "minikube": "none"
+    },
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/bootstrap.sh",
+  "forwardPorts": [
+    8080,
+    8443,
+    30000
+  ],
+  "portsAttributes": {
+    "8080": {
+      "label": "Ingress Controller"
+    },
+    "8443": {
+      "label": "Kubernetes API"
+    },
+    "30000": {
+      "label": "NodePort Range"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}

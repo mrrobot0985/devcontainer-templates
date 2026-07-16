@@ -17,6 +17,15 @@ export interface Template {
 
 export const templates: readonly Template[] = [
   {
+    id: "cloud-native-k8s",
+    name: "Cloud Native Kubernetes",
+    description: "Devcontainer template for cloud-native development with Kubernetes. Includes kubectl, Helm, k3d, Tilt, and Docker-in-Docker for building and deploying to local clusters.",
+    ghcrUri:
+      "ghcr.io/mrrobot0985/devcontainer-templates/cloud-native-k8s:latest",
+    sourcePath: "src/cloud-native-k8s",
+    defaults: { imageVariant: "jammy" },
+  },
+  {
     id: "data-engineering-spark",
     name: "Data Engineering with Spark",
     description: "Devcontainer template for data engineering with Apache Spark 3.5, Jupyter, Polars, and MinIO for lakehouse-style local development",
