@@ -1,7 +1,7 @@
 {
   "id": "cloud-native-k8s",
   "name": "Cloud Native Kubernetes",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Devcontainer template for cloud-native development with Kubernetes. Includes kubectl, Helm, k3d, Tilt, and Docker-in-Docker for building and deploying to local clusters.",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/cloud-native-k8s",
   "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",

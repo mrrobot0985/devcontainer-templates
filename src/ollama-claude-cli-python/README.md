@@ -1,6 +1,6 @@
 # Ollama + Claude CLI + Python (ollama-claude-cli-python)
 
-![Version](https://img.shields.io/badge/version-0.2.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
 
 Devcontainer for Claude CLI with Ollama backend, Python 3.12, the `uv` package manager, and common LLM/AI libraries pre-installed in a project virtual environment. Includes GPU acceleration support via `--gpus=all`.
 

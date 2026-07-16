@@ -1,7 +1,7 @@
 {
   "id": "multi-ai-cli",
   "name": "Multi-AI CLI Workspace",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Devcontainer template bundling Claude Code, OpenAI Codex CLI, Google Gemini CLI, and OpenCode CLI with shared MCP server configuration",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/multi-ai-cli",
   "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",

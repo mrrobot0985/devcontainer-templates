@@ -1,6 +1,6 @@
 {
   "id": "ollama-claude-cli-compose",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "name": "Ollama + Claude CLI (Compose)",
   "description": "Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama required. Includes Claude CLI, privacy defaults, container firewall, and persistent settings. CPU by default; GPU support available via compose file edit. Includes Node.js and GitHub CLI.",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/ollama-claude-cli-compose",

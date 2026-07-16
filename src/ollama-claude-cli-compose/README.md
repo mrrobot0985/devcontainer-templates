@@ -1,6 +1,6 @@
 # Ollama + Claude CLI (Compose) (ollama-claude-cli-compose)
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
 
 Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama installation required — the Ollama container starts automatically alongside the devcontainer.
 

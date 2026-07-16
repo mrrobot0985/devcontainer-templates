@@ -1,6 +1,6 @@
 {
   "id": "ollama-claude-cli-cpu",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "name": "Ollama + Claude CLI (CPU)",
   "description": "CPU-only devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. No GPU required. Works on Apple Silicon, GitHub Codespaces, and cloud CPU instances. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/ollama-claude-cli-cpu",
