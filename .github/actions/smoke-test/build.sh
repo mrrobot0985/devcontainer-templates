@@ -48,18 +48,13 @@ fi
 
 # Check if template references unpublished mrrobot0985 features.
 # These features are not yet on GHCR, so devcontainer up cannot resolve them.
-# Skip the build for now and rely on local testing.
 DEVCONTAINER_JSON="${SRC_DIR}/.devcontainer/devcontainer.json"
 if grep -q 'ghcr.io/mrrobot0985/devcontainer-features/' "$DEVCONTAINER_JSON"; then
     UNPUBLISHED_FEATURES="$(grep -o 'ghcr.io/mrrobot0985/devcontainer-features/[^"]*' "$DEVCONTAINER_JSON" | sort -u | tr '\n' ' ')"
     echo "WARNING: Template references unpublished features: $UNPUBLISHED_FEATURES"
     echo "Skipping smoke test — features must be published to GHCR before templates can be built."
-    # Create a dummy container label so test.sh can find it and run basic checks
-    ID_LABEL="test-container=${TEMPLATE_ID}"
-    echo "(*) Creating minimal container for test validation"
-    docker run -d --rm --label "${ID_LABEL}" --name "smoke-test-${TEMPLATE_ID}" \
-        mcr.microsoft.com/devcontainers/base:ubuntu \
-        sleep 300
+    # Create a skip marker so test.sh knows to skip
+    touch "${SRC_DIR}/.skip-smoke-test"
     exit 0
 fi
 
