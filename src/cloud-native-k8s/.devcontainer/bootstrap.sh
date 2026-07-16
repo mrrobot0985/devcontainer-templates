@@ -11,7 +11,8 @@ echo "Installing k3d ${K3D_VERSION}..."
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG="${K3D_VERSION}" bash
 
 echo "Installing Tilt ${TILT_VERSION}..."
-curl -fsSL https://github.com/tilt-dev/tilt/releases/download/${TILT_VERSION}/tilt.${TILT_VERSION#v}.linux-$(uname -m).tar.gz | tar -xzv -C /usr/local/bin tilt
+arch="$(uname -m)"
+curl -fsSL "https://github.com/tilt-dev/tilt/releases/download/${TILT_VERSION}/tilt.${TILT_VERSION#v}.linux-${arch}.tar.gz" | tar -xzv -C /usr/local/bin tilt
 
 echo "Installing additional tools..."
 # skaffold for CI/CD pipelines
