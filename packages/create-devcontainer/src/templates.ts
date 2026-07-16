@@ -26,6 +26,15 @@ export const templates: readonly Template[] = [
     defaults: { imageVariant: "jammy" },
   },
   {
+    id: "multi-ai-cli",
+    name: "Multi-AI CLI Workspace",
+    description: "Devcontainer template bundling Claude Code, OpenAI Codex CLI, Google Gemini CLI, and OpenCode CLI with shared MCP server configuration",
+    ghcrUri:
+      "ghcr.io/mrrobot0985/devcontainer-templates/multi-ai-cli:latest",
+    sourcePath: "src/multi-ai-cli",
+    defaults: { imageVariant: "jammy" },
+  },
+  {
     id: "ollama-claude-cli",
     name: "Ollama + Claude CLI",
     description: "Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
