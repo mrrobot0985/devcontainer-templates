@@ -144,6 +144,18 @@ jobs:
               - 'src/ollama-claude-cli-python/**'
               - 'test/ollama-claude-cli-python/**'
               - '.github/actions/smoke-test/**'
+            multi-ai-cli:
+              - 'src/multi-ai-cli/**'
+              - 'test/multi-ai-cli/**'
+              - '.github/actions/smoke-test/**'
+            cloud-native-k8s:
+              - 'src/cloud-native-k8s/**'
+              - 'test/cloud-native-k8s/**'
+              - '.github/actions/smoke-test/**'
+            data-engineering-spark:
+              - 'src/data-engineering-spark/**'
+              - 'test/data-engineering-spark/**'
+              - '.github/actions/smoke-test/**'
 
   test:
     needs: [lint, detect-changes]
