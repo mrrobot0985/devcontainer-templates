@@ -24,7 +24,7 @@ SRC_DIR="/tmp/${TEMPLATE_ID}"
 "${REPO_ROOT}/scripts/render-template.sh" "${TEMPLATE_ID}" "${SRC_DIR}"
 
 export DOCKER_BUILDKIT=1
-if ! command -v devcontainer >/dev/null 2>&1; then
+if ! command -v devcontainer > /dev/null 2>&1; then
     echo "(*) Installing @devcontainer/cli"
     npm install -g @devcontainers/cli
 else
@@ -51,16 +51,14 @@ DEVCONTAINER_JSON="${SRC_DIR}/.devcontainer/devcontainer.json"
 if grep -q 'ghcr.io/mrrobot0985/devcontainer-features/' "$DEVCONTAINER_JSON"; then
     echo "(*) Template references mrrobot0985 features — resolving from sibling repo"
     FEATURES_REPO="${REPO_ROOT}/../devcontainer-features"
-    if [ ! -d "$FEATURES_REPO" ]; then
+    if [ ! -d "$FEATURES_REPO/src" ]; then
         echo "(*) Cloning features repo into sibling directory"
-        if git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git "$FEATURES_REPO" 2>/dev/null; then
-            echo "(*) Cloned features repo to $FEATURES_REPO"
-        elif git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git /tmp/devcontainer-features; then
-            echo "(*) Cloned features repo to /tmp/devcontainer-features"
+        if ! git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git "$FEATURES_REPO"; then
+            echo "WARNING: Sibling clone failed, trying /tmp"
+            rm -rf "$FEATURES_REPO"
             FEATURES_REPO="/tmp/devcontainer-features"
-        else
-            echo "ERROR: Failed to clone features repo"
-            exit 1
+            rm -rf "$FEATURES_REPO"
+            git clone --depth 1 https://github.com/mrrobot0985/devcontainer-features.git "$FEATURES_REPO"
         fi
     fi
 
@@ -71,11 +69,15 @@ if grep -q 'ghcr.io/mrrobot0985/devcontainer-features/' "$DEVCONTAINER_JSON"; th
         exit 1
     fi
 
-    # Rewrite GHCR references to local paths
+    echo "(*) Features repo resolved at $FEATURES_REPO"
+    find "$FEATURES_REPO/src" -maxdepth 1 -type d | head -10
+
+    # Rewrite GHCR references to local paths (must be absolute for devcontainer CLI)
+    ABS_FEATURES_REPO="$(cd "$FEATURES_REPO" && pwd)"
     python3 -c "
 import json, re, os
 
-features_repo = '${FEATURES_REPO}'
+features_repo = '${ABS_FEATURES_REPO}'
 with open('${DEVCONTAINER_JSON}') as f:
     data = json.load(f)
 
