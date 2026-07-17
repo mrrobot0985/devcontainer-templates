@@ -1,6 +1,6 @@
 # Ollama + Claude CLI Studio (ollama-claude-cli-studio)
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.1.1-blue?style=flat-square)
 
 Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, community NVIDIA Container Toolkit, lifecycle hooks, behavior rules, skills library, audit log, agent sandbox, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.
 
@@ -26,8 +26,8 @@ Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, 
 - Lifecycle hooks (`claude-code-hooks`)
 - Privacy defaults (`claude-code-privacy`)
 - Behavior rules (`claude-code-rules`)
-- Skills library (`claude-code-skills`)
-- Claude Code Plugins (`claude-code-plugins`) with Ralph Loop pre-enabled
+- Skills library (`claude-code-skills`) with `skipOnFailure: true` (aligned with plugins for offline/flaky network creates)
+- Claude Code Plugins (`claude-code-plugins`) with Ralph Loop pre-enabled and `skipOnFailure: true`
 - Docker-in-Docker (`docker-in-docker:4.0.0`)
 - NVIDIA Container Toolkit (`ghcr.io/srzstephen/devcontainer-features/nvidia-container-toolkit:1`) — community feature; installs toolkit packages for DinD GPU
 - MCP servers (`claude-code-mcp-servers`) — GitHub and filesystem MCP servers pre-configured

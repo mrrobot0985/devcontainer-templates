@@ -34,7 +34,8 @@
 			"installEngineering": true,
 			"installProductivity": true,
 			"installMisc": false,
-			"installPersonal": false
+			"installPersonal": false,
+			"skipOnFailure": true
 		},
 		"ghcr.io/mrrobot0985/devcontainer-features/claude-code-plugins:1": {
 			"enableRalphLoop": true,
