@@ -3,6 +3,7 @@ set -e
 
 # Multi-AI CLI Workspace — bootstrap script
 # Installs Claude Code, OpenAI Codex CLI, Google Gemini CLI, and OpenCode CLI
+# Path-filter smoke: keep this file under src/multi-ai-cli so detect-changes selects it.
 
 echo "Installing AI CLI tools..."
 
