@@ -1,0 +1,37 @@
+{
+	"name": "Hermes Agent",
+	"image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
+	"remoteUser": "vscode",
+	"features": {
+		"ghcr.io/devcontainer-community/devcontainer-features/hermes-agent.nousresearch.com:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/node:2.1.0": {
+			"version": "20"
+		},
+		"ghcr.io/mrrobot0985/devcontainer-features/container-firewall:1": {
+			"services": "github,npm,openrouter"
+		},
+		"ghcr.io/mrrobot0985/devcontainer-features/non-root-enforcer:1": {},
+		"ghcr.io/mrrobot0985/devcontainer-features/ai-agent-sandbox:1": {
+			"preset": "moderate",
+			"failOnWarning": false
+		}
+	},
+	"initializeCommand": "mkdir -p \"${localEnv:HOME}/.hermes\"",
+	"postCreateCommand": "bash .devcontainer/bootstrap.sh",
+	"mounts": [
+		"source=hermes-agent-home-${devcontainerId},target=/home/vscode/.hermes,type=volume"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.copilot",
+				"github.copilot-chat"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"editor.formatOnSave": true
+			}
+		}
+	}
+}

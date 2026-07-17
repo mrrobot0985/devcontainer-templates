@@ -17,12 +17,12 @@ The collection is **agent-first**. Language, cloud, and data stacks only stay wh
 
 ## Portfolio layers
 
-| Layer | Role                                                             | Examples (today or planned)                                                               |
-| ----- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| **A** | Claude depth — owned features configure the agent                | `ollama-claude-cli*` family                                                               |
-| **B** | Agent entry points — install + security floor + home persistence | `grok-build-cli` / `grok-build-cli-studio`; Pi, Hermes, Codex, Gemini, OpenCode (planned) |
-| **C** | Multi-agent evaluation — one workspace, many CLIs                | `multi-ai-cli`                                                                            |
-| **D** | Domain stacks — not agent-centric                                | `cloud-native-k8s`, `data-engineering-spark` (**decision deferred**)                      |
+| Layer | Role                                                             | Examples (today or planned)                                                                                              |
+| ----- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **A** | Claude depth — owned features configure the agent                | `ollama-claude-cli*` family                                                                                              |
+| **B** | Agent entry points — install + security floor + home persistence | `grok-build-cli` / `grok-build-cli-studio`; `pi-coding-agent`; `hermes-agent`; `codex-cli`; `gemini-cli`; `opencode-cli` |
+| **C** | Multi-agent evaluation — one workspace, many CLIs                | `multi-ai-cli`                                                                                                           |
+| **D** | Domain stacks — not agent-centric                                | `cloud-native-k8s`, `data-engineering-spark` (**decision deferred**)                                                     |
 
 ### Layer A — Claude depth
 
@@ -55,7 +55,27 @@ Typical shape:
 - Do **not** recreate the full Ollama cpu/gpu/compose/python matrix for API-first agents.
 - Prefer community install features when they are the standard (for example Grok Build via a maintained community feature) rather than bare owned installers that add no policy.
 
-First-class agents tracked for dedicated entry points include Grok Build, Pi, Hermes, OpenAI Codex CLI, Google Gemini CLI, and OpenCode. Additional CLIs (Aider, Goose, and similar) are evaluated case by case rather than assumed.
+First-class Layer B entry points (minimal, v1):
+
+| Template          | Agent             | Studio v1                       |
+| ----------------- | ----------------- | ------------------------------- |
+| `grok-build-cli`  | Grok Build (xAI)  | `grok-build-cli-studio` shipped |
+| `pi-coding-agent` | Pi (pi.dev)       | deferred                        |
+| `hermes-agent`    | Hermes (Nous)     | deferred / single template      |
+| `codex-cli`       | OpenAI Codex CLI  | deferred                        |
+| `gemini-cli`      | Google Gemini CLI | deferred                        |
+| `opencode-cli`    | OpenCode          | deferred                        |
+
+### Layer B evaluation — multi-ai-only for v1 (#71)
+
+| Agent / CLI              | Placement for v1 | Rationale                                                                                          |
+| ------------------------ | ---------------- | -------------------------------------------------------------------------------------------------- |
+| **Aider**                | multi-ai-only    | Mature git-native agent, but no unique runtime or owned feature surface that multi-ai under-serves |
+| **Goose** (Block)        | multi-ai-only    | Open agent runtime; evaluate again if DinD/gateway needs appear                                    |
+| **Continue** CLI / peers | multi-ai-only    | Editor-adjacent; demand not established for a dedicated entry point                                |
+| Future agents            | case by case     | Same Layer B ladder: dedicated only if capability or demand warrants                               |
+
+**Decision:** do **not** open dedicated Layer B templates for Aider, Goose, or Continue in v1 unless follow-up demand or runtime requirements appear. Prefer reliable installs (or honest skips) in `multi-ai-cli` instead.
 
 ### Layer C — Multi-agent evaluation
 

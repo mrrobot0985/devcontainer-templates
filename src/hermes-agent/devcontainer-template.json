@@ -1,0 +1,22 @@
+{
+  "id": "hermes-agent",
+  "version": "1.0.0",
+  "name": "Hermes Agent",
+  "description": "Minimal devcontainer for the Hermes agent (Nous Research) with container firewall (openrouter + github + npm), non-root enforcer, AI agent sandbox, and persistent ~/.hermes state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+  "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/hermes-agent",
+  "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
+  "options": {
+    "imageVariant": {
+      "type": "string",
+      "description": "Ubuntu version (use ubuntu-22.04 or ubuntu-18.04 on local arm64/Apple Silicon):",
+      "proposals": [
+        "jammy",
+        "focal"
+      ],
+      "default": "jammy"
+    }
+  },
+  "platforms": [
+    "Any"
+  ]
+}
