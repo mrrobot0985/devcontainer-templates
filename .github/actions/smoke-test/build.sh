@@ -82,3 +82,5 @@ fi
 # Smoke matrix trigger note: owned GHCR features must build (no false SKIP).
 
 # fail-fast=false: one template failure must not cancel Layer B/D proof matrix.
+
+# Re-trigger full matrix for Layer B/D smoke proof after mdformat unblock.
