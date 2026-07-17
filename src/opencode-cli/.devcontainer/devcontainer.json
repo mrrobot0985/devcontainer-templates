@@ -18,10 +18,6 @@
 			"failOnWarning": false
 		}
 	},
-	"mounts": [
-		"source=opencode-cli-data-${devcontainerId},target=/home/vscode/.local/share/opencode,type=volume",
-		"source=opencode-cli-config-${devcontainerId},target=/home/vscode/.config/opencode,type=volume"
-	],
 	"initializeCommand": "mkdir -p \"${localEnv:HOME}/.local/share/opencode\" \"${localEnv:HOME}/.config/opencode\"",
 	"postCreateCommand": "bash .devcontainer/bootstrap.sh",
 	"customizations": {

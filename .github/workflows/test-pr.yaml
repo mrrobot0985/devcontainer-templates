@@ -190,6 +190,7 @@ jobs:
     if: needs.detect-changes.outputs.templates != '[]'
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         templates: ${{ fromJSON(needs.detect-changes.outputs.templates) }}
     steps:

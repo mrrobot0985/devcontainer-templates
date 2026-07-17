@@ -80,3 +80,5 @@ if [ "${UP_RC}" -ne 0 ]; then
 fi
 
 # Smoke matrix trigger note: owned GHCR features must build (no false SKIP).
+
+# fail-fast=false: one template failure must not cancel Layer B/D proof matrix.
