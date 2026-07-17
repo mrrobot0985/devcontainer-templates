@@ -17,12 +17,12 @@ The collection is **agent-first**. Language, cloud, and data stacks only stay wh
 
 ## Portfolio layers
 
-| Layer | Role                                                             | Examples (today or planned)                                          |
-| ----- | ---------------------------------------------------------------- | -------------------------------------------------------------------- |
-| **A** | Claude depth — owned features configure the agent                | `ollama-claude-cli*` family                                          |
-| **B** | Agent entry points — install + security floor + home persistence | Grok Build, Pi, Hermes, Codex, Gemini, OpenCode (planned)            |
-| **C** | Multi-agent evaluation — one workspace, many CLIs                | `multi-ai-cli`                                                       |
-| **D** | Domain stacks — not agent-centric                                | `cloud-native-k8s`, `data-engineering-spark` (**decision deferred**) |
+| Layer | Role                                                             | Examples (today or planned)                                                               |
+| ----- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **A** | Claude depth — owned features configure the agent                | `ollama-claude-cli*` family                                                               |
+| **B** | Agent entry points — install + security floor + home persistence | `grok-build-cli` / `grok-build-cli-studio`; Pi, Hermes, Codex, Gemini, OpenCode (planned) |
+| **C** | Multi-agent evaluation — one workspace, many CLIs                | `multi-ai-cli`                                                                            |
+| **D** | Domain stacks — not agent-centric                                | `cloud-native-k8s`, `data-engineering-spark` (**decision deferred**)                      |
 
 ### Layer A — Claude depth
 
