@@ -31,7 +31,7 @@ The `${devcontainerId}` suffix isolates state per project so that settings from 
 | Options Id | Description | Type | Default Value |
 | ----- | ----- | ----- | ----- |
 | `imageVariant` | Ubuntu version (use ubuntu-22.04 or ubuntu-18.04 on local arm64/Apple Silicon): | string | jammy |
-| `modelMap` | Comma-separated model overrides in role:model format. Override if your host Ollama has different models. | string | haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest |
+| `modelMap` | Comma-separated model overrides in role:model format. Common Ollama defaults are preconfigured; override if your host has different models. | string | haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest |
 
 ## Usage
 

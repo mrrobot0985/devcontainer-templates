@@ -15,6 +15,12 @@ local clusters.
 - **Skaffold** — CI/CD pipeline builder for Kubernetes
 - **Docker-in-Docker** — build container images inside the devcontainer
 
+## Options
+
+| Options Id | Description | Type | Default Value |
+| ----- | ----- | ----- | ----- |
+| `imageVariant` | Ubuntu version | string | jammy |
+
 ## Usage
 
 ```json
