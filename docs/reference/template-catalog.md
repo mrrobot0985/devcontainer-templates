@@ -67,49 +67,13 @@ Full agentic studio on top of the floor:
 
 There is no `enable: false` on the community toolkit feature (that option was part of a removed in-house feature). The community feature installs toolkit packages when present.
 
-## Layer B — Agent entry points
-
-Agent-agnostic security floor (install + firewall tags + non-root + sandbox where listed). No Claude suite features. API-first agents do not require host Ollama.
-
-### Grok Build
-
-| Template                | Version | Extra                                                                  |
-| ----------------------- | ------- | ---------------------------------------------------------------------- |
-| `grok-build-cli`        | `1.0.0` | Minimal: community Grok Build, firewall `grok-build`, sandbox          |
-| `grok-build-cli-studio` | `1.0.0` | DinD, host-isolation (optional/non-blocking), firewall + `docker`, MCP |
-
-#### `grok-build-cli`
-
-Minimal environment for xAI Grok Build CLI. API-first (no Ollama).
-
-**Included features**
-
-- Node.js 20 (`ghcr.io/devcontainers/features/node:2.1.0`)
-- Grok Build (`ghcr.io/sliekens/devcontainer-features/grok-build:1`)
-- GitHub CLI (`ghcr.io/devcontainers/features/github-cli:1`)
-- `container-firewall:1` — `grok-build` preset (`xai` + `github` + `npm`)
-- `non-root-enforcer:1`
-- `ai-agent-sandbox:1` (preset `moderate`, non-blocking)
-- Host `~/.grok` persistence via community feature + `initializeCommand`
-
-#### `grok-build-cli-studio`
-
-Studio on top of the Grok floor:
-
-- Docker-in-Docker (`docker-in-docker:4.0.0`)
-- `host-isolation:1` (`failOnWarning: false` — DinD needs privileges)
-- Firewall services: `grok-build,docker`
-- `mcp-server-manager:1` (GitHub MCP server by default)
-
-Requires SuperGrok or X Premium Plus. Auth: `grok login` or `GROK_DEPLOYMENT_KEY`.
-
 ## Other templates
 
-| Template                 | Version | Notes                                                    |
-| ------------------------ | ------- | -------------------------------------------------------- |
-| `multi-ai-cli`           | `1.0.0` | Multi-agent workspace (Layer C; separate redesign track) |
-| `cloud-native-k8s`       | `1.0.0` | kubectl, Helm, k3d, Tilt, DinD                           |
-| `data-engineering-spark` | `1.0.0` | Spark, Jupyter, Polars, MinIO                            |
+| Template                 | Version | Notes                                                                              |
+| ------------------------ | ------- | ---------------------------------------------------------------------------------- |
+| `multi-ai-cli`           | `1.1.0` | Layer C multi-agent evaluation (Claude, Grok, Pi, Hermes, Codex, Gemini, OpenCode) |
+| `cloud-native-k8s`       | `1.0.0` | kubectl, Helm, k3d, Tilt, DinD                                                     |
+| `data-engineering-spark` | `1.0.0` | Spark, Jupyter, Polars, MinIO                                                      |
 
 ## Publishing location
 

@@ -55,7 +55,7 @@ export const templates: readonly Template[] = [
   {
     id: "multi-ai-cli",
     name: "Multi-AI CLI Workspace",
-    description: "Devcontainer template bundling Claude Code, OpenAI Codex CLI, Google Gemini CLI, and OpenCode CLI with shared MCP server configuration",
+    description: "Layer C multi-agent evaluation workspace: Claude Code, Grok Build, Pi, Hermes, Codex, Gemini CLI, and OpenCode with agent-agnostic security floor, per-agent home volumes, and shared MCP config. Each vendor requires its own API key or login.",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/multi-ai-cli:latest",
     sourcePath: "src/multi-ai-cli",

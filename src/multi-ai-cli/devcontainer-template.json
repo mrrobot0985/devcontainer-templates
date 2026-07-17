@@ -1,8 +1,8 @@
 {
   "id": "multi-ai-cli",
   "name": "Multi-AI CLI Workspace",
-  "version": "1.0.0",
-  "description": "Devcontainer template bundling Claude Code, OpenAI Codex CLI, Google Gemini CLI, and OpenCode CLI with shared MCP server configuration",
+  "version": "1.1.0",
+  "description": "Layer C multi-agent evaluation workspace: Claude Code, Grok Build, Pi, Hermes, Codex, Gemini CLI, and OpenCode with agent-agnostic security floor, per-agent home volumes, and shared MCP config. Each vendor requires its own API key or login.",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/multi-ai-cli",
   "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
   "options": {
