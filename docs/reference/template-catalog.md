@@ -91,16 +91,14 @@ Aider, Goose, and Continue stay **multi-ai-only** for v1 (no dedicated Layer B t
 | -------------- | ------- | ---------------------------------------------------------------------------------- |
 | `multi-ai-cli` | `1.1.0` | Layer C multi-agent evaluation (Claude, Grok, Pi, Hermes, Codex, Gemini, OpenCode) |
 
-## Layer D — Domain stacks (kept; low owned-feature surface)
+## Layer D — Domain stacks (owned security floor)
 
-These templates are **kept for now** as domain stacks outside the agent-first mission (see [Template Portfolio — Layer D](../explanation/template-portfolio.md#layer-d--domain-stacks-keep-re-feature-later)). They currently use **zero or very few owned monorepo features** — generic tool bundles rather than security/config differentiator showcases.
+These templates are **domain stacks** outside the agent-first growth path (see [Template Portfolio — Layer D](../explanation/template-portfolio.md#layer-d--domain-stacks-owned-security-floor)). They now ship the **owned security floor** (re-feature path from issue #66): `container-firewall:1`, `non-root-enforcer:1`, and `ai-agent-sandbox:1` (preset `moderate`, non-blocking). **No Claude suite.** Prefer Layers A–C for AI coding agent work.
 
-**Path forward:** re-feature with owned floor and domain helpers when capacity allows, **or** archive later if unused after the agent portfolio is stable. **Not deleted** under the Layer D decision (issue #66). Prefer Layers A–C for AI coding agent work.
-
-| Template                 | Version | Notes                                                                             |
-| ------------------------ | ------- | --------------------------------------------------------------------------------- |
-| `cloud-native-k8s`       | `1.0.0` | Layer D · kubectl, Helm, k3d, Tilt, DinD · **zero owned monorepo features today** |
-| `data-engineering-spark` | `1.0.0` | Layer D · Spark, Jupyter, Polars, MinIO · **zero owned monorepo features today**  |
+| Template                 | Version | Notes                                                                                           |
+| ------------------------ | ------- | ----------------------------------------------------------------------------------------------- |
+| `cloud-native-k8s`       | `1.1.0` | Layer D · kubectl, Helm, k3d, Tilt, DinD · floor with firewall services `github,docker,npm,apt` |
+| `data-engineering-spark` | `1.1.0` | Layer D · Spark, Jupyter, Polars, MinIO · floor with firewall services `github,pypi,docker,apt` |
 
 ## Publishing location
 

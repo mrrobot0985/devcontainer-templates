@@ -15,6 +15,14 @@
     "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
+    },
+    "ghcr.io/mrrobot0985/devcontainer-features/container-firewall:1": {
+      "services": "github,docker,npm,apt"
+    },
+    "ghcr.io/mrrobot0985/devcontainer-features/non-root-enforcer:1": {},
+    "ghcr.io/mrrobot0985/devcontainer-features/ai-agent-sandbox:1": {
+      "preset": "moderate",
+      "failOnWarning": false
     }
   },
   "postCreateCommand": "bash .devcontainer/bootstrap.sh",

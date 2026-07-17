@@ -130,9 +130,9 @@ This collection is **agent-first**. Layers A–C are for AI coding agents. Layer
 
 **When to pick a domain template:** the primary outcome is that domain stack (cluster tooling or Spark/data notebooks), not an agent CLI.
 
-**When not to:** do not use `cloud-native-k8s` or `data-engineering-spark` as a substitute for Claude, Grok, or multi-agent templates. Domain templates currently ship with **zero or very few owned monorepo features** (no agent security floor, no Claude/Grok suite). They are **kept for now** with a documented re-feature-or-archive path — see [Template Portfolio — Layer D](../explanation/template-portfolio.md#layer-d--domain-stacks-keep-re-feature-later).
+**When not to:** do not use `cloud-native-k8s` or `data-engineering-spark` as a substitute for Claude, Grok, or multi-agent templates. Domain templates now include the **owned security floor** (`container-firewall`, `non-root-enforcer`, `ai-agent-sandbox`) but **no Claude/Grok suite**. See [Template Portfolio — Layer D](../explanation/template-portfolio.md#layer-d--domain-stacks-owned-security-floor).
 
-If you need agents **and** Kubernetes or Spark later, start from the matching agent template and add tools, or wait for a re-featured domain stack that includes the monorepo floor.
+If you need agents **and** Kubernetes or Spark, start from the matching agent template and add tools, or compose domain tooling on top of a Layer A/B entry point.
 
 ## Platform-Specific Guidance
 
