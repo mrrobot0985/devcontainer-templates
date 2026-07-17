@@ -16,13 +16,13 @@ Pick a variant for **hardware and workflow**, not for basic security — that is
 
 ## Quick Reference
 
-| Template | GPU | Host Ollama | Python | Best For |
-| -------- | --- | ----------- | ------ | -------- |
-| `ollama-claude-cli` | Outer `--gpus=all` | Required | No | Local NVIDIA workstation (minimal) |
-| `ollama-claude-cli-cpu` | No | Required | No | MacBooks, Codespaces, cloud CPUs |
-| `ollama-claude-cli-compose` | Optional (compose) | Bundled | No | Quick start without host Ollama |
-| `ollama-claude-cli-python` | Outer `--gpus=all` | Required | Yes | AI/ML development with Python |
-| `ollama-claude-cli-studio` | Outer `--gpus=all` + community nvidia toolkit (DinD) | Required | No | Full agentic workflow + Docker-in-Docker |
+| Template                    | GPU                                                  | Host Ollama | Python | Best For                                 |
+| --------------------------- | ---------------------------------------------------- | ----------- | ------ | ---------------------------------------- |
+| `ollama-claude-cli`         | Outer `--gpus=all`                                   | Required    | No     | Local NVIDIA workstation (minimal)       |
+| `ollama-claude-cli-cpu`     | No                                                   | Required    | No     | MacBooks, Codespaces, cloud CPUs         |
+| `ollama-claude-cli-compose` | Optional (compose)                                   | Bundled     | No     | Quick start without host Ollama          |
+| `ollama-claude-cli-python`  | Outer `--gpus=all`                                   | Required    | Yes    | AI/ML development with Python            |
+| `ollama-claude-cli-studio`  | Outer `--gpus=all` + community nvidia toolkit (DinD) | Required    | No     | Full agentic workflow + Docker-in-Docker |
 
 ## Decision Tree
 

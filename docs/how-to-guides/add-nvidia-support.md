@@ -2,9 +2,9 @@
 
 GPU access in these templates has two separate layers. Do not confuse them.
 
-| Layer | Mechanism | Purpose |
-| ----- | --------- | ------- |
-| Outer container | `runArgs: ["--gpus=all"]` | Host GPU devices visible **inside** the devcontainer |
+| Layer                   | Mechanism                            | Purpose                                                  |
+| ----------------------- | ------------------------------------ | -------------------------------------------------------- |
+| Outer container         | `runArgs: ["--gpus=all"]`            | Host GPU devices visible **inside** the devcontainer     |
 | Inner containers (DinD) | NVIDIA Container Toolkit **feature** | Toolkit packages so nested `docker run --gpus ...` works |
 
 ## Outer GPU passthrough (`--gpus=all`)
@@ -53,8 +53,8 @@ Notes:
 `ollama-claude-cli-studio` already includes:
 
 1. Outer: `"--gpus=all"` in `runArgs`
-2. Inner: `"ghcr.io/srzstephen/devcontainer-features/nvidia-container-toolkit:1": {}`
-3. Docker-in-Docker
+1. Inner: `"ghcr.io/srzstephen/devcontainer-features/nvidia-container-toolkit:1": {}`
+1. Docker-in-Docker
 
 No extra enable flag is required for the community feature.
 

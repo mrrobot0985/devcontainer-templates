@@ -12,13 +12,13 @@ Consistent **security floor** across all five:
 - `container-firewall:1`
 - `non-root-enforcer:1`
 
-| Template | Version | GPU | Host Ollama | Extra |
-| -------- | ------- | --- | ----------- | ----- |
-| `ollama-claude-cli` | `1.1.0` | `--gpus=all` | Required | Minimal |
-| `ollama-claude-cli-cpu` | `1.1.0` | None | Required | Apple Silicon / Codespaces safe |
-| `ollama-claude-cli-compose` | `1.1.0` | Optional (compose edit) | Bundled | No host Ollama |
-| `ollama-claude-cli-python` | `1.1.0` | `--gpus=all` | Required | Python 3.12 + uv + AI libs |
-| `ollama-claude-cli-studio` | `1.1.0` | `--gpus=all` + community nvidia toolkit | Required | DinD, hooks, rules, skills, audit-log, agent-sandbox |
+| Template                    | Version | GPU                                     | Host Ollama | Extra                                                |
+| --------------------------- | ------- | --------------------------------------- | ----------- | ---------------------------------------------------- |
+| `ollama-claude-cli`         | `1.1.0` | `--gpus=all`                            | Required    | Minimal                                              |
+| `ollama-claude-cli-cpu`     | `1.1.0` | None                                    | Required    | Apple Silicon / Codespaces safe                      |
+| `ollama-claude-cli-compose` | `1.1.0` | Optional (compose edit)                 | Bundled     | No host Ollama                                       |
+| `ollama-claude-cli-python`  | `1.1.0` | `--gpus=all`                            | Required    | Python 3.12 + uv + AI libs                           |
+| `ollama-claude-cli-studio`  | `1.1.0` | `--gpus=all` + community nvidia toolkit | Required    | DinD, hooks, rules, skills, audit-log, agent-sandbox |
 
 ### `ollama-claude-cli`
 
@@ -60,20 +60,20 @@ Full agentic studio on top of the floor:
 
 **GPU layers**
 
-| Layer | Config | Purpose |
-| ----- | ------ | ------- |
-| Outer | `runArgs: ["--gpus=all"]` | GPU devices in the studio container |
+| Layer        | Config                                 | Purpose                                |
+| ------------ | -------------------------------------- | -------------------------------------- |
+| Outer        | `runArgs: ["--gpus=all"]`              | GPU devices in the studio container    |
 | Inner (DinD) | community `nvidia-container-toolkit:1` | Toolkit packages for nested containers |
 
 There is no `enable: false` on the community toolkit feature (that option was part of a removed in-house feature). The community feature installs toolkit packages when present.
 
 ## Other templates
 
-| Template | Version | Notes |
-| -------- | ------- | ----- |
-| `multi-ai-cli` | `1.0.0` | Multi-agent workspace (Layer C; separate redesign track) |
-| `cloud-native-k8s` | `1.0.0` | kubectl, Helm, k3d, Tilt, DinD |
-| `data-engineering-spark` | `1.0.0` | Spark, Jupyter, Polars, MinIO |
+| Template                 | Version | Notes                                                    |
+| ------------------------ | ------- | -------------------------------------------------------- |
+| `multi-ai-cli`           | `1.0.0` | Multi-agent workspace (Layer C; separate redesign track) |
+| `cloud-native-k8s`       | `1.0.0` | kubectl, Helm, k3d, Tilt, DinD                           |
+| `data-engineering-spark` | `1.0.0` | Spark, Jupyter, Polars, MinIO                            |
 
 ## Publishing location
 
