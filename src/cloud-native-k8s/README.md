@@ -1,10 +1,20 @@
 # Cloud Native Kubernetes
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.1.0-blue?style=flat-square)
 
 Devcontainer template for cloud-native development with Kubernetes. Includes
-kubectl, Helm, k3d, Tilt, and Docker-in-Docker for building and deploying to
-local clusters.
+kubectl, Helm, k3d, Tilt, Docker-in-Docker, and owned security floor
+(container-firewall, non-root-enforcer, ai-agent-sandbox). No Claude suite.
+
+## Security floor (Layer D)
+
+Owned monorepo differentiators (re-feature path from issue #66):
+
+- Container firewall (`container-firewall:1`) — lean whitelist `github,docker,npm,apt` for registry and k8s tooling
+- Non-root enforcer (`non-root-enforcer:1`) — audits `remoteUser` is non-root
+- AI agent sandbox (`ai-agent-sandbox:1`, preset `moderate`, `failOnWarning: false`) — runtime posture audit (DinD may warn about docker.sock; non-blocking)
+
+No Claude suite features on this domain stack.
 
 ## What's Inside
 
@@ -14,6 +24,9 @@ local clusters.
 - **Tilt** — local development for Kubernetes with live reload
 - **Skaffold** — CI/CD pipeline builder for Kubernetes
 - **Docker-in-Docker** — build container images inside the devcontainer
+- **Container firewall** (`container-firewall`) — `github,docker,npm,apt` services
+- **Non-root enforcer** (`non-root-enforcer`)
+- **Agent sandbox audit** (`ai-agent-sandbox`)
 
 ## Options
 
@@ -23,8 +36,14 @@ local clusters.
 
 ## Usage
 
-```json
-"image": "ghcr.io/mrrobot0985/devcontainer-templates/cloud-native-k8s:latest"
+```bash
+devcontainer templates apply ghcr.io/mrrobot0985/devcontainer-templates/cloud-native-k8s:latest
+```
+
+Or create a new project with the `create-devcontainer` helper:
+
+```bash
+npx @mrrobot0985/create-devcontainer cloud-native-k8s ./my-project
 ```
 
 ## Forwarded Ports

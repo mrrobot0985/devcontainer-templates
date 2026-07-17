@@ -40,4 +40,23 @@ if ! command -v docker > /dev/null 2>&1; then
 fi
 echo "OK — docker installed"
 
+# Owned security floor
+if ! command -v non-root-enforcer > /dev/null 2>&1; then
+    echo "ERROR: non-root-enforcer is not installed"
+    exit 1
+fi
+echo "OK — non-root-enforcer installed"
+
+if ! command -v ai-agent-sandbox-check > /dev/null 2>&1; then
+    echo "ERROR: ai-agent-sandbox-check is not installed"
+    exit 1
+fi
+echo "OK — ai-agent-sandbox installed"
+
+if [ ! -x /usr/local/bin/container-firewall-init ]; then
+    echo "ERROR: container-firewall-init is missing"
+    exit 1
+fi
+echo "OK — container-firewall installed"
+
 echo "All tests passed!"
