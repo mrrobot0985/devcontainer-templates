@@ -33,7 +33,8 @@
 			"enableGithub": true,
 			"enableFilesystem": true
 		},
-		"ghcr.io/mrrobot0985/devcontainer-features/container-firewall:1": {}
+		"ghcr.io/mrrobot0985/devcontainer-features/container-firewall:1": {},
+		"ghcr.io/mrrobot0985/devcontainer-features/non-root-enforcer:1": {}
 	},
 	"runArgs": [
 		"--add-host=host.docker.internal:host-gateway",

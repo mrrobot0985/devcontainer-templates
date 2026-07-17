@@ -2,36 +2,49 @@
 
 This guide helps you pick the best template for your hardware, workflow, and use case.
 
+## Layer A security floor
+
+All five Claude + Ollama templates share the same security floor:
+
+- Official `claude-code`
+- `claude-code-backend`
+- `claude-code-privacy`
+- `container-firewall`
+- `non-root-enforcer`
+
+Pick a variant for **hardware and workflow**, not for basic security — that is already consistent.
+
 ## Quick Reference
 
-| Template                    | GPU      | Host Ollama | Python | Best For                                    |
-| --------------------------- | -------- | ----------- | ------ | ------------------------------------------- |
-| `ollama-claude-cli`         | Required | Required    | No     | Local GPU workstation                       |
-| `ollama-claude-cli-cpu`     | No       | Required    | No     | MacBooks, Codespaces, cloud CPUs            |
-| `ollama-claude-cli-compose` | Optional | Bundled     | No     | Quick start without host setup              |
-| `ollama-claude-cli-python`  | No       | Required    | Yes    | AI/ML development with Python               |
-| `ollama-claude-cli-studio`  | Required | Required    | No     | Full agentic workflow with Docker-in-Docker |
+| Template | GPU | Host Ollama | Python | Best For |
+| -------- | --- | ----------- | ------ | -------- |
+| `ollama-claude-cli` | Outer `--gpus=all` | Required | No | Local NVIDIA workstation (minimal) |
+| `ollama-claude-cli-cpu` | No | Required | No | MacBooks, Codespaces, cloud CPUs |
+| `ollama-claude-cli-compose` | Optional (compose) | Bundled | No | Quick start without host Ollama |
+| `ollama-claude-cli-python` | Outer `--gpus=all` | Required | Yes | AI/ML development with Python |
+| `ollama-claude-cli-studio` | Outer `--gpus=all` + community nvidia toolkit (DinD) | Required | No | Full agentic workflow + Docker-in-Docker |
 
 ## Decision Tree
 
 ### 1. Do you have a GPU?
 
-**Yes →** Use the GPU-capable templates:
+**Yes →** Use GPU-capable templates:
 
 - `ollama-claude-cli` for minimal setup
-- `ollama-claude-cli-studio` for full agentic workflows with Docker-in-Docker and NVIDIA Container Toolkit
+- `ollama-claude-cli-python` for Python + AI libraries
+- `ollama-claude-cli-studio` for full agentic workflows with Docker-in-Docker and the community NVIDIA Container Toolkit (inner/DinD GPU)
 
-**No →** Use CPU-only templates:
+**No →** Use CPU-friendly templates:
 
 - `ollama-claude-cli-cpu` for general development
-- `ollama-claude-cli-python` for AI/ML Python work
 - `ollama-claude-cli-compose` for bundled Ollama (no host installation needed)
+- On CPU hosts, avoid or strip `--gpus=all` if a GPU template fails to start
 
 ### 2. Is Ollama already running on your host?
 
-**Yes →** Any template works. The CPU and GPU templates connect to `host.docker.internal:11434`.
+**Yes →** Any non-compose template works. They connect to `host.docker.internal:11434`.
 
-**No →** Use `ollama-claude-cli-compose`. It bundles Ollama as a Docker Compose service, so no host installation is required.
+**No →** Use `ollama-claude-cli-compose`. It bundles Ollama as a Docker Compose service.
 
 ### 3. Are you doing Python AI/ML work?
 
@@ -46,17 +59,19 @@ The virtual environment at `/workspaces/.venv` persists across container rebuild
 
 ### 4. Do you need Docker inside the container?
 
-**Yes →** Use `ollama-claude-cli-studio`. It includes Docker-in-Docker and the NVIDIA Container Toolkit so GPU-accelerated inner containers can access the host GPU.
+**Yes →** Use `ollama-claude-cli-studio`. It includes Docker-in-Docker and the community NVIDIA Container Toolkit so GPU-accelerated **inner** containers can access the host GPU (when the host is configured). Outer GPU uses `--gpus=all` separately.
+
+Studio also adds lifecycle hooks, rules, skills, audit log, and agent sandbox on top of the Layer A floor.
 
 ## Platform-Specific Guidance
 
 ### Apple Silicon (M1/M2/M3)
 
-Use `ollama-claude-cli-cpu` or `ollama-claude-cli-python`. These omit the `--gpus=all` flag that fails on macOS. Ollama runs natively on Apple Silicon and is accessed via `host.docker.internal:11434`.
+Use `ollama-claude-cli-cpu` or strip `--gpus=all` from Python if needed. These avoid a GPU runtime that fails on macOS. Ollama runs natively on Apple Silicon and is accessed via `host.docker.internal:11434`.
 
 ### GitHub Codespaces
 
-Use `ollama-claude-cli-cpu` or `ollama-claude-cli-python`. Codespaces does not provide GPU runners. Ollama must be running on a reachable host or use the Compose template with port forwarding.
+Prefer `ollama-claude-cli-cpu` or `ollama-claude-cli-compose`. Codespaces typically does not provide GPU runners. Host Ollama must be reachable, or use Compose.
 
 ### Local NVIDIA Workstation
 
@@ -68,7 +83,7 @@ ollama serve
 
 ### Cloud VM (AWS, GCP, Azure)
 
-Use `ollama-claude-cli-cpu` for CPU instances or `ollama-claude-cli` for GPU instances. Install Ollama on the VM host before launching the devcontainer.
+Use `ollama-claude-cli-cpu` for CPU instances or `ollama-claude-cli` / `ollama-claude-cli-python` for GPU instances. Install Ollama on the VM host before launching the devcontainer.
 
 ## Next Steps
 

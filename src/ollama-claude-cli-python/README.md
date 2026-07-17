@@ -1,6 +1,6 @@
 # Ollama + Claude CLI + Python (ollama-claude-cli-python)
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.1.0-blue?style=flat-square)
 
 Devcontainer for Claude CLI with Ollama backend, Python 3.12, the `uv` package manager, and common LLM/AI libraries pre-installed in a project virtual environment. Includes GPU acceleration support via `--gpus=all`.
 
@@ -10,6 +10,14 @@ Devcontainer for Claude CLI with Ollama backend, Python 3.12, the `uv` package m
 - GitHub Codespaces and GitHub Actions runners
 - Cloud VM instances with or without GPU support
 - Any local development machine with Docker and NVIDIA Container Toolkit
+
+## Security floor (Layer A)
+
+- Official Claude CLI (`ghcr.io/anthropics/devcontainer-features/claude-code:1`)
+- Backend config (`claude-code-backend:1`)
+- Privacy defaults (`claude-code-privacy:1`)
+- Container firewall (`container-firewall:1`) — `claude-code` service whitelist
+- Non-root enforcer (`non-root-enforcer:1`) — audits `remoteUser` is non-root
 
 ## Includes
 
@@ -23,8 +31,15 @@ Devcontainer for Claude CLI with Ollama backend, Python 3.12, the `uv` package m
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
 - Claude Code Plugins (`claude-code-plugins`)
+- MCP servers (`claude-code-mcp-servers`) — GitHub and filesystem MCP servers pre-configured
 - Container firewall (`container-firewall`)
-- MCP servers (`claude-code-mcp-servers:0`) — GitHub and filesystem MCP servers pre-configured for external tool access
+- Non-root enforcer (`non-root-enforcer`)
+
+## GPU
+
+Outer container GPU passthrough is enabled via `runArgs: ["--gpus=all"]` so CUDA-capable Python packages can see host GPUs when available. On hosts without a GPU runtime (Apple Silicon, many Codespaces), remove or comment out `--gpus=all` if container create fails.
+
+This template does **not** install the NVIDIA Container Toolkit feature. Host Ollama still runs on the host; for DinD GPU see `ollama-claude-cli-studio`.
 
 ## Persistence
 

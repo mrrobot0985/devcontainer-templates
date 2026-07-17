@@ -1,132 +1,96 @@
 # Template Catalog
 
-This collection publishes **purpose-driven** devcontainer templates for AI coding agents and related workflows. The inventory is larger than a single Claude pair: a Claude + Ollama family (Layer A), a multi-agent evaluation workspace (Layer C), and provisional domain stacks (Layer D). Additional first-class agent entry points (Layer B) are planned.
+Purpose-driven templates. Prefer choosing the right template over adding or removing features after apply.
 
-**Portfolio intent** (layers, sense rules, deferred Layer D decision) lives in [Template Portfolio](../explanation/template-portfolio.md). Design rules for families vs options live in [Template Design Philosophy](../explanation/template-design.md).
+## Layer A — Claude + Ollama family
 
-> **Catalog completeness:** This page documents templates present in the repository today. A full cross-layer catalog refresh, choosing-guide overhaul, and `create-devcontainer` registry sync are tracked as later portfolio phases (stabilize Layer A / Phase 6 docs). Until then, treat Layer D rows as provisional and prefer the portfolio doc for “what belongs.”
+Consistent **security floor** across all five:
 
-| Template                    | Version | Layer | Description                                                                                                                                                               |
-| --------------------------- | ------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ollama-claude-cli`         | `1.0.0` | A     | Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. Includes Node.js and GitHub CLI. |
-| `ollama-claude-cli-cpu`     | `1.0.0` | A     | CPU-only Claude + Ollama entry point (no GPU required). Suitable for Apple Silicon, Codespaces, and cloud CPU hosts.                                                      |
-| `ollama-claude-cli-compose` | `1.0.0` | A     | Claude CLI with bundled Ollama via Docker Compose. No host Ollama required.                                                                                               |
-| `ollama-claude-cli-python`  | `1.0.0` | A     | Claude + Ollama with Python 3.12, `uv`, and common LLM/AI libraries.                                                                                                      |
-| `ollama-claude-cli-studio`  | `1.0.0` | A     | Full studio: Docker-in-Docker, NVIDIA Container Toolkit (optional), lifecycle hooks, rules, skills, plugins, firewall, persistence.                                       |
-| `multi-ai-cli`              | `1.0.0` | C     | Multi-agent evaluation workspace bundling several AI CLIs with shared MCP-oriented setup. Prefer dedicated Layer B templates for daily single-agent work once they ship.  |
-| `cloud-native-k8s`          | `1.0.0` | D     | Kubernetes / cloud-native tooling (kubectl, Helm, k3d, Tilt, DinD). **Provisional** — Layer D decision deferred.                                                          |
-| `data-engineering-spark`    | `1.0.0` | D     | Spark / lakehouse-style local data engineering stack. **Provisional** — Layer D decision deferred.                                                                        |
+- Official Claude CLI (`ghcr.io/anthropics/devcontainer-features/claude-code:1`)
+- `claude-code-backend:1`
+- `claude-code-privacy:1`
+- `container-firewall:1`
+- `non-root-enforcer:1`
 
-Claude + host-Ollama templates expect Ollama on the host at `http://host.docker.internal:11434` unless you use `ollama-claude-cli-compose`.
+| Template | Version | GPU | Host Ollama | Extra |
+| -------- | ------- | --- | ----------- | ----- |
+| `ollama-claude-cli` | `1.1.0` | `--gpus=all` | Required | Minimal |
+| `ollama-claude-cli-cpu` | `1.1.0` | None | Required | Apple Silicon / Codespaces safe |
+| `ollama-claude-cli-compose` | `1.1.0` | Optional (compose edit) | Bundled | No host Ollama |
+| `ollama-claude-cli-python` | `1.1.0` | `--gpus=all` | Required | Python 3.12 + uv + AI libs |
+| `ollama-claude-cli-studio` | `1.1.0` | `--gpus=all` + community nvidia toolkit | Required | DinD, hooks, rules, skills, audit-log, agent-sandbox |
 
-For hardware and workflow selection among Claude variants, see [Choosing a Template](../tutorials/choosing-a-template.md).
+### `ollama-claude-cli`
 
-## `ollama-claude-cli`
+Minimal environment for Claude CLI with Ollama on the host. Privacy-hardened by default. Outer GPU passthrough via `--gpus=all`.
 
-A minimal environment for Claude CLI with a pre-configured Ollama backend. Privacy-hardened by default. GPU passthrough enabled.
-
-### Included features
-
-- Node.js 20 (`ghcr.io/devcontainers/features/node:2.1.0`)
-- Claude CLI (`ghcr.io/anthropics/devcontainer-features/claude-code:1`)
-- GitHub CLI (`ghcr.io/devcontainers/features/github-cli:1`)
-- Custom backend configuration (`ghcr.io/mrrobot0985/devcontainer-features/claude-code-backend:0`)
-- Privacy defaults (`ghcr.io/mrrobot0985/devcontainer-features/claude-code-privacy:0`)
-- Claude Code Plugins (`ghcr.io/mrrobot0985/devcontainer-features/claude-code-plugins:0`)
-- Container firewall (`ghcr.io/mrrobot0985/devcontainer-features/container-firewall:0`) — `claude-code` preset
-- Host gateway alias and `--gpus=all` passthrough
-- Port forwarding for Ollama (`11434`)
-- Persistent `~/.claude` volume
-
-### Options
-
-| Option         | Type   | Default | Description                         |
-| -------------- | ------ | ------- | ----------------------------------- |
-| `imageVariant` | string | `jammy` | Ubuntu version (`jammy` or `focal`) |
-
-### Usage
-
-```bash
-devcontainer templates apply \
-  --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli:latest
-```
-
-Or with the helper:
-
-```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project
-```
-
-## `ollama-claude-cli-studio`
-
-The full studio environment with Ollama backend pre-configured. Combines backend configuration, observability hooks, privacy defaults, governance rules, skills, plugins, Docker-in-Docker, and optional NVIDIA Container Toolkit.
-
-### Included features
+**Included features**
 
 - Node.js 20 (`ghcr.io/devcontainers/features/node:2.1.0`)
 - Claude CLI (`ghcr.io/anthropics/devcontainer-features/claude-code:1`)
 - GitHub CLI (`ghcr.io/devcontainers/features/github-cli:1`)
-- Custom backend configuration (`ghcr.io/mrrobot0985/devcontainer-features/claude-code-backend:0`)
-- Lifecycle hooks (`ghcr.io/mrrobot0985/devcontainer-features/claude-code-hooks:0`)
-- Privacy defaults (`ghcr.io/mrrobot0985/devcontainer-features/claude-code-privacy:0`)
-- Behavior rules (`ghcr.io/mrrobot0985/devcontainer-features/claude-code-rules:0`)
-- Skills library (`ghcr.io/mrrobot0985/devcontainer-features/claude-code-skills:0`)
-- Claude Code Plugins (`ghcr.io/mrrobot0985/devcontainer-features/claude-code-plugins:0`) with Ralph Loop pre-enabled
-- Docker-in-Docker (`ghcr.io/devcontainers/features/docker-in-docker:4.0.0`)
-- NVIDIA Container Toolkit (`ghcr.io/mrrobot0985/devcontainer-features/nvidia-container-toolkit:0`, disabled by default)
-- Container firewall (`ghcr.io/mrrobot0985/devcontainer-features/container-firewall:0`) — `claude-code` preset
-- Host gateway alias and `--gpus=all` passthrough
-- Port forwarding for Ollama (`11434`)
-- Persistent `~/.claude` volume
+- `claude-code-backend:1`, `claude-code-privacy:1`, `claude-code-plugins:1`
+- `container-firewall:1` — `claude-code` preset
+- `non-root-enforcer:1`
+- Host gateway alias, `--gpus=all`, port `11434`, persistent `~/.claude` volume
 
-### Options
+### `ollama-claude-cli-cpu`
 
-| Option         | Type   | Default | Description                         |
-| -------------- | ------ | ------- | ----------------------------------- |
-| `imageVariant` | string | `jammy` | Ubuntu version (`jammy` or `focal`) |
+Same floor as minimal, without `--gpus=all`. Prefer on Apple Silicon, Codespaces, and CPU-only hosts.
 
-### Usage
+### `ollama-claude-cli-compose`
 
-```bash
-devcontainer templates apply \
-  --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:latest
-```
+Bundled Ollama via Docker Compose. Floor plus `claude-code-mcp-servers:1` (GitHub + filesystem). GPU optional via compose `deploy` block.
 
-Or with the helper:
+### `ollama-claude-cli-python`
 
-```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-cli-studio ./my-project
-```
+Floor plus official `python:1`, `claude-code-mcp-servers:1`, `uv`, project venv at `/workspaces/.venv`, and common AI libraries. Outer GPU via `--gpus=all`.
 
-## Other templates in the tree
+### `ollama-claude-cli-studio`
 
-Detailed feature breakdowns for the remaining Layer A variants, Layer C, and Layer D templates live primarily in each template’s `src/<id>/README.md`. Summary:
+Full agentic studio on top of the floor:
 
-| Template                    | Where to read more                                                                       |
-| --------------------------- | ---------------------------------------------------------------------------------------- |
-| `ollama-claude-cli-cpu`     | [src/ollama-claude-cli-cpu/README.md](../../src/ollama-claude-cli-cpu/README.md)         |
-| `ollama-claude-cli-compose` | [src/ollama-claude-cli-compose/README.md](../../src/ollama-claude-cli-compose/README.md) |
-| `ollama-claude-cli-python`  | [src/ollama-claude-cli-python/README.md](../../src/ollama-claude-cli-python/README.md)   |
-| `multi-ai-cli`              | [src/multi-ai-cli/README.md](../../src/multi-ai-cli/README.md)                           |
-| `cloud-native-k8s`          | [src/cloud-native-k8s/README.md](../../src/cloud-native-k8s/README.md)                   |
-| `data-engineering-spark`    | [src/data-engineering-spark/README.md](../../src/data-engineering-spark/README.md)       |
+- `claude-code-hooks:1`, `claude-code-rules:1`, `claude-code-skills:1`, `claude-code-plugins:1` (Ralph Loop on)
+- `claude-code-mcp-servers:1`
+- Docker-in-Docker (`docker-in-docker:4.0.0`)
+- Community NVIDIA toolkit (`ghcr.io/srzstephen/devcontainer-features/nvidia-container-toolkit:1`) for **inner** DinD GPU — distinct from outer `--gpus=all`
+- `claude-code-audit-log:1`
+- `ai-agent-sandbox:1` (preset `moderate`, non-blocking)
+- Firewall services: `claude-code,docker`
 
-Apply any of them the same way:
+**GPU layers**
 
-```bash
-npx @mrrobot0985/create-devcontainer <template-id> ./my-project
-# or
-devcontainer templates apply \
-  --workspace-folder ./my-project \
-  --template-id ghcr.io/mrrobot0985/devcontainer-templates/<template-id>:latest
-```
+| Layer | Config | Purpose |
+| ----- | ------ | ------- |
+| Outer | `runArgs: ["--gpus=all"]` | GPU devices in the studio container |
+| Inner (DinD) | community `nvidia-container-toolkit:1` | Toolkit packages for nested containers |
+
+There is no `enable: false` on the community toolkit feature (that option was part of a removed in-house feature). The community feature installs toolkit packages when present.
+
+## Other templates
+
+| Template | Version | Notes |
+| -------- | ------- | ----- |
+| `multi-ai-cli` | `1.0.0` | Multi-agent workspace (Layer C; separate redesign track) |
+| `cloud-native-k8s` | `1.0.0` | kubectl, Helm, k3d, Tilt, DinD |
+| `data-engineering-spark` | `1.0.0` | Spark, Jupyter, Polars, MinIO |
 
 ## Publishing location
 
-Templates are published to GitHub Container Registry:
-
 ```text
 ghcr.io/mrrobot0985/devcontainer-templates/<id>:<version>
+```
+
+## Usage
+
+```bash
+npx @mrrobot0985/create-devcontainer <template-id> ./my-project
+```
+
+Or:
+
+```bash
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/<id>:latest
 ```

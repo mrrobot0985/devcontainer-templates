@@ -1,6 +1,6 @@
 # Ollama + Claude CLI (Compose) (ollama-claude-cli-compose)
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.1.0-blue?style=flat-square)
 
 Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama installation required — the Ollama container starts automatically alongside the devcontainer.
 
@@ -11,6 +11,14 @@ Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama in
 - NVIDIA GPU environments (with manual compose edit)
 - GitHub Codespaces (when Compose is available)
 
+## Security floor (Layer A)
+
+- Official Claude CLI (`ghcr.io/anthropics/devcontainer-features/claude-code:1`)
+- Backend config (`claude-code-backend:1`)
+- Privacy defaults (`claude-code-privacy:1`)
+- Container firewall (`container-firewall:1`) — `claude-code` service whitelist
+- Non-root enforcer (`non-root-enforcer:1`) — audits `remoteUser` is non-root
+
 ## Includes
 
 - Bundled Ollama service (`ollama/ollama:latest`) with health checks
@@ -20,8 +28,9 @@ Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama in
 - Custom backend configuration (`claude-code-backend`)
 - Privacy defaults (`claude-code-privacy`)
 - Claude Code Plugins (`claude-code-plugins`) — opt-in via configuration
+- MCP servers (`claude-code-mcp-servers`) — GitHub and filesystem MCP servers pre-configured
 - Container firewall (`container-firewall`) — whitelist outbound traffic with `claude-code` preset
-- MCP servers (`claude-code-mcp-servers:0`) — GitHub and filesystem MCP servers pre-configured for external tool access
+- Non-root enforcer (`non-root-enforcer`)
 
 ## Differences from `ollama-claude-cli`
 
