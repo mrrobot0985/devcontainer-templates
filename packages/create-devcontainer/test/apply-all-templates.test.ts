@@ -35,7 +35,7 @@ const LAYER_A_MOUNT: MountExpectation = {
 
 /**
  * Layer B canonical mounts (naming-schema-guide / templates#85 children).
- * OpenCode uses dual data/config volumes instead of a single -home stem.
+ * OpenCode uses community feature host binds (no template named volumes).
  */
 const LAYER_B_MOUNTS: Record<string, MountExpectation[]> = {
   "codex-cli": [
@@ -59,16 +59,9 @@ const LAYER_B_MOUNTS: Record<string, MountExpectation[]> = {
   "pi-coding-agent": [
     { sourcePrefix: "pi-coding-agent-home-", target: "/home/vscode/.pi" },
   ],
-  "opencode-cli": [
-    {
-      sourcePrefix: "opencode-cli-data-",
-      target: "/home/vscode/.local/share/opencode",
-    },
-    {
-      sourcePrefix: "opencode-cli-config-",
-      target: "/home/vscode/.config/opencode",
-    },
-  ],
+  // OpenCode: community feature uses host binds + onCreate symlinks;
+  // named volumes on home paths break smoke (see persistence-model.md).
+  "opencode-cli": [],
 };
 
 /** Layer C: multi-ai-* prefixes for every agent home + shared MCP. */
@@ -79,14 +72,7 @@ const MULTI_AI_MOUNTS: MountExpectation[] = [
   { sourcePrefix: "multi-ai-hermes-", target: "/home/vscode/.hermes" },
   { sourcePrefix: "multi-ai-codex-", target: "/home/vscode/.codex" },
   { sourcePrefix: "multi-ai-gemini-", target: "/home/vscode/.gemini" },
-  {
-    sourcePrefix: "multi-ai-opencode-data-",
-    target: "/home/vscode/.local/share/opencode",
-  },
-  {
-    sourcePrefix: "multi-ai-opencode-config-",
-    target: "/home/vscode/.config/opencode",
-  },
+  // OpenCode homes via community feature host binds (not named volumes)
   { sourcePrefix: "multi-ai-mcp-", target: "/home/vscode/.mcp" },
 ];
 
@@ -191,6 +177,14 @@ describe("apply all templates (floor + mount policy)", () => {
         const expected = LAYER_B_MOUNTS[id];
         expect(expected, `missing Layer B mount policy for ${id}`).toBeDefined();
         assertMounts(mounts, expected);
+        if (id === "opencode-cli") {
+          for (const m of mounts) {
+            expect(
+              m,
+              `opencode-cli must not use named volumes on OpenCode homes (community feature binds): ${m}`
+            ).not.toMatch(/opencode-cli-(data|config)-/);
+          }
+        }
       } else if (layer === "C") {
         assertMounts(mounts, MULTI_AI_MOUNTS);
         for (const m of mounts) {
