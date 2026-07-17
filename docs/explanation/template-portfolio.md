@@ -9,32 +9,32 @@ For how purpose-driven families are designed day to day, see [Template Design Ph
 Ship **purpose-driven** devcontainer templates that:
 
 1. **Showcase monorepo differentiators** — owned features for agent configuration, privacy, security floors, and lifecycle — not thin wrappers around a single CLI install.
-2. **Give first-class agents clean entry points** — each supported agent gets a coherent minimal (and, where justified, studio) template rather than a feature checklist.
-3. **Avoid combinatorial sprawl** — do not multiply templates by every hardware or language axis for every agent.
-4. **Stay buildable** — every shipped template must apply, smoke-test, and resolve published features.
+1. **Give first-class agents clean entry points** — each supported agent gets a coherent minimal (and, where justified, studio) template rather than a feature checklist.
+1. **Avoid combinatorial sprawl** — do not multiply templates by every hardware or language axis for every agent.
+1. **Stay buildable** — every shipped template must apply, smoke-test, and resolve published features.
 
 The collection is **agent-first**. Language, cloud, and data stacks only stay when they earn their place against that mission (see Layer D).
 
 ## Portfolio layers
 
-| Layer | Role | Examples (today or planned) |
-| ----- | ---- | --------------------------- |
-| **A** | Claude depth — owned features configure the agent | `ollama-claude-cli*` family |
-| **B** | Agent entry points — install + security floor + home persistence | Grok Build, Pi, Hermes, Codex, Gemini, OpenCode (planned) |
-| **C** | Multi-agent evaluation — one workspace, many CLIs | `multi-ai-cli` |
-| **D** | Domain stacks — not agent-centric | `cloud-native-k8s`, `data-engineering-spark` (**decision deferred**) |
+| Layer | Role                                                             | Examples (today or planned)                                          |
+| ----- | ---------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **A** | Claude depth — owned features configure the agent                | `ollama-claude-cli*` family                                          |
+| **B** | Agent entry points — install + security floor + home persistence | Grok Build, Pi, Hermes, Codex, Gemini, OpenCode (planned)            |
+| **C** | Multi-agent evaluation — one workspace, many CLIs                | `multi-ai-cli`                                                       |
+| **D** | Domain stacks — not agent-centric                                | `cloud-native-k8s`, `data-engineering-spark` (**decision deferred**) |
 
 ### Layer A — Claude depth
 
 Claude Code is the deepest integration in this monorepo. Owned features configure backend, privacy, hooks, rules, skills, plugins, and related policy. The `ollama-claude-cli*` family is the primary showcase:
 
-| Template | Intent |
-| -------- | ------ |
-| `ollama-claude-cli` | Minimal GPU host-Ollama entry point |
-| `ollama-claude-cli-cpu` | Same stack without GPU requirements |
-| `ollama-claude-cli-compose` | Bundled Ollama via Compose (no host Ollama) |
-| `ollama-claude-cli-python` | Claude + Python AI/ML toolchain |
-| `ollama-claude-cli-studio` | Full studio: DinD, toolkit hooks, richer Claude suite |
+| Template                    | Intent                                                |
+| --------------------------- | ----------------------------------------------------- |
+| `ollama-claude-cli`         | Minimal GPU host-Ollama entry point                   |
+| `ollama-claude-cli-cpu`     | Same stack without GPU requirements                   |
+| `ollama-claude-cli-compose` | Bundled Ollama via Compose (no host Ollama)           |
+| `ollama-claude-cli-python`  | Claude + Python AI/ML toolchain                       |
+| `ollama-claude-cli-studio`  | Full studio: DinD, toolkit hooks, richer Claude suite |
 
 **Security floor (target):** official Claude Code install + `claude-code-backend` / `claude-code-privacy` as appropriate + `container-firewall` + `non-root-enforcer` (and studio-level audit/sandbox where justified).
 
@@ -77,18 +77,18 @@ Layer C complements Layer B; it does not replace dedicated entry points for dail
 
 **No deletion and no major investment in this phase.** A later decision gate will choose one of:
 
-| Path | Meaning |
-| ---- | ------- |
+| Path           | Meaning                                                                                                        |
+| -------------- | -------------------------------------------------------------------------------------------------------------- |
 | **Re-feature** | Wire owned differentiators (firewall, non-root, isolation, domain helpers) and catalog them under Data / Cloud |
-| **Archive** | Remove if the collection commits to AI coding agents only |
-| **Keep as-is** | Temporary only; fails the mission test long-term |
+| **Archive**    | Remove if the collection commits to AI coding agents only                                                      |
+| **Keep as-is** | Temporary only; fails the mission test long-term                                                               |
 
 **Decision criteria (record explicitly when deciding):**
 
 1. Does the template showcase monorepo differentiators, or is it a generic tool bundle?
-2. Will it be maintained and smoke-tested with the same bar as Layers A–C?
-3. Is there a clear user who would choose it over official/community templates?
-4. Does keeping it dilute the agent-first story more than it helps adoption?
+1. Will it be maintained and smoke-tested with the same bar as Layers A–C?
+1. Is there a clear user who would choose it over official/community templates?
+1. Does keeping it dilute the agent-first story more than it helps adoption?
 
 Until that gate closes, treat Layer D templates as **provisional**: listed for honesty, not as the growth vector.
 
@@ -96,18 +96,18 @@ Until that gate closes, treat Layer D templates as **provisional**: listed for h
 
 Use this matrix when proposing a new template or a cross-layer combination.
 
-| Combination | Sense? | Why |
-| ----------- | ------ | --- |
-| Claude minimal / cpu / compose / python / studio (Layer A) | **Good** | Owned Claude features make each variant a real capability delta |
-| Dedicated agent minimal (+ studio when justified) (Layer B) | **Good** | Clean entry point + security floor + home persistence |
-| `multi-ai-cli` with several agents + agent-agnostic floor (Layer C) | **Good** | Evaluation workspace; not a substitute for daily single-agent templates |
-| Claude suite features on Grok / Pi / Hermes / Codex / … | **Bad** | Wrong ownership model; confuses install with Claude-specific policy |
-| Full cpu/gpu/compose/python matrix for every Layer B agent | **Bad** | Combinatorial sprawl; most agents are API-first |
-| Domain template with zero owned features, no decision date (Layer D drift) | **Bad** | Fails mission; either re-feature or archive |
-| Options for base image / model map / python version on one template | **Good** | Parameter variance, not a new capability |
-| New template for a one-line feature difference | **Bad** | Use `options` or extend an existing purpose-driven template |
-| Firewall whitelist without correct provider service tags | **Bad** | Ships a false security story; use monitor mode or wait for tags |
-| Bare installer feature when a mature community/official install exists and we add no policy | **Bad** | Maintenance without differentiation |
+| Combination                                                                                 | Sense?   | Why                                                                     |
+| ------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------- |
+| Claude minimal / cpu / compose / python / studio (Layer A)                                  | **Good** | Owned Claude features make each variant a real capability delta         |
+| Dedicated agent minimal (+ studio when justified) (Layer B)                                 | **Good** | Clean entry point + security floor + home persistence                   |
+| `multi-ai-cli` with several agents + agent-agnostic floor (Layer C)                         | **Good** | Evaluation workspace; not a substitute for daily single-agent templates |
+| Claude suite features on Grok / Pi / Hermes / Codex / …                                     | **Bad**  | Wrong ownership model; confuses install with Claude-specific policy     |
+| Full cpu/gpu/compose/python matrix for every Layer B agent                                  | **Bad**  | Combinatorial sprawl; most agents are API-first                         |
+| Domain template with zero owned features, no decision date (Layer D drift)                  | **Bad**  | Fails mission; either re-feature or archive                             |
+| Options for base image / model map / python version on one template                         | **Good** | Parameter variance, not a new capability                                |
+| New template for a one-line feature difference                                              | **Bad**  | Use `options` or extend an existing purpose-driven template             |
+| Firewall whitelist without correct provider service tags                                    | **Bad**  | Ships a false security story; use monitor mode or wait for tags         |
+| Bare installer feature when a mature community/official install exists and we add no policy | **Bad**  | Maintenance without differentiation                                     |
 
 ### Capability vs parameter (quick test)
 

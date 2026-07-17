@@ -19,12 +19,12 @@ The official `devcontainers/templates` repository follows this pattern: generic 
 
 A **family** is a set of templates that share one primary agent or mission and differ only where capability changes:
 
-| Family | Role in the portfolio |
-| ------ | --------------------- |
-| `ollama-claude-cli*` (Layer A) | Deep Claude + Ollama stack; richest variant set because owned features justify each member |
-| Dedicated agent entry points (Layer B) | One minimal door per first-class agent; studio only when needed |
-| `multi-ai-cli` (Layer C) | Single multi-agent evaluation workspace |
-| Domain stacks (Layer D) | Provisional k8s/spark templates; fate deferred — not a growth pattern yet |
+| Family                                 | Role in the portfolio                                                                      |
+| -------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `ollama-claude-cli*` (Layer A)         | Deep Claude + Ollama stack; richest variant set because owned features justify each member |
+| Dedicated agent entry points (Layer B) | One minimal door per first-class agent; studio only when needed                            |
+| `multi-ai-cli` (Layer C)               | Single multi-agent evaluation workspace                                                    |
+| Domain stacks (Layer D)                | Provisional k8s/spark templates; fate deferred — not a growth pattern yet                  |
 
 Families grow when a new member answers a question users actually ask (“I have no GPU,” “I need DinD,” “I want several agents side by side”). Families do **not** grow by cloning an entire matrix onto every new agent.
 
