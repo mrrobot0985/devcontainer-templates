@@ -35,6 +35,24 @@ export const templates: readonly Template[] = [
     defaults: { imageVariant: "jammy" },
   },
   {
+    id: "grok-build-cli",
+    name: "Grok Build CLI",
+    description: "Minimal devcontainer for xAI Grok Build CLI with container firewall (grok-build tags), non-root enforcer, AI agent sandbox, and persistent ~/.grok state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+    ghcrUri:
+      "ghcr.io/mrrobot0985/devcontainer-templates/grok-build-cli:latest",
+    sourcePath: "src/grok-build-cli",
+    defaults: { imageVariant: "jammy" },
+  },
+  {
+    id: "grok-build-cli-studio",
+    name: "Grok Build CLI Studio",
+    description: "Full-featured devcontainer for xAI Grok Build CLI with Docker-in-Docker, host isolation audit, container firewall (grok-build + docker), AI agent sandbox, MCP server manager, non-root enforcer, and persistent ~/.grok state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+    ghcrUri:
+      "ghcr.io/mrrobot0985/devcontainer-templates/grok-build-cli-studio:latest",
+    sourcePath: "src/grok-build-cli-studio",
+    defaults: { imageVariant: "jammy" },
+  },
+  {
     id: "multi-ai-cli",
     name: "Multi-AI CLI Workspace",
     description: "Devcontainer template bundling Claude Code, OpenAI Codex CLI, Google Gemini CLI, and OpenCode CLI with shared MCP server configuration",

@@ -1,0 +1,22 @@
+{
+  "id": "grok-build-cli-studio",
+  "version": "1.0.0",
+  "name": "Grok Build CLI Studio",
+  "description": "Full-featured devcontainer for xAI Grok Build CLI with Docker-in-Docker, host isolation audit, container firewall (grok-build + docker), AI agent sandbox, MCP server manager, non-root enforcer, and persistent ~/.grok state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+  "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/grok-build-cli-studio",
+  "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
+  "options": {
+    "imageVariant": {
+      "type": "string",
+      "description": "Ubuntu version (use ubuntu-22.04 or ubuntu-18.04 on local arm64/Apple Silicon):",
+      "proposals": [
+        "jammy",
+        "focal"
+      ],
+      "default": "jammy"
+    }
+  },
+  "platforms": [
+    "Any"
+  ]
+}
