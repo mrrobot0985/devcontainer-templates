@@ -17,12 +17,12 @@ The collection is **agent-first**. Language, cloud, and data stacks only stay wh
 
 ## Portfolio layers
 
-| Layer | Role                                                             | Examples (today or planned)                                                                                              |
-| ----- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **A** | Claude depth — owned features configure the agent                | `ollama-claude-cli*` family                                                                                              |
-| **B** | Agent entry points — install + security floor + home persistence | `grok-build-cli` / `grok-build-cli-studio`; `pi-coding-agent`; `hermes-agent`; `codex-cli`; `gemini-cli`; `opencode-cli` |
-| **C** | Multi-agent evaluation — one workspace, many CLIs                | `multi-ai-cli`                                                                                                           |
-| **D** | Domain stacks — not agent-centric                                | `cloud-native-k8s`, `data-engineering-spark` (**decision deferred**)                                                     |
+| Layer | Role                                                             | Examples (today or planned)                                                               |
+| ----- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **A** | Claude depth — owned features configure the agent                | `ollama-claude-cli*` family                                                               |
+| **B** | Agent entry points — install + security floor + home persistence | `grok-build-cli` / `grok-build-cli-studio`; Pi, Hermes, Codex, Gemini, OpenCode (planned) |
+| **C** | Multi-agent evaluation — one workspace, many CLIs                | `multi-ai-cli`                                                                            |
+| **D** | Domain stacks — not agent-centric                                | `cloud-native-k8s`, `data-engineering-spark` (**keep; re-feature or archive later**) |
 
 ### Layer A — Claude depth
 
@@ -55,27 +55,7 @@ Typical shape:
 - Do **not** recreate the full Ollama cpu/gpu/compose/python matrix for API-first agents.
 - Prefer community install features when they are the standard (for example Grok Build via a maintained community feature) rather than bare owned installers that add no policy.
 
-First-class Layer B entry points (minimal, v1):
-
-| Template          | Agent             | Studio v1                       |
-| ----------------- | ----------------- | ------------------------------- |
-| `grok-build-cli`  | Grok Build (xAI)  | `grok-build-cli-studio` shipped |
-| `pi-coding-agent` | Pi (pi.dev)       | deferred                        |
-| `hermes-agent`    | Hermes (Nous)     | deferred / single template      |
-| `codex-cli`       | OpenAI Codex CLI  | deferred                        |
-| `gemini-cli`      | Google Gemini CLI | deferred                        |
-| `opencode-cli`    | OpenCode          | deferred                        |
-
-### Layer B evaluation — multi-ai-only for v1 (#71)
-
-| Agent / CLI              | Placement for v1 | Rationale                                                                                          |
-| ------------------------ | ---------------- | -------------------------------------------------------------------------------------------------- |
-| **Aider**                | multi-ai-only    | Mature git-native agent, but no unique runtime or owned feature surface that multi-ai under-serves |
-| **Goose** (Block)        | multi-ai-only    | Open agent runtime; evaluate again if DinD/gateway needs appear                                    |
-| **Continue** CLI / peers | multi-ai-only    | Editor-adjacent; demand not established for a dedicated entry point                                |
-| Future agents            | case by case     | Same Layer B ladder: dedicated only if capability or demand warrants                               |
-
-**Decision:** do **not** open dedicated Layer B templates for Aider, Goose, or Continue in v1 unless follow-up demand or runtime requirements appear. Prefer reliable installs (or honest skips) in `multi-ai-cli` instead.
+First-class agents tracked for dedicated entry points include Grok Build, Pi, Hermes, OpenAI Codex CLI, Google Gemini CLI, and OpenCode. Additional CLIs (Aider, Goose, and similar) are evaluated case by case rather than assumed.
 
 ### Layer C — Multi-agent evaluation
 
@@ -91,26 +71,36 @@ Rules for Layer C:
 
 Layer C complements Layer B; it does not replace dedicated entry points for daily single-agent work.
 
-### Layer D — Domain stacks (deferred)
+### Layer D — Domain stacks (keep; re-feature later)
 
-`cloud-native-k8s` and `data-engineering-spark` exist in the tree but sit **outside** the agent-first mission. Today they use little or no owned feature surface.
+`cloud-native-k8s` and `data-engineering-spark` remain in the tree as **domain stacks**. They sit **outside** the agent-first growth path. Today they ship with **zero or very few owned monorepo features** — honest tool bundles (kubectl/Helm/k3d/Tilt/DinD; Spark/Jupyter/Polars/MinIO), not differentiator showcases.
 
-**No deletion and no major investment in this phase.** A later decision gate will choose one of:
+#### Decision recorded (issue #66)
 
-| Path           | Meaning                                                                                                        |
-| -------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Re-feature** | Wire owned differentiators (firewall, non-root, isolation, domain helpers) and catalog them under Data / Cloud |
-| **Archive**    | Remove if the collection commits to AI coding agents only                                                      |
-| **Keep as-is** | Temporary only; fails the mission test long-term                                                               |
+| Choice                         | Status                                                                                               |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| **Keep both for now**          | **Selected.** Do **not** delete in this phase.                                                       |
+| **Re-feature**                 | **Path forward** when capacity allows: wire owned floor + domain helpers; catalog under Data / Cloud |
+| **Archive later if unused**    | **Fallback** after the agent portfolio is stable, if there is no demand or maintenance path          |
+| **Major investment right now** | **Out of scope** until Layers A–C are stable                                                         |
 
-**Decision criteria (record explicitly when deciding):**
+Explicit non-action: **do not delete** these templates while documenting the path forward.
+
+#### Revisit criteria
+
+Apply the same decision criteria when revisiting after the agent portfolio (Layers A–C) is stable:
 
 1. Does the template showcase monorepo differentiators, or is it a generic tool bundle?
 1. Will it be maintained and smoke-tested with the same bar as Layers A–C?
 1. Is there a clear user who would choose it over official/community templates?
 1. Does keeping it dilute the agent-first story more than it helps adoption?
 
-Until that gate closes, treat Layer D templates as **provisional**: listed for honesty, not as the growth vector.
+**Re-feature target examples** (illustrative, not committed scope):
+
+- `data-engineering-spark` → owned Jupyter/ML/data helpers + firewall + non-root where they fit
+- `cloud-native-k8s` → DinD + firewall/docker tags + host isolation + cloud CLI persistence where they fit
+
+Until re-feature or archive, treat Layer D templates as **kept-but-honest**: listed in the catalog with Layer D status and the zero/low owned-feature caveat, not as the growth vector.
 
 ## Sense matrix
 
@@ -123,7 +113,8 @@ Use this matrix when proposing a new template or a cross-layer combination.
 | `multi-ai-cli` with several agents + agent-agnostic floor (Layer C)                         | **Good** | Evaluation workspace; not a substitute for daily single-agent templates |
 | Claude suite features on Grok / Pi / Hermes / Codex / …                                     | **Bad**  | Wrong ownership model; confuses install with Claude-specific policy     |
 | Full cpu/gpu/compose/python matrix for every Layer B agent                                  | **Bad**  | Combinatorial sprawl; most agents are API-first                         |
-| Domain template with zero owned features, no decision date (Layer D drift)                  | **Bad**  | Fails mission; either re-feature or archive                             |
+| Domain template with zero owned features and no path forward (Layer D drift)                | **Bad**  | Fails mission; must re-feature or archive with a recorded date          |
+| Domain template kept with honest Layer D caveat + revisit criteria                          | **OK**   | Temporary honesty; re-feature or archive after agents stabilize         |
 | Options for base image / model map / python version on one template                         | **Good** | Parameter variance, not a new capability                                |
 | New template for a one-line feature difference                                              | **Bad**  | Use `options` or extend an existing purpose-driven template             |
 | Firewall whitelist without correct provider service tags                                    | **Bad**  | Ships a false security story; use monitor mode or wait for tags         |
@@ -140,9 +131,9 @@ Use this matrix when proposing a new template or a cross-layer combination.
 Layer A  Claude depth (rich family)
 Layer B  One clean door per first-class agent
 Layer C  Side-by-side evaluation (multi-ai-cli)
-Layer D  Domain stacks — deferred gate
+Layer D  Domain stacks — keep for now; re-feature or archive after agents stabilize
 
-Growth order: stabilize A → redesign C → ship B agents → decide D → full catalog/registry sync
+Growth order: stabilize A → redesign C → ship B agents → revisit D (re-feature or archive) → full catalog/registry sync
 ```
 
 Phase numbers live in the portfolio epic and issue tracker; this document owns **intent**, not schedule.
