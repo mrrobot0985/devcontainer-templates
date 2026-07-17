@@ -23,7 +23,7 @@ fi
 echo "OK — gh CLI is installed"
 
 # --- Agent-agnostic security floor ---
-if ! command -v devcontainer-non-root-enforcer > /dev/null 2>&1; then
+if ! command -v non-root-enforcer > /dev/null 2>&1; then
 	echo "ERROR: non-root-enforcer is not installed"
 	exit 1
 fi

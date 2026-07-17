@@ -35,21 +35,20 @@ same volume; deleting the volume clears that agent's persisted state.
 
 ## Current template status (honesty)
 
-As of the 2026-07 maturity audit, **not every Layer B template ships mounts yet**.
+Named-volume mounts are the portfolio model for Layer A–C agent auth survival.
 
-| Template                                               | Home mounts today                                |
-| ------------------------------------------------------ | ------------------------------------------------ |
-| `ollama-claude-cli*`                                   | Yes (`~/.claude`)                                |
-| `multi-ai-cli`                                         | Yes (per-agent homes)                            |
-| `gemini-cli`, `pi-coding-agent`, `hermes-agent`        | Yes                                              |
-| `codex-cli`                                            | **Missing** — tracked in templates#85            |
-| `grok-build-cli`                                       | **Missing** — tracked in templates#85            |
-| `grok-build-cli-studio`                                | **Missing** — tracked in templates#85            |
-| `opencode-cli`                                         | **Missing** — tracked in templates#85            |
+| Template                                               | Home mounts today |
+| ------------------------------------------------------ | ----------------- |
+| `ollama-claude-cli*`                                   | Yes (`~/.claude`) |
+| `multi-ai-cli`                                         | Yes (per-agent homes, including dual OpenCode paths) |
+| `gemini-cli`, `pi-coding-agent`, `hermes-agent`        | Yes |
+| `codex-cli`                                            | Yes (`codex-cli-home-…` → `~/.codex`) |
+| `grok-build-cli`                                       | Yes (`grok-build-cli-home-…` → `~/.grok`) |
+| `grok-build-cli-studio`                                | Yes (`grok-build-cli-studio-home-…` → `~/.grok`) |
+| `opencode-cli`                                         | Yes (dual: data + config volumes) |
 | Layer D (`cloud-native-k8s`, `data-engineering-spark`) | No agent home mounts (not agent-auth workspaces) |
 
-Treat the table above as the source of truth until #85 lands. Do not assume a
-template persists auth solely because the portfolio narrative says "per-agent homes."
+**Canonical Layer B stem:** `{template-id}-home-${devcontainerId}` (OpenCode uses `-data` / `-config`). Multi-ai keeps the `multi-ai-{agent}-…` prefix so volumes never collide.
 
 ## Per-project isolation
 
