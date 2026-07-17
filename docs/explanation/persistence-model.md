@@ -42,9 +42,8 @@ Named-volume mounts are the portfolio model for Layer A–C agent auth survival.
 | `ollama-claude-cli*`                                   | Yes (`~/.claude`)                                                                |
 | `multi-ai-cli`                                         | Yes (per-agent homes; OpenCode via community host binds, not named volumes)      |
 | `gemini-cli`, `pi-coding-agent`, `hermes-agent`        | Yes                                                                              |
-| `codex-cli`                                            | Yes (`codex-cli-home-…` → `~/.codex`)                                            |
-| `grok-build-cli`                                       | Yes (`grok-build-cli-home-…` → `~/.grok`)                                        |
-| `grok-build-cli-studio`                                | Yes (`grok-build-cli-studio-home-…` → `~/.grok`)                                 |
+| `codex-cli`                                            | Via community (sliekens) host binds — **no** template named volume (conflicts with feature `onCreate` symlinks) |
+| `grok-build-cli` / `-studio`                           | Via community (sliekens) host binds — **no** template named volume |
 | `opencode-cli`                                         | Via community feature host binds (`~/.local/share` + `~/.config` → `/var/lib/…`) |
 | Layer D (`cloud-native-k8s`, `data-engineering-spark`) | No agent home mounts (not agent-auth workspaces)                                 |
 
