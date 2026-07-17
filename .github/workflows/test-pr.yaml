@@ -148,6 +148,34 @@ jobs:
               - 'src/multi-ai-cli/**'
               - 'test/multi-ai-cli/**'
               - '.github/actions/smoke-test/**'
+            grok-build-cli:
+              - 'src/grok-build-cli/**'
+              - 'test/grok-build-cli/**'
+              - '.github/actions/smoke-test/**'
+            grok-build-cli-studio:
+              - 'src/grok-build-cli-studio/**'
+              - 'test/grok-build-cli-studio/**'
+              - '.github/actions/smoke-test/**'
+            pi-coding-agent:
+              - 'src/pi-coding-agent/**'
+              - 'test/pi-coding-agent/**'
+              - '.github/actions/smoke-test/**'
+            hermes-agent:
+              - 'src/hermes-agent/**'
+              - 'test/hermes-agent/**'
+              - '.github/actions/smoke-test/**'
+            codex-cli:
+              - 'src/codex-cli/**'
+              - 'test/codex-cli/**'
+              - '.github/actions/smoke-test/**'
+            gemini-cli:
+              - 'src/gemini-cli/**'
+              - 'test/gemini-cli/**'
+              - '.github/actions/smoke-test/**'
+            opencode-cli:
+              - 'src/opencode-cli/**'
+              - 'test/opencode-cli/**'
+              - '.github/actions/smoke-test/**'
             cloud-native-k8s:
               - 'src/cloud-native-k8s/**'
               - 'test/cloud-native-k8s/**'
