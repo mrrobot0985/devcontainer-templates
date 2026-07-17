@@ -53,13 +53,13 @@ This package ships **15 templates** in four portfolio layers. Full details:
 
 ### Layer A — Claude + Ollama
 
-| ID                           | Name                          |
-| ---------------------------- | ----------------------------- |
-| `ollama-claude-cli`          | Ollama + Claude CLI           |
-| `ollama-claude-cli-cpu`      | Ollama + Claude CLI (CPU)     |
-| `ollama-claude-cli-compose`  | Ollama + Claude CLI (Compose) |
-| `ollama-claude-cli-python`   | Ollama + Claude CLI + Python  |
-| `ollama-claude-cli-studio`   | Ollama + Claude CLI Studio    |
+| ID                          | Name                          |
+| --------------------------- | ----------------------------- |
+| `ollama-claude-cli`         | Ollama + Claude CLI           |
+| `ollama-claude-cli-cpu`     | Ollama + Claude CLI (CPU)     |
+| `ollama-claude-cli-compose` | Ollama + Claude CLI (Compose) |
+| `ollama-claude-cli-python`  | Ollama + Claude CLI + Python  |
+| `ollama-claude-cli-studio`  | Ollama + Claude CLI Studio    |
 
 ### Layer B — Agent entry points
 
@@ -75,16 +75,16 @@ This package ships **15 templates** in four portfolio layers. Full details:
 
 ### Layer C — Multi-agent evaluation
 
-| ID             | Name                    |
-| -------------- | ----------------------- |
-| `multi-ai-cli` | Multi-AI CLI Workspace  |
+| ID             | Name                   |
+| -------------- | ---------------------- |
+| `multi-ai-cli` | Multi-AI CLI Workspace |
 
 ### Layer D — Domain stacks
 
-| ID                       | Name                         |
-| ------------------------ | ---------------------------- |
-| `cloud-native-k8s`       | Cloud Native Kubernetes      |
-| `data-engineering-spark` | Data Engineering with Spark  |
+| ID                       | Name                        |
+| ------------------------ | --------------------------- |
+| `cloud-native-k8s`       | Cloud Native Kubernetes     |
+| `data-engineering-spark` | Data Engineering with Spark |
 
 Run `create-devcontainer` with no arguments to see the full list (grouped by layer).
 

@@ -20,8 +20,8 @@ export const templates: readonly Template[] = [
   {
     id: "cloud-native-k8s",
     name: "Cloud Native Kubernetes",
-    description: "Devcontainer template for cloud-native development with Kubernetes. Includes kubectl, Helm, k3d, Tilt, and Docker-in-Docker for building and deploying to local clusters.",
-    version: "1.0.0",
+    description: "Devcontainer template for cloud-native development with Kubernetes. Includes kubectl, Helm, k3d, Tilt, Docker-in-Docker, and owned security floor (container-firewall, non-root-enforcer, ai-agent-sandbox). No Claude suite.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/cloud-native-k8s:latest",
     sourcePath: "src/cloud-native-k8s",
@@ -40,8 +40,8 @@ export const templates: readonly Template[] = [
   {
     id: "data-engineering-spark",
     name: "Data Engineering with Spark",
-    description: "Devcontainer template for data engineering with Apache Spark 3.5, Jupyter, Polars, and MinIO for lakehouse-style local development",
-    version: "1.0.0",
+    description: "Devcontainer template for data engineering with Apache Spark 3.5, Jupyter, Polars, MinIO, and owned security floor (container-firewall, non-root-enforcer, ai-agent-sandbox). No Claude suite.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/data-engineering-spark:latest",
     sourcePath: "src/data-engineering-spark",
