@@ -49,6 +49,8 @@ Typical shape:
 - **Minimal:** install the agent (prefer official or mature community features), agent-agnostic security floor, persist the agent's home directory (`~/.grok`, `~/.pi`, …).
 - **Studio (optional):** DinD / host isolation / MCP tooling only when dogfood shows a real need.
 
+**Persistence target vs today:** the portfolio **intends** per-agent home mounts on every Layer B template. Some entry points still lack mounts (codex, grok, grok-studio, opencode as of 2026-07); see [persistence model](persistence-model.md) and [templates#85](https://github.com/mrrobot0985/devcontainer-templates/issues/85).
+
 **Non-goals for Layer B:**
 
 - Do **not** attach Claude-only suite features (`claude-code-hooks`, `claude-code-rules`, `claude-code-skills`, …) to non-Claude agents.
@@ -64,7 +66,7 @@ First-class agents tracked for dedicated entry points include Grok Build, Pi, He
 Rules for Layer C:
 
 - Install each agent reliably; document multi-key auth honestly.
-- Apply an **agent-agnostic** floor (`non-root-enforcer`, `ai-agent-sandbox`, multi-provider firewall tags when available).
+- Apply an **agent-agnostic** floor (`non-root-enforcer`, `ai-agent-sandbox`, multi-provider firewall tags — use `multi-ai` / agent tags from `container-firewall` ≥ 1.1.0).
 - Gate Claude-only features so they apply only when Claude is present and intended.
 - Persist per-agent homes (`~/.claude`, `~/.grok`, `~/.pi`, …), not a single shared config tree.
 - Prefer `policy: monitor` or omit firewall over shipping a **broken whitelist**.

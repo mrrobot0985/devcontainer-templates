@@ -26,9 +26,26 @@ Runs on every push to `main` and every pull request. It is the primary gate.
 
 1. **`detect-changes`** — determines which templates changed using `dorny/paths-filter`.
 
-1. **`test`** — builds and runs `test/<template>/test.sh` for every changed template.
+1. **`test`** — builds and runs `test/<template>/test.sh` for every changed template (via the smoke-test composite action).
 
-1. **`smoke-tests`** — evaluates the matrix results and fails the workflow if any smoke test failed.
+1. **`smoke-tests`** — evaluates the matrix results and fails the workflow if any smoke test **job** failed (or was not an intentional skip).
+
+### Smoke-test known limitation (fix-skip)
+
+`.github/actions/smoke-test/build.sh` currently treats **any** reference to
+`ghcr.io/mrrobot0985/devcontainer-features/*` as “unpublished,” writes a skip
+marker, and exits **0**. Those features are published on public GHCR; the skip
+is therefore a **false green** for most agent and domain templates that use the
+owned security floor.
+
+Until [templates#88](https://github.com/mrrobot0985/devcontainer-templates/issues/88)
+lands:
+
+- A green smoke job does **not** prove `devcontainer up` worked for owned-feature templates.
+- Local smoke via `build.sh` will skip the same way.
+- Prefer feature monorepo tests and static template validation for confidence, or run `devcontainer up` manually after removing the skip guard.
+
+Do not document “all templates smoke-tested in CI” as true while this guard remains.
 
 ## create-devcontainer CI (`create-devcontainer-ci.yaml`)
 
