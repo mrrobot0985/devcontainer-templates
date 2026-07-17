@@ -1,13 +1,25 @@
 # Template Catalog
 
-This collection provides two purpose-driven templates for Ollama-backed Claude environments. Choose the one that matches the scope of your project rather than adding or removing features after applying it.
+This collection publishes **purpose-driven** devcontainer templates for AI coding agents and related workflows. The inventory is larger than a single Claude pair: a Claude + Ollama family (Layer A), a multi-agent evaluation workspace (Layer C), and provisional domain stacks (Layer D). Additional first-class agent entry points (Layer B) are planned.
 
-| Template                   | Version | Description                                                                                                                                                                                                                                                |
-| -------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ollama-claude-cli`        | `0.1.0` | Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. Includes Node.js and GitHub CLI.                                                                                  |
-| `ollama-claude-cli-studio` | `0.1.0` | Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, container firewall, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. |
+**Portfolio intent** (layers, sense rules, deferred Layer D decision) lives in [Template Portfolio](../explanation/template-portfolio.md). Design rules for families vs options live in [Template Design Philosophy](../explanation/template-design.md).
 
-Both templates require Ollama to be running on the host and accessible at `http://host.docker.internal:11434`.
+> **Catalog completeness:** This page documents templates present in the repository today. A full cross-layer catalog refresh, choosing-guide overhaul, and `create-devcontainer` registry sync are tracked as later portfolio phases (stabilize Layer A / Phase 6 docs). Until then, treat Layer D rows as provisional and prefer the portfolio doc for “what belongs.”
+
+| Template | Version | Layer | Description |
+| -------- | ------- | ----- | ----------- |
+| `ollama-claude-cli` | `1.0.0` | A | Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. Includes Node.js and GitHub CLI. |
+| `ollama-claude-cli-cpu` | `1.0.0` | A | CPU-only Claude + Ollama entry point (no GPU required). Suitable for Apple Silicon, Codespaces, and cloud CPU hosts. |
+| `ollama-claude-cli-compose` | `1.0.0` | A | Claude CLI with bundled Ollama via Docker Compose. No host Ollama required. |
+| `ollama-claude-cli-python` | `1.0.0` | A | Claude + Ollama with Python 3.12, `uv`, and common LLM/AI libraries. |
+| `ollama-claude-cli-studio` | `1.0.0` | A | Full studio: Docker-in-Docker, NVIDIA Container Toolkit (optional), lifecycle hooks, rules, skills, plugins, firewall, persistence. |
+| `multi-ai-cli` | `1.0.0` | C | Multi-agent evaluation workspace bundling several AI CLIs with shared MCP-oriented setup. Prefer dedicated Layer B templates for daily single-agent work once they ship. |
+| `cloud-native-k8s` | `1.0.0` | D | Kubernetes / cloud-native tooling (kubectl, Helm, k3d, Tilt, DinD). **Provisional** — Layer D decision deferred. |
+| `data-engineering-spark` | `1.0.0` | D | Spark / lakehouse-style local data engineering stack. **Provisional** — Layer D decision deferred. |
+
+Claude + host-Ollama templates expect Ollama on the host at `http://host.docker.internal:11434` unless you use `ollama-claude-cli-compose`.
+
+For hardware and workflow selection among Claude variants, see [Choosing a Template](../tutorials/choosing-a-template.md).
 
 ## `ollama-claude-cli`
 
@@ -88,9 +100,32 @@ Or with the helper:
 npx @mrrobot0985/create-devcontainer ollama-claude-cli-studio ./my-project
 ```
 
+## Other templates in the tree
+
+Detailed feature breakdowns for the remaining Layer A variants, Layer C, and Layer D templates live primarily in each template’s `src/<id>/README.md`. Summary:
+
+| Template | Where to read more |
+| -------- | ------------------ |
+| `ollama-claude-cli-cpu` | [src/ollama-claude-cli-cpu/README.md](../../src/ollama-claude-cli-cpu/README.md) |
+| `ollama-claude-cli-compose` | [src/ollama-claude-cli-compose/README.md](../../src/ollama-claude-cli-compose/README.md) |
+| `ollama-claude-cli-python` | [src/ollama-claude-cli-python/README.md](../../src/ollama-claude-cli-python/README.md) |
+| `multi-ai-cli` | [src/multi-ai-cli/README.md](../../src/multi-ai-cli/README.md) |
+| `cloud-native-k8s` | [src/cloud-native-k8s/README.md](../../src/cloud-native-k8s/README.md) |
+| `data-engineering-spark` | [src/data-engineering-spark/README.md](../../src/data-engineering-spark/README.md) |
+
+Apply any of them the same way:
+
+```bash
+npx @mrrobot0985/create-devcontainer <template-id> ./my-project
+# or
+devcontainer templates apply \
+  --workspace-folder ./my-project \
+  --template-id ghcr.io/mrrobot0985/devcontainer-templates/<template-id>:latest
+```
+
 ## Publishing location
 
-Both templates are published to GitHub Container Registry:
+Templates are published to GitHub Container Registry:
 
 ```text
 ghcr.io/mrrobot0985/devcontainer-templates/<id>:<version>
