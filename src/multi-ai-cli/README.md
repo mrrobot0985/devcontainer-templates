@@ -14,6 +14,12 @@ comparison: Claude Code, OpenAI Codex CLI, and shared MCP server configuration.
 - **Security scan** — Trivy vulnerability scan on container creation
 - **Non-root enforcement** — validates remoteUser is not root
 
+## Options
+
+| Options Id | Description | Type | Default Value |
+| ----- | ----- | ----- | ----- |
+| `imageVariant` | Ubuntu version | string | jammy |
+
 ## Usage
 
 ```json

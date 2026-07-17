@@ -36,7 +36,7 @@ Devcontainer for Claude CLI with Ollama backend, Python 3.12, the `uv` package m
 | Options Id | Description | Type | Default Value |
 | ----- | ----- | ----- | ----- |
 | `imageVariant` | Ubuntu version: | string | jammy |
-| `modelMap` | Comma-separated model overrides in role:model format. | string | haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest |
+| `modelMap` | Comma-separated model overrides in role:model format. Override if your host Ollama has different models. | string | haiku:llama3.2:latest,opus:llama3.2:latest,sonnet:llama3.2:latest,subagent:llama3.2:latest |
 | `pythonVersion` | Python version to install: | string | 3.12 |
 
 ## Usage

@@ -16,6 +16,12 @@ Polars, and MinIO for lakehouse-style local development.
 - **MinIO client** — S3-compatible object storage
 - **Delta Spark** — lakehouse protocol
 
+## Options
+
+| Options Id | Description | Type | Default Value |
+| ----- | ----- | ----- | ----- |
+| `imageVariant` | Ubuntu version | string | jammy |
+
 ## Usage
 
 ```json
