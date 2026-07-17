@@ -141,7 +141,7 @@ export const templates: readonly Template[] = [
     id: "ollama-claude-cli-studio",
     name: "Ollama + Claude CLI Studio",
     description: "Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, community NVIDIA Container Toolkit, container firewall, non-root enforcer, audit log, agent sandbox, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
-    version: "1.1.0",
+    version: "1.1.1",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:latest",
     sourcePath: "src/ollama-claude-cli-studio",
