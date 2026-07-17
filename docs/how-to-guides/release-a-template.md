@@ -62,6 +62,16 @@ The `@mrrobot0985/create-devcontainer` helper is released independently with `v*
 
 The `create-devcontainer-ci.yaml` workflow runs on tag pushes and publishes the built package to npm.
 
+### npm lag gate
+
+After a monorepo version bump, CI requires the registry to match. Fail closed when:
+
+```bash
+npm view @mrrobot0985/create-devcontainer version   # must be >= package.json
+```
+
+If the lag gate is red, push the matching `vX.Y.Z` tag (this section) so publish can catch up. The gate also runs on a weekly schedule.
+
 ## Why prefixed tags matter
 
 A single git tag namespace is shared across all templates and the npm package. Without a prefix, `v1.0.0` is ambiguous — it could apply to any template or the package. Prefixed tags keep release histories independent and readable.

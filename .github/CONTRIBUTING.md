@@ -102,6 +102,18 @@ The release workflow triggers on any `*-v*` tag and publishes the template whose
 1. Create and push a signed tag such as `vX.Y.Z`.
 1. Push the tag to trigger the create-devcontainer CI workflow, which publishes to npm.
 
+### npm lag gate
+
+CI fails closed when the published package is behind the monorepo:
+
+```bash
+# must hold: npm view version >= packages/create-devcontainer/package.json version
+npm view @mrrobot0985/create-devcontainer version
+```
+
+The `npm-lag-gate` job in `create-devcontainer-ci.yaml` runs on push/PR/schedule.
+If it is red, finish the package release steps above (tag `vX.Y.Z` and push) so registry catches up.
+
 ## Code of conduct
 
 This project follows the [Code of Conduct](CODE_OF_CONDUCT.md).

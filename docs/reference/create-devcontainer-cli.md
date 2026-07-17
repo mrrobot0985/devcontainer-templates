@@ -9,14 +9,14 @@
 | **Monorepo** `packages/create-devcontainer` | Source of truth for the 15-template portfolio (registry + bundled copies) |
 | **npm** `@mrrobot0985/create-devcontainer`  | What `npx` users get                                                      |
 
-As of the 2026-07 maturity audit, **npm can lag monorepo** (example: monorepo `0.8.x` with 15 templates while npm `latest` was still an older release with a smaller registry). Always check:
+CI enforces an **npm lag gate**: registry version must be ≥ monorepo `package.json` (see [CI workflows](ci-workflows.md)). Check anytime with:
 
 ```bash
 npm view @mrrobot0985/create-devcontainer version
 node -p "require('./packages/create-devcontainer/package.json').version"  # from repo root
 ```
 
-If versions differ, prefer running from monorepo source (`npx tsx packages/create-devcontainer/src/index.ts …`) until publish catches up ([templates#83](https://github.com/mrrobot0985/devcontainer-templates/issues/83)).
+If the gate is red, tag and push `vX.Y.Z` matching `package.json` so `create-devcontainer CI` publishes ([release guide](../how-to-guides/release-a-template.md)). Until publish lands, prefer monorepo source (`npx tsx packages/create-devcontainer/src/index.ts …`).
 
 ## Installation and usage
 

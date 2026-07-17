@@ -2,27 +2,26 @@
 #
 # Triggers:
 #   - push to main or feature/fix branches (feat/**, fix/**)
-#   - tags matching v* or @*
-#   - pull requests targeting main
-#   only when the changed paths include the package, the templates, the sync
-#   script, or this workflow itself.
+#   - tags matching v* or @* (always — no path filter; path filters skip tag publish)
+#   - pull requests targeting main (path-filtered)
+#   - weekly schedule (npm lag gate)
+#   - workflow_dispatch
 #
 # Jobs:
 #   typecheck-test-build - installs dependencies, type-checks, validates the
 #                          template registry sync, runs package tests, and builds.
 #   publish              - publishes the built package to npm when triggered
 #                          by a tag.
+#   npm-lag-gate         - fails closed when registry version < monorepo package.json
 name: create-devcontainer CI
 
 on:
+  # Tag pushes must not share path filters with branch pushes: GitHub evaluates
+  # paths on tags against the tagged commit's diff and can skip the workflow
+  # entirely, leaving npm permanently lagging the monorepo.
   push:
     branches: [main, feat/**, fix/**]
     tags: ['v*', '@*']
-    paths:
-      - "packages/create-devcontainer/**"
-      - "src/**"
-      - "scripts/sync-template-registry.ts"
-      - ".github/workflows/create-devcontainer-ci.yaml"
   pull_request:
     branches: [main]
     paths:
@@ -30,6 +29,10 @@ on:
       - "src/**"
       - "scripts/sync-template-registry.ts"
       - ".github/workflows/create-devcontainer-ci.yaml"
+  schedule:
+    # Weekly fail-closed check that npm has caught up with monorepo.
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
 
 env:
   NODE_VERSION: 20
@@ -40,6 +43,7 @@ defaults:
 
 jobs:
   typecheck-test-build:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -93,3 +97,107 @@ jobs:
         run: npm publish --access public
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # Fail closed when the published npm version is behind monorepo package.json.
+  # Skipped on tag pushes (publish job is the release path; npm may lag seconds).
+  # Runs on push/PR/schedule/workflow_dispatch so lag is never checklist-only.
+  npm-lag-gate:
+    if: github.ref_type != 'tag'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Fail if npm version < monorepo package.json
+        run: |
+          set -euo pipefail
+          node <<'EOF'
+          const fs = require("node:fs");
+          const { execSync } = require("node:child_process");
+
+          const monoPath = "packages/create-devcontainer/package.json";
+          const mono = JSON.parse(fs.readFileSync(monoPath, "utf8")).version;
+          if (!mono) {
+            console.error(`No version in ${monoPath}`);
+            process.exit(1);
+          }
+
+          let npmVersion;
+          try {
+            npmVersion = execSync(
+              "npm view @mrrobot0985/create-devcontainer version",
+              { encoding: "utf8" },
+            ).trim();
+          } catch (err) {
+            console.error(
+              "FAIL CLOSED: could not query npm for @mrrobot0985/create-devcontainer",
+            );
+            console.error(err && err.message ? err.message : err);
+            process.exit(1);
+          }
+
+          if (!npmVersion) {
+            console.error("FAIL CLOSED: empty npm version");
+            process.exit(1);
+          }
+
+          function parse(v) {
+            const core = String(v).split("-")[0];
+            const parts = core.split(".").map((p) => Number(p));
+            if (parts.length < 1 || parts.some((n) => Number.isNaN(n))) {
+              throw new Error(`unparseable version: ${v}`);
+            }
+            while (parts.length < 3) parts.push(0);
+            return parts;
+          }
+
+          let monoParts;
+          let npmParts;
+          try {
+            monoParts = parse(mono);
+            npmParts = parse(npmVersion);
+          } catch (err) {
+            console.error(err.message || err);
+            process.exit(1);
+          }
+
+          let cmp = 0;
+          for (let i = 0; i < 3; i++) {
+            if (npmParts[i] < monoParts[i]) {
+              cmp = -1;
+              break;
+            }
+            if (npmParts[i] > monoParts[i]) {
+              cmp = 1;
+              break;
+            }
+          }
+
+          if (cmp < 0) {
+            console.error(
+              `npm lag gate FAILED: registry ${npmVersion} < monorepo ${mono}`,
+            );
+            console.error(
+              "Publish with: git tag -s v" +
+                mono +
+                ' -m "release create-devcontainer v' +
+                mono +
+                '" && git push origin v' +
+                mono,
+            );
+            process.exit(1);
+          }
+
+          console.log(
+            `npm lag gate OK: registry ${npmVersion} >= monorepo ${mono}`,
+          );
+          EOF

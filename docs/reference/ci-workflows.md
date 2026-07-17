@@ -5,7 +5,7 @@ Three GitHub Actions workflows enforce quality and publish artifacts. All PRs mu
 | Workflow               | File                          | Triggers                                                                                                                        | Checks                                                                                                                                                           |
 | ---------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | CI - Test Templates    | `test-pr.yaml`                | Push to `main`, any pull request                                                                                                | JSON validation, templateOption placeholder coverage, shellcheck, ruff, generated README freshness, registry sync, pytest, and smoke tests for changed templates |
-| create-devcontainer CI | `create-devcontainer-ci.yaml` | Push to `main`/`feat/**`/`fix/**`, tags `v*` or `@*`, PRs to `main` when package, `src/`, sync script, or workflow file changes | Type check, registry sync, package unit tests, build, and npm publish on tag                                                                                     |
+| create-devcontainer CI | `create-devcontainer-ci.yaml` | Push to `main`/`feat/**`/`fix/**`, tags `v*` or `@*` (no path filter on push), path-filtered PRs to `main`, weekly schedule, `workflow_dispatch` | Type check, registry sync, package unit tests, build, npm publish on tag, and fail-closed npm lag gate                                                                                     |
 | Release                | `release.yaml`                | Any `*-v*` tag                                                                                                                  | Publishes the matching template to GHCR                                                                                                                          |
 
 ## CI - Test Templates (`test-pr.yaml`)
@@ -49,11 +49,11 @@ Do not document “all templates smoke-tested in CI” as true while this guard 
 
 ## create-devcontainer CI (`create-devcontainer-ci.yaml`)
 
-Runs when files under `packages/create-devcontainer/`, `src/`, `scripts/sync-template-registry.ts`, or the workflow itself change.
+Runs on pushes to `main` / `feat/**` / `fix/**`, on `v*` / `@*` tags (always — path filters are intentionally omitted so tag publish cannot be skipped), on path-filtered PRs to `main`, on a weekly schedule, and via `workflow_dispatch`.
 
 ### Jobs
 
-1. **`typecheck-test-build`**:
+1. **`typecheck-test-build`** (skipped on `schedule`):
 
    - Installs dependencies with `npm ci`.
    - Type-checks the package.
@@ -64,6 +64,12 @@ Runs when files under `packages/create-devcontainer/`, `src/`, `scripts/sync-tem
 1. **`publish`** (tag triggers only):
 
    - Publishes the built package to npm with public access.
+
+1. **`npm-lag-gate`** (all non-tag events, including schedule):
+
+   - Queries `npm view @mrrobot0985/create-devcontainer version`.
+   - Fails closed when that version is **less than** `packages/create-devcontainer/package.json`.
+   - One-liner check: `npm view @mrrobot0985/create-devcontainer version` must be ≥ monorepo.
 
 ## Release (`release.yaml`)
 
