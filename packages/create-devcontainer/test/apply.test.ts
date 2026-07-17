@@ -9,6 +9,7 @@ const fakeTemplate: Template = {
   id: "test-template",
   name: "Test Template",
   description: "A test template.",
+  version: "0.0.0",
   ghcrUri: "ghcr.io/example/test:1",
   sourcePath: "test/fixtures/test-template",
   defaults: { imageVariant: "jammy" },

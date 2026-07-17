@@ -10,6 +10,7 @@ export interface Template {
   id: string;
   name: string;
   description: string;
+  version: string;
   ghcrUri: string;
   sourcePath: string;
   defaults: Record<string, string>;
@@ -20,6 +21,7 @@ export const templates: readonly Template[] = [
     id: "cloud-native-k8s",
     name: "Cloud Native Kubernetes",
     description: "Devcontainer template for cloud-native development with Kubernetes. Includes kubectl, Helm, k3d, Tilt, Docker-in-Docker, and owned security floor (container-firewall, non-root-enforcer, ai-agent-sandbox). No Claude suite.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/cloud-native-k8s:latest",
     sourcePath: "src/cloud-native-k8s",
@@ -29,6 +31,7 @@ export const templates: readonly Template[] = [
     id: "codex-cli",
     name: "OpenAI Codex CLI",
     description: "Minimal devcontainer for OpenAI Codex CLI with container firewall (codex tags), non-root enforcer, AI agent sandbox, and persistent ~/.codex state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+    version: "1.0.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/codex-cli:latest",
     sourcePath: "src/codex-cli",
@@ -38,6 +41,7 @@ export const templates: readonly Template[] = [
     id: "data-engineering-spark",
     name: "Data Engineering with Spark",
     description: "Devcontainer template for data engineering with Apache Spark 3.5, Jupyter, Polars, MinIO, and owned security floor (container-firewall, non-root-enforcer, ai-agent-sandbox). No Claude suite.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/data-engineering-spark:latest",
     sourcePath: "src/data-engineering-spark",
@@ -47,6 +51,7 @@ export const templates: readonly Template[] = [
     id: "gemini-cli",
     name: "Google Gemini CLI",
     description: "Minimal devcontainer for Google Gemini CLI with container firewall (gemini tags), non-root enforcer, AI agent sandbox, and persistent ~/.gemini state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+    version: "1.0.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/gemini-cli:latest",
     sourcePath: "src/gemini-cli",
@@ -56,6 +61,7 @@ export const templates: readonly Template[] = [
     id: "grok-build-cli",
     name: "Grok Build CLI",
     description: "Minimal devcontainer for xAI Grok Build CLI with container firewall (grok-build tags), non-root enforcer, AI agent sandbox, and persistent ~/.grok state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+    version: "1.0.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/grok-build-cli:latest",
     sourcePath: "src/grok-build-cli",
@@ -65,6 +71,7 @@ export const templates: readonly Template[] = [
     id: "grok-build-cli-studio",
     name: "Grok Build CLI Studio",
     description: "Full-featured devcontainer for xAI Grok Build CLI with Docker-in-Docker, host isolation audit, container firewall (grok-build + docker), AI agent sandbox, MCP server manager, non-root enforcer, and persistent ~/.grok state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+    version: "1.0.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/grok-build-cli-studio:latest",
     sourcePath: "src/grok-build-cli-studio",
@@ -74,6 +81,7 @@ export const templates: readonly Template[] = [
     id: "hermes-agent",
     name: "Hermes Agent",
     description: "Minimal devcontainer for the Hermes agent (Nous Research) with container firewall (openrouter + github + npm), non-root enforcer, AI agent sandbox, and persistent ~/.hermes state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+    version: "1.0.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/hermes-agent:latest",
     sourcePath: "src/hermes-agent",
@@ -83,6 +91,7 @@ export const templates: readonly Template[] = [
     id: "multi-ai-cli",
     name: "Multi-AI CLI Workspace",
     description: "Layer C multi-agent evaluation workspace: Claude Code, Grok Build, Pi, Hermes, Codex, Gemini CLI, and OpenCode with agent-agnostic security floor, per-agent home volumes, and shared MCP config. Each vendor requires its own API key or login.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/multi-ai-cli:latest",
     sourcePath: "src/multi-ai-cli",
@@ -92,6 +101,7 @@ export const templates: readonly Template[] = [
     id: "ollama-claude-cli",
     name: "Ollama + Claude CLI",
     description: "Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, non-root enforcer, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli:latest",
     sourcePath: "src/ollama-claude-cli",
@@ -101,6 +111,7 @@ export const templates: readonly Template[] = [
     id: "ollama-claude-cli-compose",
     name: "Ollama + Claude CLI (Compose)",
     description: "Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama required. Includes Claude CLI, privacy defaults, container firewall, non-root enforcer, and persistent settings. CPU by default; GPU support available via compose file edit. Includes Node.js and GitHub CLI.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-compose:latest",
     sourcePath: "src/ollama-claude-cli-compose",
@@ -110,6 +121,7 @@ export const templates: readonly Template[] = [
     id: "ollama-claude-cli-cpu",
     name: "Ollama + Claude CLI (CPU)",
     description: "CPU-only devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, non-root enforcer, and persistent settings. No GPU required. Works on Apple Silicon, GitHub Codespaces, and cloud CPU instances. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-cpu:latest",
     sourcePath: "src/ollama-claude-cli-cpu",
@@ -119,6 +131,7 @@ export const templates: readonly Template[] = [
     id: "ollama-claude-cli-python",
     name: "Ollama + Claude CLI + Python",
     description: "Devcontainer for Claude CLI with Ollama backend, Python 3.12, uv package manager, and common LLM/AI libraries pre-installed in a project virtual environment. Supports GPU acceleration via --gpus=all. Security floor includes privacy, container firewall, and non-root enforcer. Works on Apple Silicon (CPU fallback), Codespaces, and cloud instances. Includes Node.js and GitHub CLI.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-python:latest",
     sourcePath: "src/ollama-claude-cli-python",
@@ -128,6 +141,7 @@ export const templates: readonly Template[] = [
     id: "ollama-claude-cli-studio",
     name: "Ollama + Claude CLI Studio",
     description: "Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, community NVIDIA Container Toolkit, container firewall, non-root enforcer, audit log, agent sandbox, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+    version: "1.1.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:latest",
     sourcePath: "src/ollama-claude-cli-studio",
@@ -137,6 +151,7 @@ export const templates: readonly Template[] = [
     id: "opencode-cli",
     name: "OpenCode CLI",
     description: "Minimal devcontainer for OpenCode CLI with container firewall (github + npm + OpenCode domains), non-root enforcer, AI agent sandbox, and persistent OpenCode config/state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+    version: "1.0.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/opencode-cli:latest",
     sourcePath: "src/opencode-cli",
@@ -146,6 +161,7 @@ export const templates: readonly Template[] = [
     id: "pi-coding-agent",
     name: "Pi Coding Agent",
     description: "Minimal devcontainer for the Pi coding agent (pi.dev) with container firewall, non-root enforcer, AI agent sandbox, and persistent ~/.pi state. Includes Node.js and GitHub CLI. API-first — no Ollama or Claude suite features.",
+    version: "1.0.0",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/pi-coding-agent:latest",
     sourcePath: "src/pi-coding-agent",
