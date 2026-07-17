@@ -48,12 +48,45 @@ npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --name "My P
 
 ## Templates
 
-| ID                         | Name                       |
-| -------------------------- | -------------------------- |
-| `ollama-claude-cli`        | Ollama + Claude CLI        |
-| `ollama-claude-cli-studio` | Ollama + Claude CLI Studio |
+This package ships **15 templates** in four portfolio layers. Full details:
+[Template Catalog](https://github.com/mrrobot0985/devcontainer-templates/blob/main/docs/reference/template-catalog.md).
 
-Run `create-devcontainer` with no arguments to see the full list.
+### Layer A — Claude + Ollama
+
+| ID                           | Name                          |
+| ---------------------------- | ----------------------------- |
+| `ollama-claude-cli`          | Ollama + Claude CLI           |
+| `ollama-claude-cli-cpu`      | Ollama + Claude CLI (CPU)     |
+| `ollama-claude-cli-compose`  | Ollama + Claude CLI (Compose) |
+| `ollama-claude-cli-python`   | Ollama + Claude CLI + Python  |
+| `ollama-claude-cli-studio`   | Ollama + Claude CLI Studio    |
+
+### Layer B — Agent entry points
+
+| ID                      | Name                  |
+| ----------------------- | --------------------- |
+| `grok-build-cli`        | Grok Build CLI        |
+| `grok-build-cli-studio` | Grok Build CLI Studio |
+| `pi-coding-agent`       | Pi Coding Agent       |
+| `hermes-agent`          | Hermes Agent          |
+| `codex-cli`             | OpenAI Codex CLI      |
+| `gemini-cli`            | Google Gemini CLI     |
+| `opencode-cli`          | OpenCode CLI          |
+
+### Layer C — Multi-agent evaluation
+
+| ID             | Name                    |
+| -------------- | ----------------------- |
+| `multi-ai-cli` | Multi-AI CLI Workspace  |
+
+### Layer D — Domain stacks
+
+| ID                       | Name                         |
+| ------------------------ | ---------------------------- |
+| `cloud-native-k8s`       | Cloud Native Kubernetes      |
+| `data-engineering-spark` | Data Engineering with Spark  |
+
+Run `create-devcontainer` with no arguments to see the full list (grouped by layer).
 
 ## Options
 

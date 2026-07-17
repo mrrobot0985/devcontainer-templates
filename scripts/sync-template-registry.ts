@@ -27,6 +27,7 @@ interface TemplateMeta {
   id: string;
   name: string;
   description: string;
+  version?: string;
   options?: Record<string, { type: string; default?: unknown }>;
 }
 
@@ -64,6 +65,7 @@ export interface Template {
   id: string;
   name: string;
   description: string;
+  version: string;
   ghcrUri: string;
   sourcePath: string;
   defaults: Record<string, string>;
@@ -75,11 +77,20 @@ export const templates: readonly Template[] = [`);
     const defaultValue = t.options?.imageVariant?.default;
     const defaultStr =
       typeof defaultValue === "string" ? defaultValue : "jammy";
+    const version =
+      typeof t.version === "string" && t.version.length > 0
+        ? t.version
+        : "0.0.0";
+    const description = t.description
+      .replace(/\\/g, "\\\\")
+      .replace(/"/g, '\\"');
+    const name = t.name.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 
     lines.push(`  {`);
     lines.push(`    id: "${t.id}",`);
-    lines.push(`    name: "${t.name}",`);
-    lines.push(`    description: "${t.description}",`);
+    lines.push(`    name: "${name}",`);
+    lines.push(`    description: "${description}",`);
+    lines.push(`    version: "${version}",`);
     lines.push(`    ghcrUri:`);
     lines.push(`      "ghcr.io/mrrobot0985/devcontainer-templates/${t.id}:latest",`);
     lines.push(`    sourcePath: "src/${t.id}",`);
