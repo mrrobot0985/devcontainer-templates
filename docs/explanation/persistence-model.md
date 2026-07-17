@@ -48,7 +48,7 @@ Named-volume mounts are the portfolio model for Layer A–C agent auth survival.
 | `opencode-cli`                                         | Via community feature host binds (`~/.local/share` + `~/.config` → `/var/lib/…`) |
 | Layer D (`cloud-native-k8s`, `data-engineering-spark`) | No agent home mounts (not agent-auth workspaces)                                 |
 
-**Canonical Layer B stem:** `{template-id}-home-${devcontainerId}` for agents we volume-mount. **OpenCode** uses the community feature’s host bind mounts (`${localEnv:HOME}/.local/share/opencode` and `…/.config/opencode` → `/var/lib/…`); named volumes on those home paths break `onCreate` symlink setup. Multi-ai keeps the `multi-ai-{agent}-…` prefix for non-OpenCode agents.
+**Canonical Layer B stem:** `{template-id}-home-${devcontainerId}` only for agents **without** a community feature that already bind-mounts + symlinks home (today: Gemini, Pi, Hermes). **Codex / Grok / OpenCode** use sliekens community feature host binds → `/var/lib/…` + `onCreate` symlinks; named volumes on those homes break smoke. Multi-ai uses `multi-ai-{agent}-…` only for agents that still take named volumes.
 
 ## Per-project isolation
 

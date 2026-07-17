@@ -31,10 +31,8 @@
 	"postCreateCommand": "bash .devcontainer/bootstrap.sh",
 	"mounts": [
 		"source=multi-ai-claude-${devcontainerId},target=/home/vscode/.claude,type=volume",
-		"source=multi-ai-grok-${devcontainerId},target=/home/vscode/.grok,type=volume",
 		"source=multi-ai-pi-${devcontainerId},target=/home/vscode/.pi,type=volume",
 		"source=multi-ai-hermes-${devcontainerId},target=/home/vscode/.hermes,type=volume",
-		"source=multi-ai-codex-${devcontainerId},target=/home/vscode/.codex,type=volume",
 		"source=multi-ai-gemini-${devcontainerId},target=/home/vscode/.gemini,type=volume",
 		"source=multi-ai-mcp-${devcontainerId},target=/home/vscode/.mcp,type=volume"
 	],

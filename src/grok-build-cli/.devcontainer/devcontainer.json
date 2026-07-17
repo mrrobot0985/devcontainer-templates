@@ -17,9 +17,6 @@
 			"failOnWarning": false
 		}
 	},
-	"mounts": [
-		"source=grok-build-cli-home-${devcontainerId},target=/home/vscode/.grok,type=volume"
-	],
 	"initializeCommand": "mkdir -p \"${localEnv:HOME}/.grok\"",
 	"postCreateCommand": "bash .devcontainer/bootstrap.sh",
 	"customizations": {

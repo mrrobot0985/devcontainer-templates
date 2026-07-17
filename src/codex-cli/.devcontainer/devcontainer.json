@@ -17,9 +17,6 @@
 			"failOnWarning": false
 		}
 	},
-	"mounts": [
-		"source=codex-cli-home-${devcontainerId},target=/home/vscode/.codex,type=volume"
-	],
 	"initializeCommand": "mkdir -p \"${localEnv:HOME}/.codex\"",
 	"postCreateCommand": "bash .devcontainer/bootstrap.sh",
 	"customizations": {

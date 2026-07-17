@@ -38,21 +38,14 @@ const LAYER_A_MOUNT: MountExpectation = {
  * OpenCode uses community feature host binds (no template named volumes).
  */
 const LAYER_B_MOUNTS: Record<string, MountExpectation[]> = {
-  "codex-cli": [
-    { sourcePrefix: "codex-cli-home-", target: "/home/vscode/.codex" },
-  ],
+  // codex community feature: host bind + onCreate symlink (no named volume)
+  "codex-cli": [],
   "gemini-cli": [
     { sourcePrefix: "gemini-cli-home-", target: "/home/vscode/.gemini" },
   ],
-  "grok-build-cli": [
-    { sourcePrefix: "grok-build-cli-home-", target: "/home/vscode/.grok" },
-  ],
-  "grok-build-cli-studio": [
-    {
-      sourcePrefix: "grok-build-cli-studio-home-",
-      target: "/home/vscode/.grok",
-    },
-  ],
+  // grok-build community feature: host bind + onCreate symlink (no named volume)
+  "grok-build-cli": [],
+  "grok-build-cli-studio": [],
   "hermes-agent": [
     { sourcePrefix: "hermes-agent-home-", target: "/home/vscode/.hermes" },
   ],
@@ -67,10 +60,9 @@ const LAYER_B_MOUNTS: Record<string, MountExpectation[]> = {
 /** Layer C: multi-ai-* prefixes for every agent home + shared MCP. */
 const MULTI_AI_MOUNTS: MountExpectation[] = [
   { sourcePrefix: "multi-ai-claude-", target: "/home/vscode/.claude" },
-  { sourcePrefix: "multi-ai-grok-", target: "/home/vscode/.grok" },
+  // grok + codex: community feature host binds (not named volumes)
   { sourcePrefix: "multi-ai-pi-", target: "/home/vscode/.pi" },
   { sourcePrefix: "multi-ai-hermes-", target: "/home/vscode/.hermes" },
-  { sourcePrefix: "multi-ai-codex-", target: "/home/vscode/.codex" },
   { sourcePrefix: "multi-ai-gemini-", target: "/home/vscode/.gemini" },
   // OpenCode homes via community feature host binds (not named volumes)
   { sourcePrefix: "multi-ai-mcp-", target: "/home/vscode/.mcp" },
@@ -183,6 +175,20 @@ describe("apply all templates (floor + mount policy)", () => {
               m,
               `opencode-cli must not use named volumes on OpenCode homes (community feature binds): ${m}`
             ).not.toMatch(/opencode-cli-(data|config)-/);
+          }
+        }
+        if (id === "codex-cli") {
+          for (const m of mounts) {
+            expect(m, `codex-cli must not name-volume ~/.codex: ${m}`).not.toMatch(
+              /codex-cli-home-/
+            );
+          }
+        }
+        if (id === "grok-build-cli" || id === "grok-build-cli-studio") {
+          for (const m of mounts) {
+            expect(m, `${id} must not name-volume ~/.grok: ${m}`).not.toMatch(
+              /grok-build-cli(-studio)?-home-/
+            );
           }
         }
       } else if (layer === "C") {
