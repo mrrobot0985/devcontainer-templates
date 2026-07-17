@@ -17,7 +17,7 @@ Aider, Goose, and Continue are **multi-ai-only for v1** (no dedicated Layer B te
 
 ## Layer A security floor
 
-All five Claude + Ollama templates share the same security floor:
+All five Claude + Ollama templates share this baseline:
 
 - Official `claude-code`
 - `claude-code-backend`
@@ -25,18 +25,22 @@ All five Claude + Ollama templates share the same security floor:
 - `container-firewall`
 - `non-root-enforcer`
 
-Pick a variant for **hardware and workflow**, not for basic security — that is already consistent.
+**Studio** additionally ships `ai-agent-sandbox` (and richer Claude suite pieces). Minimal Layer A variants do **not** all include `ai-agent-sandbox` yet — alignment with the full agent-minimal floor is tracked in [templates#89](https://github.com/mrrobot0985/devcontainer-templates/issues/89).
+
+Pick a variant for **hardware and workflow** first; treat floor differences between minimal and studio as intentional depth until #89 lands.
 
 ## Layer B security floor
 
 Shared across Layer B agent entry points:
 
 - Agent install (official npm or mature community feature)
-- `container-firewall` with agent-appropriate service tags
+- `container-firewall` with agent-appropriate service tags (shipped in firewall ≥ 1.1.0)
 - `non-root-enforcer`
 - `ai-agent-sandbox` (moderate)
 
 Examples: Grok uses `grok-build`; Codex uses `codex`; Gemini uses `gemini`; Pi uses `multi-ai`; Hermes uses `github,npm,openrouter`; OpenCode uses `github,npm` plus OpenCode domains.
+
+**Home mounts:** some Layer B templates still lack named volumes for agent homes (codex, grok, grok-studio, opencode). See [persistence model](../explanation/persistence-model.md) and [templates#85](https://github.com/mrrobot0985/devcontainer-templates/issues/85).
 
 Grok studio adds DinD, optional non-blocking `host-isolation`, firewall `docker` tag, and `mcp-server-manager`. Other agent studios are deferred for v1.
 

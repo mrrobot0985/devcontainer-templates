@@ -39,6 +39,13 @@ For the studio template:
 
 On CI runners, `build.sh` automatically strips `--gpus=all` from `runArgs` because GPUs are unavailable.
 
+### Known false-skip (owned features)
+
+If the rendered `devcontainer.json` references `ghcr.io/mrrobot0985/devcontainer-features/*`, current `build.sh` may print a warning about “unpublished features,” touch `.skip-smoke-test`, and **exit 0 without building**. Those packages are on public GHCR; the skip is incorrect. Tracked in [templates#88](https://github.com/mrrobot0985/devcontainer-templates/issues/88). Until fixed:
+
+- A successful `build.sh` that only printed `SKIP:` did not validate the template.
+- Use feature monorepo scenario tests, static validation, or a manual `devcontainer up` for real confidence.
+
 ## Run Python unit tests
 
 The Python unit tests live in `test/` and validate tooling such as the README generator.

@@ -48,7 +48,12 @@ npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --name "My P
 
 ## Templates
 
-This package ships **15 templates** in four portfolio layers. Full details:
+**Source of truth in this monorepo** ships **15 templates** in four portfolio layers.
+What you get via `npx` depends on the **published npm version** (see the badge above).
+If monorepo `package.json` is ahead of npm, use a local build or wait for a release
+([templates#83](https://github.com/mrrobot0985/devcontainer-templates/issues/83)).
+
+Full details:
 [Template Catalog](https://github.com/mrrobot0985/devcontainer-templates/blob/main/docs/reference/template-catalog.md).
 
 ### Layer A — Claude + Ollama

@@ -1,6 +1,22 @@
 # create-devcontainer CLI Reference
 
-`@mrrobot0985/create-devcontainer` is an npm helper that copies templates from the [mrrobot0985/devcontainer-templates](https://github.com/mrrobot0985/devcontainer-templates) collection into any workspace. It is useful for scaffolding a new project without needing the Dev Container CLI or GHCR access.
+`@mrrobot0985/create-devcontainer` is an npm helper that copies templates from the [mrrobot0985/devcontainer-templates](https://github.com/mrrobot0985/devcontainer-templates) collection into any workspace. It is useful for scaffolding a new project without needing the Dev Container CLI or GHCR access for the **template files** themselves (features inside a template still resolve from GHCR at `devcontainer up` time).
+
+## Published vs monorepo versions
+
+| Surface                                     | What it is                                                                |
+| ------------------------------------------- | ------------------------------------------------------------------------- |
+| **Monorepo** `packages/create-devcontainer` | Source of truth for the 15-template portfolio (registry + bundled copies) |
+| **npm** `@mrrobot0985/create-devcontainer`  | What `npx` users get                                                      |
+
+As of the 2026-07 maturity audit, **npm can lag monorepo** (example: monorepo `0.8.x` with 15 templates while npm `latest` was still an older release with a smaller registry). Always check:
+
+```bash
+npm view @mrrobot0985/create-devcontainer version
+node -p "require('./packages/create-devcontainer/package.json').version"  # from repo root
+```
+
+If versions differ, prefer running from monorepo source (`npx tsx packages/create-devcontainer/src/index.ts …`) until publish catches up ([templates#83](https://github.com/mrrobot0985/devcontainer-templates/issues/83)).
 
 ## Installation and usage
 
@@ -14,12 +30,16 @@ If you do not provide a target folder, the current directory is used.
 
 ## Templates
 
-| ID                         | Name                       |
-| -------------------------- | -------------------------- |
-| `ollama-claude-cli`        | Ollama + Claude CLI        |
-| `ollama-claude-cli-studio` | Ollama + Claude CLI Studio |
+The monorepo registry includes the full portfolio (Layer A–D). IDs include:
 
-Run the command with no arguments to see the full list.
+| ID                                                                                                                                | Layer (summary)            |
+| --------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| `ollama-claude-cli`, `ollama-claude-cli-cpu`, `ollama-claude-cli-compose`, `ollama-claude-cli-python`, `ollama-claude-cli-studio` | A — Claude depth           |
+| `grok-build-cli`, `grok-build-cli-studio`, `codex-cli`, `gemini-cli`, `opencode-cli`, `pi-coding-agent`, `hermes-agent`           | B — agent entry points     |
+| `multi-ai-cli`                                                                                                                    | C — multi-agent evaluation |
+| `cloud-native-k8s`, `data-engineering-spark`                                                                                      | D — domain stacks          |
+
+Run the command with no arguments (or `--help`) to see the list **shipped in the version you are running**.
 
 ## Options
 
@@ -34,55 +54,20 @@ Run the command with no arguments to see the full list.
 
 ## Examples
 
-Apply the minimal template to the current directory:
-
 ```bash
 npx @mrrobot0985/create-devcontainer ollama-claude-cli .
-```
-
-Apply the studio template to a specific project:
-
-```bash
 npx @mrrobot0985/create-devcontainer ollama-claude-cli-studio ./my-project
-```
-
-Apply with a custom devcontainer name:
-
-```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --name "My Project"
-```
-
-Apply and generate a `README.md` skeleton:
-
-```bash
+npx @mrrobot0985/create-devcontainer multi-ai-cli ./compare --name "Multi AI"
 npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --readme
-```
-
-Combine name and README to create a named devcontainer and a matching README title:
-
-```bash
-npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --name "My Project" --readme
-```
-
-Pull from GHCR instead of using the bundled template:
-
-```bash
 npx @mrrobot0985/create-devcontainer ollama-claude-cli ./my-project --registry
 ```
 
 ## Development
 
-Run from the repository source:
-
 ```bash
 cd packages/create-devcontainer
 npm install
 npx tsx src/index.ts ollama-claude-cli ../../test-output
-```
-
-Build and test the package:
-
-```bash
 npm run build
 npm test
 ```
@@ -96,3 +81,7 @@ npx tsx scripts/sync-template-registry.ts --write
 ```
 
 CI and the pre-commit hook validate that the registry stays in sync with `src/`.
+
+## Publishing
+
+npm publish is driven by create-devcontainer CI on `v*` / `@*` tags (see [CI workflows](ci-workflows.md)). Template GHCR publish uses `*-v*` tags and is separate.
