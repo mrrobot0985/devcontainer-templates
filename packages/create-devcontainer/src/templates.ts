@@ -46,7 +46,7 @@ export const templates: readonly Template[] = [
   {
     id: "ollama-claude-cli",
     name: "Ollama + Claude CLI",
-    description: "Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+    description: "Minimal devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, non-root enforcer, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli:latest",
     sourcePath: "src/ollama-claude-cli",
@@ -55,7 +55,7 @@ export const templates: readonly Template[] = [
   {
     id: "ollama-claude-cli-compose",
     name: "Ollama + Claude CLI (Compose)",
-    description: "Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama required. Includes Claude CLI, privacy defaults, container firewall, and persistent settings. CPU by default; GPU support available via compose file edit. Includes Node.js and GitHub CLI.",
+    description: "Devcontainer with a bundled Ollama service via Docker Compose. No host Ollama required. Includes Claude CLI, privacy defaults, container firewall, non-root enforcer, and persistent settings. CPU by default; GPU support available via compose file edit. Includes Node.js and GitHub CLI.",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-compose:latest",
     sourcePath: "src/ollama-claude-cli-compose",
@@ -64,7 +64,7 @@ export const templates: readonly Template[] = [
   {
     id: "ollama-claude-cli-cpu",
     name: "Ollama + Claude CLI (CPU)",
-    description: "CPU-only devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. No GPU required. Works on Apple Silicon, GitHub Codespaces, and cloud CPU instances. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+    description: "CPU-only devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, non-root enforcer, and persistent settings. No GPU required. Works on Apple Silicon, GitHub Codespaces, and cloud CPU instances. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-cpu:latest",
     sourcePath: "src/ollama-claude-cli-cpu",
@@ -73,7 +73,7 @@ export const templates: readonly Template[] = [
   {
     id: "ollama-claude-cli-python",
     name: "Ollama + Claude CLI + Python",
-    description: "Devcontainer for Claude CLI with Ollama backend, Python 3.12, uv package manager, and common LLM/AI libraries pre-installed in a project virtual environment. Supports GPU acceleration via --gpus=all. Works on Apple Silicon (CPU fallback), Codespaces, and cloud instances. Includes Node.js and GitHub CLI.",
+    description: "Devcontainer for Claude CLI with Ollama backend, Python 3.12, uv package manager, and common LLM/AI libraries pre-installed in a project virtual environment. Supports GPU acceleration via --gpus=all. Security floor includes privacy, container firewall, and non-root enforcer. Works on Apple Silicon (CPU fallback), Codespaces, and cloud instances. Includes Node.js and GitHub CLI.",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-python:latest",
     sourcePath: "src/ollama-claude-cli-python",
@@ -82,7 +82,7 @@ export const templates: readonly Template[] = [
   {
     id: "ollama-claude-cli-studio",
     name: "Ollama + Claude CLI Studio",
-    description: "Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, container firewall, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
+    description: "Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, community NVIDIA Container Toolkit, container firewall, non-root enforcer, audit log, agent sandbox, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.",
     ghcrUri:
       "ghcr.io/mrrobot0985/devcontainer-templates/ollama-claude-cli-studio:latest",
     sourcePath: "src/ollama-claude-cli-studio",

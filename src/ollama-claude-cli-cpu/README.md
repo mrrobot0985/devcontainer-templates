@@ -1,6 +1,6 @@
 # Ollama + Claude CLI (CPU) (ollama-claude-cli-cpu)
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.1.0-blue?style=flat-square)
 
 CPU-only devcontainer for Claude CLI with a pre-configured Ollama backend, privacy defaults, container firewall, and persistent settings. No GPU required.
 
@@ -11,6 +11,14 @@ CPU-only devcontainer for Claude CLI with a pre-configured Ollama backend, priva
 - Cloud VM instances without GPU support
 - Any CPU-only local development machine
 
+## Security floor (Layer A)
+
+- Official Claude CLI (`ghcr.io/anthropics/devcontainer-features/claude-code:1`)
+- Backend config (`claude-code-backend:1`)
+- Privacy defaults (`claude-code-privacy:1`)
+- Container firewall (`container-firewall:1`) — `claude-code` service whitelist
+- Non-root enforcer (`non-root-enforcer:1`) — audits `remoteUser` is non-root
+
 ## Includes
 
 - Node.js 20
@@ -20,6 +28,7 @@ CPU-only devcontainer for Claude CLI with a pre-configured Ollama backend, priva
 - Privacy defaults (`claude-code-privacy`)
 - Claude Code Plugins (`claude-code-plugins`) — opt-in via configuration
 - Container firewall (`container-firewall`) — whitelist outbound traffic with `claude-code` preset
+- Non-root enforcer (`non-root-enforcer`)
 
 ## Differences from `ollama-claude-cli`
 

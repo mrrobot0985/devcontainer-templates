@@ -1,8 +1,8 @@
 {
   "id": "ollama-claude-cli-python",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Ollama + Claude CLI + Python",
-  "description": "Devcontainer for Claude CLI with Ollama backend, Python 3.12, uv package manager, and common LLM/AI libraries pre-installed in a project virtual environment. Supports GPU acceleration via --gpus=all. Works on Apple Silicon (CPU fallback), Codespaces, and cloud instances. Includes Node.js and GitHub CLI.",
+  "description": "Devcontainer for Claude CLI with Ollama backend, Python 3.12, uv package manager, and common LLM/AI libraries pre-installed in a project virtual environment. Supports GPU acceleration via --gpus=all. Security floor includes privacy, container firewall, and non-root enforcer. Works on Apple Silicon (CPU fallback), Codespaces, and cloud instances. Includes Node.js and GitHub CLI.",
   "documentationURL": "https://github.com/mrrobot0985/devcontainer-templates/tree/main/src/ollama-claude-cli-python",
   "licenseURL": "https://github.com/mrrobot0985/devcontainer-templates/blob/main/LICENSE",
   "options": {

@@ -1,8 +1,21 @@
 # Ollama + Claude CLI Studio (ollama-claude-cli-studio)
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.1.0-blue?style=flat-square)
 
-Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, NVIDIA Container Toolkit, lifecycle hooks, behavior rules, skills library, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.
+Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, Docker-in-Docker, community NVIDIA Container Toolkit, lifecycle hooks, behavior rules, skills library, audit log, agent sandbox, and persistent settings. Includes Node.js and GitHub CLI. Requires Ollama to be running on the host.
+
+## Security floor (Layer A)
+
+- Official Claude CLI (`ghcr.io/anthropics/devcontainer-features/claude-code:1`)
+- Backend config (`claude-code-backend:1`)
+- Privacy defaults (`claude-code-privacy:1`)
+- Container firewall (`container-firewall:1`) — `claude-code` + `docker` service tags (DinD image pulls)
+- Non-root enforcer (`non-root-enforcer:1`) — audits `remoteUser` is non-root
+
+## Studio extras (preferred)
+
+- Claude Code audit log (`claude-code-audit-log:1`) — structured JSON events for compliance review
+- AI agent sandbox (`ai-agent-sandbox:1`, preset `moderate`, `failOnWarning: false`) — runtime posture audit (DinD will warn about docker.sock; non-blocking)
 
 ## Includes
 
@@ -16,9 +29,37 @@ Full-featured devcontainer for Claude CLI with a pre-configured Ollama backend, 
 - Skills library (`claude-code-skills`)
 - Claude Code Plugins (`claude-code-plugins`) with Ralph Loop pre-enabled
 - Docker-in-Docker (`docker-in-docker:4.0.0`)
-- NVIDIA Container Toolkit (`nvidia-container-toolkit:0`)
-- Container firewall (`container-firewall:0`) — whitelist outbound traffic with `claude-code` + `docker` presets so Docker-in-Docker image pulls work
-- MCP servers (`claude-code-mcp-servers:0`) — GitHub and filesystem MCP servers pre-configured for external tool access
+- NVIDIA Container Toolkit (`ghcr.io/srzstephen/devcontainer-features/nvidia-container-toolkit:1`) — community feature; installs toolkit packages for DinD GPU
+- MCP servers (`claude-code-mcp-servers`) — GitHub and filesystem MCP servers pre-configured
+- Container firewall (`container-firewall`) — whitelist with `claude-code` + `docker` presets so Docker-in-Docker image pulls work
+- Non-root enforcer (`non-root-enforcer`)
+- Audit log (`claude-code-audit-log`)
+- Agent sandbox audit (`ai-agent-sandbox`)
+
+## GPU: `--gpus=all` vs NVIDIA Container Toolkit
+
+These are **different layers**:
+
+| Mechanism | What it does | Where configured |
+| --------- | ------------ | ---------------- |
+| `runArgs: ["--gpus=all"]` | Passes host GPU devices into the **outer** devcontainer | `devcontainer.json` `runArgs` |
+| Community `nvidia-container-toolkit:1` | Installs NVIDIA Container Toolkit packages **inside** the container so **inner** DinD containers can use the `nvidia` runtime | `features` entry |
+
+- Outer GPU for processes in the studio container (and host Ollama access patterns) uses `--gpus=all`.
+- Nested `docker run --gpus all ...` from DinD needs the toolkit packages (and a properly configured host). The community feature always installs the packages (there is no `enable: false` option — that belonged to a deleted in-house feature).
+- Host requirements: NVIDIA driver + host NVIDIA Container Toolkit + Docker configured for the NVIDIA runtime.
+
+Verify outer GPU:
+
+```bash
+nvidia-smi
+```
+
+Verify DinD GPU (after host is configured):
+
+```bash
+docker run --rm --gpus all nvidia/cuda:12.0-base nvidia-smi
+```
 
 ## Persistence
 
