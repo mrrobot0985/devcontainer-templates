@@ -67,6 +67,24 @@ Full agentic studio on top of the floor:
 
 There is no `enable: false` on the community toolkit feature (that option was part of a removed in-house feature). The community feature installs toolkit packages when present.
 
+## Layer B — Agent entry points
+
+Install + security floor + home persistence. **No Claude suite** on non-Claude agents. Prefer community install features where they exist.
+
+Shared floor (unless noted): `non-root-enforcer:1`, `ai-agent-sandbox:1` (moderate), `container-firewall:1` with agent-appropriate service tags, Node 20, GitHub CLI.
+
+| Template                | Version | Agent                                  | Firewall services               | Persist         |
+| ----------------------- | ------- | -------------------------------------- | ------------------------------- | --------------- |
+| `grok-build-cli`        | `1.0.0` | Grok Build (community)                 | `grok-build`                    | `~/.grok`       |
+| `grok-build-cli-studio` | `1.0.0` | Grok + DinD + MCP                      | `grok-build,docker`             | `~/.grok`       |
+| `pi-coding-agent`       | `1.0.0` | Pi (`@earendil-works/pi-coding-agent`) | `multi-ai`                      | `~/.pi`         |
+| `hermes-agent`          | `1.0.0` | Hermes (community)                     | `github,npm,openrouter`         | `~/.hermes`     |
+| `codex-cli`             | `1.0.0` | OpenAI Codex (community)               | `codex`                         | `~/.codex`      |
+| `gemini-cli`            | `1.0.0` | Google Gemini CLI                      | `gemini`                        | `~/.gemini`     |
+| `opencode-cli`          | `1.0.0` | OpenCode (community)                   | `github,npm` + OpenCode domains | OpenCode config |
+
+Aider, Goose, and Continue stay **multi-ai-only** for v1 (no dedicated Layer B templates unless demand proves otherwise).
+
 ## Layer C — Multi-agent evaluation
 
 | Template       | Version | Notes                                                                              |
