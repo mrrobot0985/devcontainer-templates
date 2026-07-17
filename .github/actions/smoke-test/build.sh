@@ -78,3 +78,5 @@ if [ "${UP_RC}" -ne 0 ]; then
     echo "This is a real failure — owned GHCR features must resolve and build."
     exit "${UP_RC}"
 fi
+
+# Smoke matrix trigger note: owned GHCR features must build (no false SKIP).
