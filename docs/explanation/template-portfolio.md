@@ -22,7 +22,7 @@ The collection is **agent-first**. Language, cloud, and data stacks only stay wh
 | **A** | Claude depth — owned features configure the agent                | `ollama-claude-cli*` family                                                               |
 | **B** | Agent entry points — install + security floor + home persistence | `grok-build-cli` / `grok-build-cli-studio`; Pi, Hermes, Codex, Gemini, OpenCode (planned) |
 | **C** | Multi-agent evaluation — one workspace, many CLIs                | `multi-ai-cli`                                                                            |
-| **D** | Domain stacks — not agent-centric                                | `cloud-native-k8s`, `data-engineering-spark` (**keep; re-feature or archive later**) |
+| **D** | Domain stacks — not agent-centric                                | `cloud-native-k8s`, `data-engineering-spark` (**keep; re-feature or archive later**)      |
 
 ### Layer A — Claude depth
 
