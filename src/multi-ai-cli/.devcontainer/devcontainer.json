@@ -8,7 +8,6 @@
 		},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
-		"ghcr.io/mrrobot0985/devcontainer-features/grok-build:1": {},
 		"ghcr.io/sliekens/devcontainer-features/codex:1": {},
 		"ghcr.io/sliekens/devcontainer-features/opencode:1": {},
 		"ghcr.io/devcontainer-community/devcontainer-features/hermes-agent.nousresearch.com:1": {},
@@ -27,7 +26,6 @@
 			"configPath": "auto"
 		}
 	},
-	"initializeCommand": "mkdir -p \"${HOME}/.grok\" \"${HOME}/.codex\" \"${HOME}/.local/share/opencode\" \"${HOME}/.config/opencode\"",
 	"postCreateCommand": "bash .devcontainer/bootstrap.sh",
 	"mounts": [
 		"source=multi-ai-claude-${devcontainerId},target=/home/vscode/.claude,type=volume",

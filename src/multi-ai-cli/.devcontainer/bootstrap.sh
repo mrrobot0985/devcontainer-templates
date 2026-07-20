@@ -75,6 +75,13 @@ install_npm_global "@earendil-works/pi-coding-agent" "pi"
 install_npm_global "@google/gemini-cli" "gemini"
 
 echo ""
+echo "=== Install Grok if not present (no feature available) ==="
+if ! command -v grok >/dev/null 2>&1; then
+	echo "Installing Grok CLI..."
+	curl -fsSL https://x.ai/cli/install.sh | bash
+fi
+
+echo ""
 echo "=== Feature-installed agents (expect already on PATH) ==="
 for cmd in claude grok codex opencode hermes; do
 	if command -v "${cmd}" >/dev/null 2>&1; then

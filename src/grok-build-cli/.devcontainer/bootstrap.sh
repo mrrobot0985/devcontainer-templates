@@ -1,37 +1,30 @@
 #!/bin/bash
 set -euo pipefail
 
-# Bootstrap — ensures consistent configuration for ephemeral/disposable sessions.
-# Does NOT install software. Expects our grok-build feature to install the CLI.
+# Bootstrap — installs Grok Build CLI and configures the environment.
+# Runs at container startup as the devcontainer user (vscode).
 
-# --- Verify Grok Build CLI is available ---
-if command -v grok >/dev/null 2>&1; then
-    echo "Bootstrap OK — Grok Build CLI installed: $(grok --version 2>/dev/null || grok version 2>/dev/null || echo 'version unknown')"
-else
-    echo "Bootstrap WARN — grok CLI not found on PATH"
-    echo "  Ensure ghcr.io/mrrobot0985/devcontainer-features/grok-build is installed."
-fi
+# --- Install Grok Build CLI if not present ---
+if ! command -v grok >/dev/null 2>&1; then
+    echo "Installing Grok Build CLI..."
+    curl -fsSL https://x.ai/cli/install.sh | bash
 
-if command -v agent >/dev/null 2>&1; then
-    echo "Bootstrap OK — Grok agent binary is available"
+    # Verify
+    if command -v grok >/dev/null 2>&1; then
+        echo "Grok Build installed: $(grok --version)"
+    else
+        echo "ERROR: Grok Build installation failed"
+        exit 1
+    fi
 else
-    echo "Bootstrap INFO — agent binary not found (optional; grok is the primary entry point)"
+    echo "Grok Build already installed: $(grok --version)"
 fi
 
 # --- Verify GitHub CLI is available ---
 if command -v gh >/dev/null 2>&1; then
-    echo "Bootstrap OK — GitHub CLI installed: $(gh --version | head -1)"
+    echo "GitHub CLI installed: $(gh --version | head -1)"
 else
-    echo "Bootstrap WARN — GitHub CLI not found"
-fi
-
-# --- Ensure Grok config directory exists for the remote user ---
-GROK_DIR="${_REMOTE_USER_HOME:-$HOME}/.grok"
-if [ -e "$GROK_DIR" ]; then
-    echo "Bootstrap OK — Grok config path exists at $GROK_DIR"
-else
-    echo "Bootstrap WARN — Grok config path missing at $GROK_DIR"
-    echo "  Add mount to devcontainer.json: source=\${localEnv:HOME}/.grok,target=/var/lib/grok-build,type=bind"
+    echo "WARN: GitHub CLI not found"
 fi
 
 # --- Auth hint ---
@@ -39,5 +32,5 @@ echo ""
 echo "Grok Build authentication:"
 echo "  - Run: grok login"
 echo "  - Or set GROK_DEPLOYMENT_KEY for non-interactive use"
-echo "  - Requires SuperGrok or X Premium Plus (see https://x.ai/news/grok-build-cli)"
+echo "  - Requires SuperGrok or X Premium Plus (see https://x.ai/build)"
 echo ""
