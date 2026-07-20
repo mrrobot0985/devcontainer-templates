@@ -2,14 +2,14 @@
 set -euo pipefail
 
 # Bootstrap — ensures consistent configuration for ephemeral/disposable sessions.
-# Does NOT install software. Expects the community grok-build feature to install the CLI.
+# Does NOT install software. Expects our grok-build feature to install the CLI.
 
 # --- Verify Grok Build CLI is available ---
 if command -v grok >/dev/null 2>&1; then
     echo "Bootstrap OK — Grok Build CLI installed: $(grok --version 2>/dev/null || grok version 2>/dev/null || echo 'version unknown')"
 else
     echo "Bootstrap WARN — grok CLI not found on PATH"
-    echo "  Ensure ghcr.io/sliekens/devcontainer-features/grok-build is installed."
+    echo "  Ensure ghcr.io/mrrobot0985/devcontainer-features/grok-build is installed."
 fi
 
 if command -v agent >/dev/null 2>&1; then
@@ -39,7 +39,7 @@ if [ -e "$GROK_DIR" ]; then
     echo "Bootstrap OK — Grok config path exists at $GROK_DIR"
 else
     echo "Bootstrap WARN — Grok config path missing at $GROK_DIR"
-    echo "  The community grok-build feature should create it via host ~/.grok bind + onCreate."
+    echo "  Add mount to devcontainer.json: source=\${localEnv:HOME}/.grok,target=/var/lib/grok-build,type=bind"
 fi
 
 # --- MCP server manager (optional studio tooling) ---
