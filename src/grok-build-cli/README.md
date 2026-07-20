@@ -6,7 +6,7 @@ Minimal devcontainer for xAI Grok Build CLI with container firewall (grok-build 
 
 ## Security floor (Layer B)
 
-- Community Grok Build install (`ghcr.io/sliekens/devcontainer-features/grok-build:1`)
+- Grok Build install (our feature)
 - Container firewall (`container-firewall:1`) — `grok-build` service whitelist (`xai` + `github` + `npm`)
 - Non-root enforcer (`non-root-enforcer:1`) — audits `remoteUser` is non-root
 - AI agent sandbox (`ai-agent-sandbox:1`, preset `moderate`, `failOnWarning: false`)

@@ -3,7 +3,7 @@
 	"image": "mcr.microsoft.com/devcontainers/base:${templateOption:imageVariant}",
 	"remoteUser": "vscode",
 	"features": {
-		"ghcr.io/sliekens/devcontainer-features/grok-build:1": {},
+		"ghcr.io/mrrobot0985/devcontainer-features/grok-build:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/devcontainers/features/node:2.1.0": {
 			"version": "20"

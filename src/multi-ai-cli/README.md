@@ -11,7 +11,7 @@ not a substitute for dedicated single-agent templates (Layers A/B) for daily wor
 | Agent | Binary | Install path |
 | ----- | ------ | ------------ |
 | Claude Code | `claude` | Official `ghcr.io/anthropics/devcontainer-features/claude-code:1` |
-| Grok Build | `grok` | Community `ghcr.io/sliekens/devcontainer-features/grok-build:1` |
+| Grok Build | `grok` | Our feature `ghcr.io/mrrobot0985/devcontainer-features/grok-build:1` |
 | Pi | `pi` | Bootstrap: `npm i -g @earendil-works/pi-coding-agent` |
 | Hermes | `hermes` | Community `ghcr.io/devcontainer-community/devcontainer-features/hermes-agent.nousresearch.com:1` |
 | OpenAI Codex CLI | `codex` | Community `ghcr.io/sliekens/devcontainer-features/codex:1` |

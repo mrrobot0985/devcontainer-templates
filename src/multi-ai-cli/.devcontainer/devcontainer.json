@@ -8,7 +8,7 @@
 		},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
-		"ghcr.io/sliekens/devcontainer-features/grok-build:1": {},
+		"ghcr.io/mrrobot0985/devcontainer-features/grok-build:1": {},
 		"ghcr.io/sliekens/devcontainer-features/codex:1": {},
 		"ghcr.io/sliekens/devcontainer-features/opencode:1": {},
 		"ghcr.io/devcontainer-community/devcontainer-features/hermes-agent.nousresearch.com:1": {},

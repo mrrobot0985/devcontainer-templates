@@ -6,7 +6,7 @@ Full-featured devcontainer for xAI Grok Build CLI with Docker-in-Docker, host is
 
 ## Security floor (Layer B)
 
-- Community Grok Build install (`ghcr.io/sliekens/devcontainer-features/grok-build:1`)
+- Grok Build install (our feature)
 - Container firewall (`container-firewall:1`) — `grok-build` + `docker` service tags (DinD image pulls)
 - Non-root enforcer (`non-root-enforcer:1`) — audits `remoteUser` is non-root
 - AI agent sandbox (`ai-agent-sandbox:1`, preset `moderate`, `failOnWarning: false`) — runtime posture audit (DinD will warn about docker.sock; non-blocking)
